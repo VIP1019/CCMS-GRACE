@@ -34,45 +34,74 @@ const GRACE = {
     instructor: 'Mary Grace Bolos',
     academicYear: 'AY 2026-2027',
     semester: '1st Semester',
-    version: '2.0.0'
+    version: '2.0.0',
+    // --- System Administrator Configurable Variables ---
+    maintenance_mode: false,
+    active_semester: '1st Semester',
+    active_term_cycle: 'Extension Term Cycle A',
+    allow_new_proposals: true
   },
 
-  /* ===== 1. ROLE ===== */
-  /* Per proposal: 3 primary user interfaces:
-     (1) Administrator Interface — user/role management, system config
-     (2) Extension Office/Coordinator Interface — project/process/funding management
-         Sub-user: Office Assistant/Extensionist — records OVPRE communications,
-                   updates project status, funding info based on institutional records
-     (3) Project Proponent Interface — proposal submission, activities, deliverables */
+  /* ===== 1. ROLE =====
+     Per proposal Section VI (Scope): 6 defined system roles:
+     1. Project Proponent
+     2. Extension Coordinator
+     3. Dean/Director
+     4. Vice President for Research and Extension (VPRE) [under OVPRE]
+     5. Assistant Extension Officer [under OVPRE, SEPARATE role from VPRE]
+     6. System Administrator
+     VPRE and Assistant are separate portal roles because their system
+     responsibilities and permissions may differ (proposal, p. Scope).
+     External actors — President, Board Secretary, Board of Trustees —
+     are NOT portal users. Their actions are RECORDED by portal users. */
   roles: [
-    { role_id: 'R001', role_name: 'admin',       description: 'System Administrator — full system access, user account management, RBAC, system configuration, and records administration', is_active: true },
-    { role_id: 'R002', role_name: 'coordinator', description: 'Extension Office / Coordinator — proposal and project management, process and status monitoring, communication updates, funding-information recording, documentation, reporting, completion and post-implementation monitoring', is_active: true },
-    { role_id: 'R002A', role_name: 'extensionist', description: 'Office Assistant / Extensionist (sub-role under Coordinator) — authorized to record/update OVPRE-related communications, project status information, and funding information when available, based on authorized institutional records and communications', is_active: true },
-    { role_id: 'R003', role_name: 'proponent',   description: 'Project Proponent — authorized faculty, project leaders, and project team members; submits and updates proposal information, compliance requirements, activities, implementation progress, participation, and supporting documents per assigned permissions', is_active: true }
+    { role_id: 'R001', role_name: 'admin',
+      description: 'System Administrator — user account administration, role and permission configuration, system configuration, records administration. NOT a project decision-maker.',
+      is_active: true },
+    { role_id: 'R002', role_name: 'coordinator',
+      description: 'Extension Coordinator — coordinates and monitors project info, proposal/process status, communications, implementation activities, docs, reports, completion and post-implementation records. Does NOT independently exercise institutional approval authority.',
+      is_active: true },
+    { role_id: 'R003', role_name: 'proponent',
+      description: 'Project Proponent — authorized faculty/project team. Prepares/submits proposals, responds to compliance/revisions, submits implementation updates, manages activities and participation records, uploads documents, submits reports per assigned permissions.',
+      is_active: true },
+    { role_id: 'R004', role_name: 'dean',
+      description: 'Dean/Director — reviews applicable proposals and supporting information; records review, endorsement, return-for-revision, or other authorized actions within assigned institutional authority.',
+      is_active: true },
+    { role_id: 'R005', role_name: 'vpre',
+      description: 'Vice President for Research and Extension (VPRE) — performs authorized OVPRE-level review, processing, decision-recording (eligibility check, compliance review, Technical Evaluation facilitation, subsequent institutional processing), and other functions validated with the beneficiary.',
+      is_active: true },
+    { role_id: 'R006', role_name: 'assistant',
+      description: 'Assistant Extension Officer — authorized OVPRE-related recording, coordination, status updating, communication recording, document handling, compliance-support, and other operational functions. Distinct from VPRE; formal signing authority subject to institutional validation.',
+      is_active: true }
   ],
 
-  /* ===== 2. PERSON ===== */
-  /* Note: Mary Grace Bolos is the IT 116 INSTRUCTOR (not a portal user role).
-     She appears here as the Extension Office Head for project-record purposes. */
+  /* ===== 2. PERSON =====
+     Note: Mary Grace Bolos = IT 116 INSTRUCTOR. She holds Dean portal role
+     for demo purposes only. She is NOT a system role in the actual implementation.
+     Actual Dean/Director will be determined by the beneficiary. */
   persons: [
-    { person_id: 'PER001', first_name: 'Prince Jheck', last_name: 'Juan',       email: 'pjuan@ucn.edu.ph',         contact_no: '09171234567', affiliation: 'CCMS — Information Technology', designation: 'Project Leader / System Admin' },
-    { person_id: 'PER002', first_name: 'Crystelle',    last_name: 'Villanueva', email: 'cvillanueva@ucn.edu.ph',   contact_no: '09182345678', affiliation: 'CCMS — Information Technology', designation: 'Extension Coordinator' },
-    { person_id: 'PER003', first_name: 'Lei-anne',     last_name: 'Araña',      email: 'larana@ucn.edu.ph',        contact_no: '09193456789', affiliation: 'CCMS — Information Technology', designation: 'Project Proponent' },
-    { person_id: 'PER004', first_name: 'Maria',        last_name: 'Santos',     email: 'msantos@ucn.edu.ph',       contact_no: '09204567890', affiliation: 'CCMS — Computer Science',      designation: 'Project Proponent' },
-    { person_id: 'PER005', first_name: 'Roberto',      last_name: 'De Leon',    email: 'rdeleon@ucn.edu.ph',       contact_no: '09215678901', affiliation: 'CCMS — Information Systems',   designation: 'Project Proponent' },
-    { person_id: 'PER006', first_name: 'Mary Grace',   last_name: 'Bolos',      email: 'mgbolos@ucn.edu.ph',       contact_no: '09226789012', affiliation: 'CCMS — Extension Office',      designation: 'Extension Office Head / Dean (IT 116 Instructor)' },
-    { person_id: 'PER007', first_name: 'Ana',          last_name: 'Dela Rosa',  email: 'adelarosa@ucn.edu.ph',     contact_no: '09301234590', affiliation: 'UCN — OVPRE',                  designation: 'Office Assistant / Extensionist' }
+    { person_id: 'PER001', first_name: 'Prince Jheck', last_name: 'Juan',       email: 'pjuan@ucn.edu.ph',       contact_no: '09171234567', affiliation: 'CCMS — Information Technology', designation: 'IT 116 Team Leader / System Admin (Demo)' },
+    { person_id: 'PER002', first_name: 'Crystelle',    last_name: 'Villanueva', email: 'cvillanueva@ucn.edu.ph', contact_no: '09182345678', affiliation: 'CCMS — Extension Office',      designation: 'Extension Coordinator' },
+    { person_id: 'PER003', first_name: 'Lei-anne',     last_name: 'Arana',      email: 'larana@ucn.edu.ph',      contact_no: '09193456789', affiliation: 'CCMS — Information Technology', designation: 'Project Proponent / Faculty' },
+    { person_id: 'PER004', first_name: 'Maria',        last_name: 'Santos',     email: 'msantos@ucn.edu.ph',     contact_no: '09204567890', affiliation: 'CCMS — Computer Science',      designation: 'Project Proponent / Faculty' },
+    { person_id: 'PER005', first_name: 'Roberto',      last_name: 'De Leon',    email: 'rdeleon@ucn.edu.ph',     contact_no: '09215678901', affiliation: 'CCMS — Information Systems',   designation: 'Project Proponent / Faculty' },
+    { person_id: 'PER006', first_name: 'Mary Grace',   last_name: 'Bolos',      email: 'mgbolos@ucn.edu.ph',     contact_no: '09226789012', affiliation: 'CCMS — Dean Office',          designation: 'Dean/Director (IT 116 Instructor)' },
+    { person_id: 'PER007', first_name: 'Arthur',       last_name: 'Gonzales',   email: 'agvpre@ucn.edu.ph',      contact_no: '09401234567', affiliation: 'UCN — OVPRE',                 designation: 'Vice President for Research and Extension (VPRE)' },
+    { person_id: 'PER008', first_name: 'Ana',          last_name: 'Dela Rosa',  email: 'adelarosa@ucn.edu.ph',   contact_no: '09301234590', affiliation: 'UCN — OVPRE',                 designation: 'Assistant Extension Officer' }
   ],
 
-  /* ===== 3. USER_ACCOUNT ===== */
+  /* ===== 3. USER_ACCOUNT =====
+     6 portal accounts — 1 per role for demo.
+     External institutional actors (President, Board Secretary, BOT) have NO accounts. */
   userAccounts: [
-    { user_id: 'U001', person_id: 'PER001', role_id: 'R001',  username: 'pjuan@ucn.edu.ph',       password_hash: '[bcrypt_hashed]', account_status: 'active', created_at: '2026-01-15' },
-    { user_id: 'U002', person_id: 'PER002', role_id: 'R002',  username: 'cvillanueva@ucn.edu.ph', password_hash: '[bcrypt_hashed]', account_status: 'active', created_at: '2026-01-15' },
-    { user_id: 'U003', person_id: 'PER003', role_id: 'R003',  username: 'larana@ucn.edu.ph',      password_hash: '[bcrypt_hashed]', account_status: 'active', created_at: '2026-01-15' },
-    { user_id: 'U004', person_id: 'PER004', role_id: 'R003',  username: 'msantos@ucn.edu.ph',     password_hash: '[bcrypt_hashed]', account_status: 'active', created_at: '2026-01-15' },
-    { user_id: 'U005', person_id: 'PER005', role_id: 'R003',  username: 'rdeleon@ucn.edu.ph',     password_hash: '[bcrypt_hashed]', account_status: 'active', created_at: '2026-02-01' },
-    { user_id: 'U006', person_id: 'PER006', role_id: 'R002',  username: 'mgbolos@ucn.edu.ph',     password_hash: '[bcrypt_hashed]', account_status: 'active', created_at: '2026-01-10' },
-    { user_id: 'U007', person_id: 'PER007', role_id: 'R002A', username: 'adelarosa@ucn.edu.ph',   password_hash: '[bcrypt_hashed]', account_status: 'active', created_at: '2026-01-20' }
+    { user_id: 'U001', person_id: 'PER001', role_id: 'R001', username: 'pjuan@ucn.edu.ph',       password_hash: '[bcrypt]', account_status: 'active', created_at: '2026-01-15' },
+    { user_id: 'U002', person_id: 'PER002', role_id: 'R002', username: 'cvillanueva@ucn.edu.ph', password_hash: '[bcrypt]', account_status: 'active', created_at: '2026-01-15' },
+    { user_id: 'U003', person_id: 'PER003', role_id: 'R003', username: 'larana@ucn.edu.ph',      password_hash: '[bcrypt]', account_status: 'active', created_at: '2026-01-15' },
+    { user_id: 'U004', person_id: 'PER004', role_id: 'R003', username: 'msantos@ucn.edu.ph',     password_hash: '[bcrypt]', account_status: 'active', created_at: '2026-01-15' },
+    { user_id: 'U005', person_id: 'PER005', role_id: 'R003', username: 'rdeleon@ucn.edu.ph',     password_hash: '[bcrypt]', account_status: 'active', created_at: '2026-02-01' },
+    { user_id: 'U006', person_id: 'PER006', role_id: 'R004', username: 'mgbolos@ucn.edu.ph',     password_hash: '[bcrypt]', account_status: 'active', created_at: '2026-01-10' },
+    { user_id: 'U007', person_id: 'PER007', role_id: 'R005', username: 'agvpre@ucn.edu.ph',      password_hash: '[bcrypt]', account_status: 'active', created_at: '2026-02-10' },
+    { user_id: 'U008', person_id: 'PER008', role_id: 'R006', username: 'adelarosa@ucn.edu.ph',   password_hash: '[bcrypt]', account_status: 'active', created_at: '2026-01-20' }
   ],
 
   /* ===== 4. PROJECT ===== */
@@ -276,39 +305,39 @@ const GRACE = {
            does NOT independently determine eligibility or approve proposals. */
   approvals: [
     /* EXT-2026-048: Web Dev Training — Daet LGU (FULLY PROCESSED) */
-    { approval_id: 'APR001', project_id: 'EXT-2026-048', approval_stage: 'Completeness Check',            decision: 'Approved', decision_date: '2026-08-16', approved_by: 'PER002', signature_reference: 'EXT-2026-048-CC-01',  remarks: 'Extension Project Proposal and all required supporting documents verified complete.' },
-    { approval_id: 'APR002', project_id: 'EXT-2026-048', approval_stage: 'Dean/Director Endorsement',     decision: 'Approved', decision_date: '2026-08-17', approved_by: 'PER006', signature_reference: 'EXT-2026-048-DD-01',  remarks: 'Reviewed and endorsed to OVPRE by the Dean/Director.' },
-    { approval_id: 'APR003', project_id: 'EXT-2026-048', approval_stage: 'OVPRE Endorsement',             decision: 'Approved', decision_date: '2026-08-18', approved_by: 'PER007', signature_reference: 'EXT-2026-048-OV-01',  remarks: 'Endorsed by OVPRE for Eligibility Check. Recorded by Office Assistant/Extensionist.' },
-    { approval_id: 'APR004', project_id: 'EXT-2026-048', approval_stage: 'Eligibility Check',             decision: 'Approved', decision_date: '2026-08-19', approved_by: 'PER002', signature_reference: 'EXT-2026-048-EC-01',  remarks: 'All eligibility requirements satisfied. Cleared for Technical Evaluation. [Indicator: E]' },
-    { approval_id: 'APR005', project_id: 'EXT-2026-048', approval_stage: 'Technical Evaluation',          decision: 'Approved', decision_date: '2026-08-21', approved_by: 'PER006', signature_reference: 'EXT-2026-048-TE-01',  remarks: 'Technical requirements and methodology approved by evaluation panel. [Indicator: TE]' },
-    { approval_id: 'APR006', project_id: 'EXT-2026-048', approval_stage: 'Institutional Endorsement',     decision: 'Approved', decision_date: '2026-08-23', approved_by: 'PER006', signature_reference: 'EXT-2026-048-IE-01',  remarks: 'Endorsed to the President and Board Secretary for Board of Trustees processing.' },
-    { approval_id: 'APR007', project_id: 'EXT-2026-048', approval_stage: 'Board of Trustees Approval',    decision: 'Approved', decision_date: '2026-08-25', approved_by: 'PER006', signature_reference: 'EXT-2026-048-BOT-01', remarks: 'Approved by Board of Trustees. BOT-approved proposal distributed to project implementers.' },
-    { approval_id: 'APR008', project_id: 'EXT-2026-048', approval_stage: 'Notice to Proceed (NTP)',       decision: 'Approved', decision_date: '2026-08-26', approved_by: 'PER006', signature_reference: 'NTP-2026-048',         remarks: 'NTP issued. MOA signed with Daet LGU. Project implementers officially designated. [Indicator: M]' },
+    { approval_id: 'APR001', project_id: 'EXT-2026-048', approval_stage: 'Completeness Check',             decision: 'Approved', decision_date: '2026-08-16', approved_by: 'PER002', signature_reference: 'EXT-2026-048-CC-01',  remarks: 'Extension Project Proposal and all required supporting documents verified complete.' },
+    { approval_id: 'APR002', project_id: 'EXT-2026-048', approval_stage: 'Dean/Director Endorsement',      decision: 'Approved', decision_date: '2026-08-17', approved_by: 'PER006', signature_reference: 'EXT-2026-048-DD-01',  remarks: 'Reviewed and endorsed to OVPRE by the Dean/Director.' },
+    { approval_id: 'APR003', project_id: 'EXT-2026-048', approval_stage: 'OVPRE Endorsement',              decision: 'Approved', decision_date: '2026-08-18', approved_by: 'PER007', signature_reference: 'EXT-2026-048-OV-01',  remarks: 'Endorsed by OVPRE for Eligibility Check. Recorded by Office Assistant/Extensionist.' },
+    { approval_id: 'APR004', project_id: 'EXT-2026-048', approval_stage: 'Eligibility Check',              decision: 'Approved', decision_date: '2026-08-19', approved_by: 'PER002', signature_reference: 'EXT-2026-048-EC-01',  remarks: 'All eligibility requirements satisfied. Cleared for Technical Evaluation. [Indicator: E]' },
+    { approval_id: 'APR005', project_id: 'EXT-2026-048', approval_stage: 'Technical Evaluation',           decision: 'Approved', decision_date: '2026-08-21', approved_by: 'PER006', signature_reference: 'EXT-2026-048-TE-01',  remarks: 'Technical requirements and methodology approved by evaluation panel. [Indicator: TE]' },
+    { approval_id: 'APR006', project_id: 'EXT-2026-048', approval_stage: 'Institutional Endorsement',      decision: 'Approved', decision_date: '2026-08-23', approved_by: 'PER006', signature_reference: 'EXT-2026-048-IE-01',  remarks: 'Endorsed to the President and Board Secretary for Board of Trustees processing.' },
+    { approval_id: 'APR007', project_id: 'EXT-2026-048', approval_stage: 'Board of Trustees Approval',     decision: 'Approved', decision_date: '2026-08-25', approved_by: 'PER006', signature_reference: 'EXT-2026-048-BOT-01', remarks: 'Approved by Board of Trustees. BOT-approved proposal distributed to project implementers.' },
+    { approval_id: 'APR008', project_id: 'EXT-2026-048', approval_stage: 'Notice to Proceed (NTP)',        decision: 'Approved', decision_date: '2026-08-26', approved_by: 'PER006', signature_reference: 'NTP-2026-048',        remarks: 'NTP issued. MOA signed with Daet LGU. Project implementers officially designated. [Indicator: M]' },
     /* EXT-2026-045: Basud Library System */
-    { approval_id: 'APR009', project_id: 'EXT-2026-045', approval_stage: 'Completeness Check',            decision: 'Approved', decision_date: '2026-05-21', approved_by: 'PER002', signature_reference: 'EXT-2026-045-CC-01',  remarks: 'Proposal and supporting documents complete.' },
-    { approval_id: 'APR010', project_id: 'EXT-2026-045', approval_stage: 'Dean/Director Endorsement',     decision: 'Approved', decision_date: '2026-05-22', approved_by: 'PER006', signature_reference: 'EXT-2026-045-DD-01',  remarks: 'Endorsed to OVPRE by Dean/Director.' },
-    { approval_id: 'APR011', project_id: 'EXT-2026-045', approval_stage: 'OVPRE Endorsement',             decision: 'Approved', decision_date: '2026-05-23', approved_by: 'PER007', signature_reference: 'EXT-2026-045-OV-01',  remarks: 'OVPRE endorsement recorded. [Office Assistant/Extensionist]' },
-    { approval_id: 'APR012', project_id: 'EXT-2026-045', approval_stage: 'Eligibility Check',             decision: 'Approved', decision_date: '2026-05-24', approved_by: 'PER002', signature_reference: 'EXT-2026-045-EC-01',  remarks: 'Eligibility confirmed. [Indicator: E]' },
-    { approval_id: 'APR013', project_id: 'EXT-2026-045', approval_stage: 'Technical Evaluation',          decision: 'Approved', decision_date: '2026-05-26', approved_by: 'PER006', signature_reference: 'EXT-2026-045-TE-01',  remarks: 'Technical methodology approved. [Indicator: TE]' },
-    { approval_id: 'APR014', project_id: 'EXT-2026-045', approval_stage: 'Notice to Proceed (NTP)',       decision: 'Approved', decision_date: '2026-05-28', approved_by: 'PER006', signature_reference: 'NTP-2026-045',         remarks: 'NTP issued. MOA with Basud Municipal signed. [Indicator: M]' },
+    { approval_id: 'APR009', project_id: 'EXT-2026-045', approval_stage: 'Completeness Check',             decision: 'Approved', decision_date: '2026-05-21', approved_by: 'PER002', signature_reference: 'EXT-2026-045-CC-01',  remarks: 'Proposal and supporting documents complete.' },
+    { approval_id: 'APR010', project_id: 'EXT-2026-045', approval_stage: 'Dean/Director Endorsement',      decision: 'Approved', decision_date: '2026-05-22', approved_by: 'PER006', signature_reference: 'EXT-2026-045-DD-01',  remarks: 'Endorsed to OVPRE by Dean/Director.' },
+    { approval_id: 'APR011', project_id: 'EXT-2026-045', approval_stage: 'OVPRE Endorsement',              decision: 'Approved', decision_date: '2026-05-23', approved_by: 'PER007', signature_reference: 'EXT-2026-045-OV-01',  remarks: 'OVPRE endorsement recorded. [Office Assistant/Extensionist]' },
+    { approval_id: 'APR012', project_id: 'EXT-2026-045', approval_stage: 'Eligibility Check',              decision: 'Approved', decision_date: '2026-05-24', approved_by: 'PER002', signature_reference: 'EXT-2026-045-EC-01',  remarks: 'Eligibility confirmed. [Indicator: E]' },
+    { approval_id: 'APR013', project_id: 'EXT-2026-045', approval_stage: 'Technical Evaluation',           decision: 'Approved', decision_date: '2026-05-26', approved_by: 'PER006', signature_reference: 'EXT-2026-045-TE-01',  remarks: 'Technical methodology approved. [Indicator: TE]' },
+    { approval_id: 'APR014', project_id: 'EXT-2026-045', approval_stage: 'Notice to Proceed (NTP)',        decision: 'Approved', decision_date: '2026-05-28', approved_by: 'PER006', signature_reference: 'NTP-2026-045',        remarks: 'NTP issued. MOA with Basud Municipal signed. [Indicator: M]' },
     /* EXT-2026-041: DOST Consultancy */
-    { approval_id: 'APR015', project_id: 'EXT-2026-041', approval_stage: 'Completeness Check',            decision: 'Approved', decision_date: '2026-07-02', approved_by: 'PER002', signature_reference: 'EXT-2026-041-CC-01',  remarks: 'Consultancy request documentation verified complete.' },
-    { approval_id: 'APR016', project_id: 'EXT-2026-041', approval_stage: 'Eligibility Check',             decision: 'Approved', decision_date: '2026-07-03', approved_by: 'PER002', signature_reference: 'EXT-2026-041-EC-01',  remarks: 'Eligibility confirmed. External request validated. [Indicator: E]' },
-    { approval_id: 'APR017', project_id: 'EXT-2026-041', approval_stage: 'Notice to Proceed (NTP)',       decision: 'Approved', decision_date: '2026-07-12', approved_by: 'PER006', signature_reference: 'NTP-2026-041',         remarks: 'NTP issued to project consultants. [Indicator: M]' },
+    { approval_id: 'APR015', project_id: 'EXT-2026-041', approval_stage: 'Completeness Check',             decision: 'Approved', decision_date: '2026-07-02', approved_by: 'PER002', signature_reference: 'EXT-2026-041-CC-01',  remarks: 'Consultancy request documentation verified complete.' },
+    { approval_id: 'APR016', project_id: 'EXT-2026-041', approval_stage: 'Eligibility Check',              decision: 'Approved', decision_date: '2026-07-03', approved_by: 'PER002', signature_reference: 'EXT-2026-041-EC-01',  remarks: 'Eligibility confirmed. External request validated. [Indicator: E]' },
+    { approval_id: 'APR017', project_id: 'EXT-2026-041', approval_stage: 'Notice to Proceed (NTP)',        decision: 'Approved', decision_date: '2026-07-12', approved_by: 'PER006', signature_reference: 'NTP-2026-041',        remarks: 'NTP issued to project consultants. [Indicator: M]' },
     /* EXT-2026-038: Digital Literacy — Faculty-Initiated (COMPLETED) */
-    { approval_id: 'APR018', project_id: 'EXT-2026-038', approval_stage: 'Completeness Check',            decision: 'Approved', decision_date: '2026-03-26', approved_by: 'PER002', signature_reference: 'EXT-2026-038-CC-01',  remarks: 'Faculty-initiated proposal documents verified complete.' },
-    { approval_id: 'APR019', project_id: 'EXT-2026-038', approval_stage: 'Dean/Director Endorsement',     decision: 'Approved', decision_date: '2026-03-27', approved_by: 'PER006', signature_reference: 'EXT-2026-038-DD-01',  remarks: 'Endorsed to OVPRE.' },
-    { approval_id: 'APR020', project_id: 'EXT-2026-038', approval_stage: 'Eligibility Check',             decision: 'Approved', decision_date: '2026-03-28', approved_by: 'PER002', signature_reference: 'EXT-2026-038-EC-01',  remarks: 'Faculty-initiated proposal cleared eligibility check. [Indicator: E]' },
-    { approval_id: 'APR021', project_id: 'EXT-2026-038', approval_stage: 'Technical Evaluation',          decision: 'Approved', decision_date: '2026-04-04', approved_by: 'PER006', signature_reference: 'EXT-2026-038-TE-01',  remarks: 'Approved. Excellent proposal presentation. [Indicator: TE]' },
-    { approval_id: 'APR022', project_id: 'EXT-2026-038', approval_stage: 'Notice to Proceed (NTP)',       decision: 'Approved', decision_date: '2026-04-08', approved_by: 'PER006', signature_reference: 'NTP-2026-038',         remarks: 'NTP issued to project proponent and implementers. [Indicator: M]' },
+    { approval_id: 'APR018', project_id: 'EXT-2026-038', approval_stage: 'Completeness Check',             decision: 'Approved', decision_date: '2026-03-26', approved_by: 'PER002', signature_reference: 'EXT-2026-038-CC-01',  remarks: 'Faculty-initiated proposal documents verified complete.' },
+    { approval_id: 'APR019', project_id: 'EXT-2026-038', approval_stage: 'Dean/Director Endorsement',      decision: 'Approved', decision_date: '2026-03-27', approved_by: 'PER006', signature_reference: 'EXT-2026-038-DD-01',  remarks: 'Endorsed to OVPRE.' },
+    { approval_id: 'APR020', project_id: 'EXT-2026-038', approval_stage: 'Eligibility Check',              decision: 'Approved', decision_date: '2026-03-28', approved_by: 'PER002', signature_reference: 'EXT-2026-038-EC-01',  remarks: 'Faculty-initiated proposal cleared eligibility check. [Indicator: E]' },
+    { approval_id: 'APR021', project_id: 'EXT-2026-038', approval_stage: 'Technical Evaluation',           decision: 'Approved', decision_date: '2026-04-04', approved_by: 'PER006', signature_reference: 'EXT-2026-038-TE-01',  remarks: 'Approved. Excellent proposal presentation. [Indicator: TE]' },
+    { approval_id: 'APR022', project_id: 'EXT-2026-038', approval_stage: 'Notice to Proceed (NTP)',        decision: 'Approved', decision_date: '2026-04-08', approved_by: 'PER006', signature_reference: 'NTP-2026-038',        remarks: 'NTP issued to project proponent and implementers. [Indicator: M]' },
     /* EXT-2026-035: Data Analytics (PENDING — at Eligibility Check stage) */
-    { approval_id: 'APR023', project_id: 'EXT-2026-035', approval_stage: 'Completeness Check',            decision: 'Approved', decision_date: '2026-09-02', approved_by: 'PER002', signature_reference: 'EXT-2026-035-CC-01',  remarks: 'Proposal submitted. Documents verified.' },
-    { approval_id: 'APR024', project_id: 'EXT-2026-035', approval_stage: 'Eligibility Check',             decision: 'Pending',  decision_date: null,         approved_by: null,      signature_reference: null,                   remarks: 'Under OVPRE review. Awaiting eligibility determination. [Indicator: E — in progress]' },
+    { approval_id: 'APR023', project_id: 'EXT-2026-035', approval_stage: 'Completeness Check',             decision: 'Approved', decision_date: '2026-09-02', approved_by: 'PER002', signature_reference: 'EXT-2026-035-CC-01',  remarks: 'Proposal submitted. Documents verified.' },
+    { approval_id: 'APR024', project_id: 'EXT-2026-035', approval_stage: 'Eligibility Check',              decision: 'Pending',  decision_date: null,         approved_by: null,      signature_reference: null,                   remarks: 'Under OVPRE review. Awaiting eligibility determination. [Indicator: E — in progress]' },
     /* EXT-2026-033: Network Assessment — Vinzons */
-    { approval_id: 'APR025', project_id: 'EXT-2026-033', approval_stage: 'Completeness Check',            decision: 'Approved', decision_date: '2026-07-26', approved_by: 'PER002', signature_reference: 'EXT-2026-033-CC-01',  remarks: 'Consultancy documents verified complete.' },
-    { approval_id: 'APR026', project_id: 'EXT-2026-033', approval_stage: 'Eligibility Check',             decision: 'Approved', decision_date: '2026-07-27', approved_by: 'PER002', signature_reference: 'EXT-2026-033-EC-01',  remarks: 'Eligibility confirmed. [Indicator: E]' },
-    { approval_id: 'APR027', project_id: 'EXT-2026-033', approval_stage: 'Technical Evaluation',          decision: 'Approved', decision_date: '2026-07-29', approved_by: 'PER006', signature_reference: 'EXT-2026-033-TE-01',  remarks: 'Technical scope approved. [Indicator: TE]' },
-    { approval_id: 'APR028', project_id: 'EXT-2026-033', approval_stage: 'Notice to Proceed (NTP)',       decision: 'Approved', decision_date: '2026-07-30', approved_by: 'PER006', signature_reference: 'NTP-2026-033',         remarks: 'NTP issued to assessment team. [Indicator: M]' }
+    { approval_id: 'APR025', project_id: 'EXT-2026-033', approval_stage: 'Completeness Check',             decision: 'Approved', decision_date: '2026-07-26', approved_by: 'PER002', signature_reference: 'EXT-2026-033-CC-01',  remarks: 'Consultancy documents verified complete.' },
+    { approval_id: 'APR026', project_id: 'EXT-2026-033', approval_stage: 'Eligibility Check',              decision: 'Approved', decision_date: '2026-07-27', approved_by: 'PER002', signature_reference: 'EXT-2026-033-EC-01',  remarks: 'Eligibility confirmed. [Indicator: E]' },
+    { approval_id: 'APR027', project_id: 'EXT-2026-033', approval_stage: 'Technical Evaluation',           decision: 'Approved', decision_date: '2026-07-29', approved_by: 'PER006', signature_reference: 'EXT-2026-033-TE-01',  remarks: 'Technical scope approved. [Indicator: TE]' },
+    { approval_id: 'APR028', project_id: 'EXT-2026-033', approval_stage: 'Notice to Proceed (NTP)',        decision: 'Approved', decision_date: '2026-07-30', approved_by: 'PER006', signature_reference: 'NTP-2026-033',        remarks: 'NTP issued to assessment team. [Indicator: M]' }
   ],
 
   /* ===== 16. DOCUMENT ===== */
@@ -377,11 +406,18 @@ const GRACE = {
     { satisfaction_id: 'SAT005', project_id: 'EXT-2026-038', respondent_name: 'Manuel Torres',   affiliation: 'Brgy. Lag-on', relevance_rating: 4, quality_rating: 5, benefit_impact_rating: 4, overall_satisfaction: 4, recommendation: 'Yes', comments: 'Excellent training. Would recommend this to other barangays.',     response_date: '2026-06-20' }
   ],
 
+  /* ===== 21. BACKUP_LOGS ===== */
+  backupLogs: [
+    { backup_id: 'BKP-001', timestamp: '2026-09-01 02:00 AM', triggered_by: 'System Auto-Backup', file_size: '4.2 MB', status: 'Success' },
+    { backup_id: 'BKP-002', timestamp: '2026-09-15 02:00 AM', triggered_by: 'System Auto-Backup', file_size: '4.5 MB', status: 'Success' },
+    { backup_id: 'BKP-003', timestamp: '2026-09-22 11:30 AM', triggered_by: 'PER001', file_size: '4.8 MB', status: 'Success' }
+  ],
+
   /* ===== NOTIFICATIONS ===== */
   notifications: [
-    { notif_id: 'NOT001', type: 'approval',    title: 'Module 3 progress update — EXT-2026-048',  message: 'Activity ACT003 is 65% complete. JavaScript module ongoing.',               time: '2 hours ago',  read: false, icon: 'fa-tasks',        color: 'var(--maroon)' },
-    { notif_id: 'NOT002', type: 'funding',     title: 'Funding released for EXT-2026-041',         message: 'UCN Extension Office Fund ₱35,000 fully released.',                          time: '5 hours ago',  read: false, icon: 'fa-coins',        color: 'var(--gold)' },
-    { notif_id: 'NOT003', type: 'completion',  title: 'EXT-2026-038 completion approved',           message: 'Narrative report approved by Extension Coordinator. Project archived.',       time: '1 day ago',    read: true,  icon: 'fa-check-circle', color: '#16a34a' },
+    { notif_id: 'NOT001', type: 'approval',    title: 'Module 3 progress update — EXT-2026-048',  message: 'Activity ACT003 is 65% complete. JavaScript module ongoing.',                time: '2 hours ago',  read: false, icon: 'fa-tasks',        color: 'var(--maroon)' },
+    { notif_id: 'NOT002', type: 'funding',     title: 'Funding released for EXT-2026-041',         message: 'UCN Extension Office Fund ₱35,000 fully released.',                           time: '5 hours ago',  read: false, icon: 'fa-coins',        color: 'var(--gold)' },
+    { notif_id: 'NOT003', type: 'completion',  title: 'EXT-2026-038 completion approved',          message: 'Narrative report approved by Extension Coordinator. Project archived.',       time: '1 day ago',    read: true,  icon: 'fa-check-circle', color: '#16a34a' },
     { notif_id: 'NOT004', type: 'submission',  title: 'New proposal submitted — EXT-2026-035 v2',  message: 'Revised Data Analytics Workshop proposal awaiting eligibility check.',        time: '2 days ago',   read: true,  icon: 'fa-file-alt',     color: '#2563eb' },
     { notif_id: 'NOT005', type: 'deadline',    title: 'ACT003 ends Sep 25 — action needed',        message: 'EXT-2026-048 Module 3 schedule ends in 3 days. Please update attendance.',   time: '3 days ago',   read: true,  icon: 'fa-calendar-alt', color: '#d97706' }
   ],
@@ -407,7 +443,7 @@ const GRACE = {
   getProjectById(id)           { return this.projects.find(p => p.project_id === id); },
   getPersonById(id)            { return this.persons.find(p => p.person_id === id); },
   getPersonName(id)            { const p = this.getPersonById(id); return p ? `${p.first_name} ${p.last_name}` : 'Unknown'; },
-  getUserByRole(role)          { const map={admin:'U001',coordinator:'U002',proponent:'U003'}; return this.userAccounts.find(u=>u.user_id===map[role]); },
+  getUserByRole(role)          { const map={admin:'U001',coordinator:'U002',proponent:'U003',dean:'U006',ovpre:'U008'}; return this.userAccounts.find(u=>u.user_id===map[role]); },
   getActivitiesByProject(pid)  { return this.activities.filter(a => a.project_id === pid); },
   getDocumentsByProject(pid)   { return this.documents.filter(d => d.project_id === pid); },
   getTeamByProject(pid)        { return this.projectTeams.filter(t => t.project_id === pid); },

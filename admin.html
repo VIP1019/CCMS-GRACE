@@ -45,12 +45,12 @@
             <h4>Audit Log</h4>
             <p>5 recent actions</p>
           </div>
-          <div class="admin-card">
+          <div class="admin-card" id="admin-card-backup">
             <div class="admin-icon"><i class="fas fa-database"></i></div>
             <h4>Data Backup</h4>
             <p>Last: Sep 22, 2026</p>
           </div>
-          <div class="admin-card">
+          <div class="admin-card" id="admin-card-settings">
             <div class="admin-icon"><i class="fas fa-sliders-h"></i></div>
             <h4>System Settings</h4>
             <p>General configuration</p>
@@ -80,6 +80,12 @@
           </button>
           <button class="admin-tab-btn" data-tab="tab-audit" style="padding:0.6rem 1.25rem;border:none;background:none;font-size:0.88rem;font-weight:600;color:var(--gray-500);cursor:pointer;">
             <i class="fas fa-history" style="margin-right:0.4rem;"></i>Audit Log
+          </button>
+          <button class="admin-tab-btn" id="admin-tab-settings-btn" data-tab="tab-settings" style="padding:0.6rem 1.25rem;border:none;background:none;font-size:0.88rem;font-weight:600;color:var(--gray-500);cursor:pointer;">
+            <i class="fas fa-sliders-h" style="margin-right:0.4rem;"></i>System Settings
+          </button>
+          <button class="admin-tab-btn" id="admin-tab-backup-btn" data-tab="tab-backup" style="padding:0.6rem 1.25rem;border:none;background:none;font-size:0.88rem;font-weight:600;color:var(--gray-500);cursor:pointer;">
+            <i class="fas fa-database" style="margin-right:0.4rem;"></i>Backup/Restore
           </button>
         </div>
 
@@ -156,10 +162,78 @@
             <div class="table-footer"><span class="table-info" id="audit-info">Loading...</span></div>
           </div>
         </div>
+
+        <!-- System Settings Tab -->
+        <div id="tab-settings" class="admin-tab-content" style="display:none;">
+          <div class="table-container" style="margin-bottom:1.5rem; padding: 1.5rem;">
+            <div class="table-header" style="border-bottom: 1px solid var(--gray-200); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+              <h4><i class="fas fa-sliders-h" style="color:var(--maroon);margin-right:0.5rem;"></i>System Settings</h4>
+              <span style="font-size:0.8rem;color:var(--gray-500);">Global configuration variables for the G.R.A.C.E Portal</span>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; max-width: 800px;">
+              <div class="form-group">
+                <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.5rem;">Academic Year</label>
+                <input type="text" id="setting-ay" class="form-input" value="AY 2026-2027" style="width: 100%; padding: 0.6rem; border: 1px solid var(--gray-200); border-radius: 6px;">
+              </div>
+              <div class="form-group">
+                <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.5rem;">Active Semester</label>
+                <select id="setting-sem" class="form-select" style="width: 100%; padding: 0.6rem; border: 1px solid var(--gray-200); border-radius: 6px;">
+                  <option selected>1st Semester</option>
+                  <option>2nd Semester</option>
+                  <option>Mid-Year</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.5rem;">Active Extension Term Cycle</label>
+                <select id="setting-term" class="form-select" style="width: 100%; padding: 0.6rem; border: 1px solid var(--gray-200); border-radius: 6px;">
+                  <option selected>Extension Term Cycle A</option>
+                  <option>Extension Term Cycle B</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.5rem;">Maintenance Mode</label>
+                <select id="setting-maintenance" class="form-select" style="width: 100%; padding: 0.6rem; border: 1px solid var(--gray-200); border-radius: 6px;">
+                  <option selected value="false">Disabled (System Online)</option>
+                  <option value="true">Enabled (System Offline)</option>
+                </select>
+              </div>
+            </div>
+            <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--gray-200);">
+              <button class="btn btn-primary" onclick="alert('System settings updated successfully!')"><i class="fas fa-save"></i> Save Configuration</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Backup/Restore Tab -->
+        <div id="tab-backup" class="admin-tab-content" style="display:none;">
+          <div class="table-container" style="margin-bottom:1.5rem;">
+            <div class="table-header" style="display: flex; justify-content: space-between; align-items: center; padding: 1.25rem;">
+              <div>
+                <h4><i class="fas fa-database" style="color:var(--maroon);margin-right:0.5rem;"></i>Database Backup & Restore</h4>
+                <span style="font-size:0.8rem;color:var(--gray-500);">Manage system state, export JSON backups, and restore from historical points.</span>
+              </div>
+              <div style="display: flex; gap: 0.75rem;">
+                <!-- Backup Button -->
+                <button class="btn btn-primary" onclick="if(window.exportDatabaseBackup) exportDatabaseBackup(); else alert('Backup triggered (Ensure main.js is loaded)');"><i class="fas fa-download"></i> Export Database</button>
+                <!-- Restore Input Trigger -->
+                <label class="btn btn-outline" style="cursor: pointer; margin: 0; display: inline-flex; align-items: center; gap: 0.5rem;">
+                  <i class="fas fa-upload"></i> Upload System State
+                  <input type="file" style="display: none;" accept=".json" onchange="if(window.importDatabaseRestore) importDatabaseRestore(event); else alert('Restore triggered (Ensure main.js is loaded)');">
+                </label>
+              </div>
+            </div>
+            <table>
+              <thead>
+                <tr><th>Backup ID</th><th>Timestamp</th><th>Triggered By</th><th>File Size</th><th>Status</th><th>Actions</th></tr>
+              </thead>
+              <tbody id="backup-tbody"></tbody>
+            </table>
+            <div class="table-footer"><span class="table-info" id="backup-info">Loading...</span></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
 <script src="js/data.js"></script>
 <script src="js/main.js"></script>
@@ -195,7 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
     accTbody.innerHTML += `<tr>
       <td><code style="font-size:0.78rem;background:var(--gray-100);padding:2px 6px;border-radius:4px;">${u.user_id}</code></td>
       <td style="font-size:0.82rem;">
-        <strong>${person ? `${person.first_name} ${person.last_name}` : u.person_id}</strong>
+        <strong>${person ? `${person.first_name}${person.last_name}` : u.person_id}</strong>
         <div style="font-size:0.75rem;color:var(--gray-500);">FK → ${u.person_id}</div>
       </td>
       <td>
@@ -246,6 +320,34 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   document.getElementById('audit-info').textContent = `Showing ${GRACE.auditLog.length} audit entries`;
 
+  // Backup Logs (New logic)
+  const bkpTbody = document.getElementById('backup-tbody');
+  if (GRACE.backupLogs) {
+    GRACE.backupLogs.forEach(b => {
+      const statusBadge = b.status === 'Success' ? 'badge-approved' : 'badge-danger';
+      bkpTbody.innerHTML += `<tr>
+        <td><code style="font-size:0.78rem;background:var(--gray-100);padding:2px 6px;border-radius:4px;">${b.backup_id}</code></td>
+        <td style="font-size:0.82rem;">${b.timestamp}</td>
+        <td style="font-size:0.82rem;">${b.triggered_by}</td>
+        <td style="font-size:0.82rem;">${b.file_size}</td>
+        <td><span class="badge ${statusBadge}">${b.status}</span></td>
+        <td>
+          <button class="btn btn-sm btn-outline" title="Download this version"><i class="fas fa-download"></i></button>
+          <button class="btn btn-sm btn-outline" title="Restore this version" style="color:var(--maroon); border-color:var(--maroon);"><i class="fas fa-history"></i></button>
+        </td>
+      </tr>`;
+    });
+    document.getElementById('backup-info').textContent = `Showing ${GRACE.backupLogs.length} backup records`;
+  }
+  
+  // System Settings Defaults (New logic)
+  if (GRACE.system) {
+    if(document.getElementById('setting-ay')) document.getElementById('setting-ay').value = GRACE.system.academicYear || '';
+    if(document.getElementById('setting-sem')) document.getElementById('setting-sem').value = GRACE.system.active_semester || '1st Semester';
+    if(document.getElementById('setting-term')) document.getElementById('setting-term').value = GRACE.system.active_term_cycle || 'Extension Term Cycle A';
+    if(document.getElementById('setting-maintenance')) document.getElementById('setting-maintenance').value = GRACE.system.maintenance_mode === true ? 'true' : 'false';
+  }
+
   // Tab switching
   document.querySelectorAll('.admin-tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -255,17 +357,135 @@ document.addEventListener('DOMContentLoaded', () => {
         b.classList.remove('active');
       });
       document.querySelectorAll('.admin-tab-content').forEach(c => c.style.display = 'none');
+      
       btn.style.color = 'var(--maroon)';
       btn.style.borderBottom = '2px solid var(--maroon)';
       btn.style.marginBottom = '-2px';
       btn.classList.add('active');
+      
       const tabId = btn.dataset.tab;
       document.getElementById(tabId).style.display = 'block';
     });
   });
 });
+
+/*
+ * ============================================================
+ * OVPRE ADMIN ACCESS RESTRICTION
+ * ============================================================
+ *
+ * OVPRE is allowed to manage:
+ * - PERSON records
+ * - USER_ACCOUNT records
+ * - ROLE records
+ * - Audit Log
+ *
+ * OVPRE is NOT allowed to access:
+ * - System Settings
+ * - Data Backup
+ * - Backup/Restore
+ *
+ * This block checks the role stored by the SSO/login process.
+ * The original admin functionality above remains unchanged.
+ * ============================================================
+ */
+document.addEventListener('DOMContentLoaded', () => {
+  const graceRole = localStorage.getItem('graceRole');
+
+  if (graceRole === 'ovpre') {
+    /*
+     * Hide the Data Backup summary card.
+     */
+    const backupCard = document.getElementById('admin-card-backup');
+
+    if (backupCard) {
+      backupCard.style.display = 'none';
+    }
+
+    /*
+     * Hide the System Settings summary card.
+     */
+    const settingsCard = document.getElementById('admin-card-settings');
+
+    if (settingsCard) {
+      settingsCard.style.display = 'none';
+    }
+
+    /*
+     * Hide the System Settings tab navigation button.
+     */
+    const settingsTabButton = document.getElementById('admin-tab-settings-btn');
+
+    if (settingsTabButton) {
+      settingsTabButton.style.display = 'none';
+    }
+
+    /*
+     * Hide the Backup/Restore tab navigation button.
+     */
+    const backupTabButton = document.getElementById('admin-tab-backup-btn');
+
+    if (backupTabButton) {
+      backupTabButton.style.display = 'none';
+    }
+
+    /*
+     * Hide the complete System Settings tab content.
+     * This prevents OVPRE from reaching the configuration
+     * controls even if the tab is referenced directly.
+     */
+    const settingsTabContent = document.getElementById('tab-settings');
+
+    if (settingsTabContent) {
+      settingsTabContent.style.display = 'none';
+    }
+
+    /*
+     * Hide the complete Backup/Restore tab content.
+     * This prevents OVPRE from executing database backup
+     * and restore operations through this interface.
+     */
+    const backupTabContent = document.getElementById('tab-backup');
+
+    if (backupTabContent) {
+      backupTabContent.style.display = 'none';
+    }
+
+    /*
+     * Additional protection:
+     * If either restricted tab happens to have the active
+     * class because of previously stored UI state or another
+     * script, remove that active state for OVPRE.
+     */
+    if (settingsTabButton) {
+      settingsTabButton.classList.remove('active');
+    }
+
+    if (backupTabButton) {
+      backupTabButton.classList.remove('active');
+    }
+
+    /*
+     * Make sure the permitted PERSON tab remains available
+     * as the default visible administration area.
+     */
+    const personsTab = document.getElementById('tab-persons');
+
+    if (personsTab) {
+      personsTab.style.display = 'block';
+    }
+
+    /*
+     * Ensure the PERSON navigation button remains visible
+     * and active for the OVPRE administration session.
+     */
+    const personsTabButton = document.querySelector('.admin-tab-btn[data-tab="tab-persons"]');
+
+    if (personsTabButton) {
+      personsTabButton.style.display = '';
+    }
+  }
+});
 </script>
 </body>
 </html>
-
-

@@ -8,6 +8,44 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/dashboard.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    /* Prototype Modal Styles */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-content {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    .modal-header h3 { margin: 0; color: var(--maroon); }
+    .close-modal {
+      background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #6b7280;
+    }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; margin-bottom: 0.5rem; font-size: 0.85rem; font-weight: 600; color: #374151; }
+    .form-group select, .form-group input, .form-group textarea {
+      width: 100%; padding: 0.6rem; border: 1px solid #d1d5db; border-radius: 4px; font-family: inherit; font-size: 0.85rem;
+    }
+    .form-group select:disabled {
+      background-color: #f3f4f6; color: #6b7280;
+    }
+  </style>
 </head>
 <body>
 <div class="dashboard-layout">
@@ -24,7 +62,8 @@
         </div>
         <div class="page-header-actions">
           <button class="btn btn-sm btn-outline"><i class="fas fa-download"></i> Export</button>
-          <button class="btn btn-sm btn-primary" data-role="coordinator"><i class="fas fa-clipboard-check"></i> Record Decision</button>
+          <!-- Modified data-role to include ovpre -->
+          <button class="btn btn-sm btn-primary" id="btn-record-decision" data-role="coordinator,dean,proponent,ovpre"><i class="fas fa-clipboard-check"></i> Record Decision</button>
         </div>
       </div>
 
@@ -142,6 +181,52 @@
   </div>
 </div>
 
+<!-- Prototype Modal for Recording Decision -->
+<div class="modal-overlay" id="decision-modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Record Approval Decision</h3>
+      <button class="close-modal" id="close-modal-btn">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Project ID</label>
+        <select id="modal-project-id" class="form-select"></select>
+      </div>
+      <div class="form-group">
+        <label>Approval Stage</label>
+        <select id="modal-stage" class="form-select">
+          <option value="Completeness Check">Completeness Check</option>
+          <option value="Dean/Director Endorsement">Dean/Director Endorsement</option>
+          <option value="OVPRE Endorsement">OVPRE Endorsement</option>
+          <option value="Eligibility Check">Eligibility Check</option>
+          <option value="Compliance / Required Revisions">Compliance / Required Revisions</option>
+          <option value="Technical Evaluation">Technical Evaluation</option>
+          <option value="Institutional Endorsement">Institutional Endorsement</option>
+          <option value="Board of Trustees Approval">Board of Trustees Approval</option>
+          <option value="Notice to Proceed (NTP)">Notice to Proceed (NTP)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Decision</label>
+        <select id="modal-decision" class="form-select">
+          <option value="Approved">Approved</option>
+          <option value="Pending">Pending</option>
+          <option value="Returned">Returned</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Remarks</label>
+        <textarea id="modal-remarks" rows="3" placeholder="Enter remarks or conditions..."></textarea>
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1.5rem;">
+        <button class="btn btn-outline close-modal-action" id="cancel-decision-btn">Cancel</button>
+        <button class="btn btn-primary" id="save-decision-btn">Save Decision</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="js/data.js"></script>
 <script src="js/main.js"></script>
 <script>
@@ -149,11 +234,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const tbody = document.getElementById('approvals-tbody');
   const info  = document.getElementById('approvals-info');
   const projSelect = document.getElementById('filter-project');
+  const modalProjSelect = document.getElementById('modal-project-id');
+  const decisionModal = document.getElementById('decision-modal');
+  const modalStageSelect = document.getElementById('modal-stage');
+  const modalDecisionSelect = document.getElementById('modal-decision');
+  const modalRemarks = document.getElementById('modal-remarks');
+  const saveDecisionBtn = document.getElementById('save-decision-btn');
+
   if (!tbody || !window.GRACE) return;
 
   // Populate project filter
   GRACE.projects.forEach(p => {
-    projSelect.innerHTML += `<option value="${p.project_id}">${p.project_id} — ${p.title.substring(0,40)}...</option>`;
+    const opt = `<option value="${p.project_id}">${p.project_id} — ${p.title.substring(0,40)}...</option>`;
+    projSelect.innerHTML += opt;
+    if(modalProjSelect) modalProjSelect.innerHTML += opt;
   });
 
   const decisionBadge = (d) => {
@@ -190,17 +284,19 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   let approved = 0, pending = 0;
-  GRACE.approvals.forEach(a => {
+  
+  // Render function separated to allow dynamic appending
+  function renderApprovalRow(a) {
     const proj = GRACE.getProjectById(a.project_id);
     const projLabel = proj ? `<div style="font-weight:600;font-size:0.82rem;">${a.project_id}</div><div style="font-size:0.76rem;color:var(--gray-500);">${proj.title.substring(0,42)}...</div>` : a.project_id;
     const approverName = a.approved_by ? GRACE.getPersonName(a.approved_by) : '<span style="color:var(--gray-400);">—</span>';
     const dateStr = a.decision_date || '<span style="color:var(--gray-400);">Pending</span>';
     const sigRef = a.signature_reference ? `<code style="font-size:0.75rem;background:var(--gray-100);padding:2px 5px;border-radius:3px;">${a.signature_reference}</code>` : '<span style="color:var(--gray-400);">—</span>';
-
+    
     if (a.decision === 'Approved') approved++;
     else pending++;
 
-    tbody.innerHTML += `<tr>
+    return `<tr>
       <td><code style="font-size:0.78rem;background:var(--gray-100);padding:2px 6px;border-radius:4px;">${a.approval_id}</code></td>
       <td>${projLabel}</td>
       <td>${stageBadge(a.approval_stage)}</td>
@@ -210,12 +306,102 @@ document.addEventListener('DOMContentLoaded', () => {
       <td>${sigRef}</td>
       <td style="font-size:0.8rem;color:var(--gray-600);max-width:180px;">${a.remarks}</td>
     </tr>`;
+  }
+
+  GRACE.approvals.forEach(a => {
+    tbody.innerHTML += renderApprovalRow(a);
   });
 
   document.getElementById('card-total').textContent  = GRACE.approvals.length;
   document.getElementById('card-approved').textContent = approved;
   document.getElementById('card-pending').textContent  = pending;
   info.textContent = `Showing ${GRACE.approvals.length} approval records`;
+
+  // Role-Based Action Restriction & Modal Prototype logic
+  const currentRole = localStorage.getItem('graceRole') || 'proponent';
+  const recordBtn = document.getElementById('btn-record-decision');
+
+  if (recordBtn) {
+    // Hide button if role is purely admin. Allow for Coordinator, Dean, Proponent, OVPRE.
+    if (currentRole === 'admin') {
+      recordBtn.style.display = 'none';
+    } else {
+      recordBtn.style.display = 'inline-flex';
+    }
+
+    recordBtn.addEventListener('click', () => {
+      // Reset Modal Fields
+      modalRemarks.value = '';
+      modalDecisionSelect.value = 'Approved';
+      
+      // Enforce Specific Stages based on Active Role
+      if (currentRole === 'dean') {
+        modalStageSelect.value = 'Dean/Director Endorsement';
+        Array.from(modalStageSelect.options).forEach(opt => {
+          opt.disabled = (opt.value !== 'Dean/Director Endorsement');
+        });
+      } else if (currentRole === 'ovpre') {
+        modalStageSelect.value = 'OVPRE Endorsement';
+        Array.from(modalStageSelect.options).forEach(opt => {
+          opt.disabled = (opt.value !== 'OVPRE Endorsement');
+        });
+      } else if (currentRole === 'proponent') {
+        modalStageSelect.value = 'Completeness Check';
+        Array.from(modalStageSelect.options).forEach(opt => {
+          opt.disabled = (opt.value !== 'Completeness Check');
+        });
+      } else {
+        // Coordinator / Admin can select any stage
+        Array.from(modalStageSelect.options).forEach(opt => opt.disabled = false);
+      }
+      
+      // Open modal
+      if (decisionModal) decisionModal.style.display = 'flex';
+    });
+
+    // Handle closing modal
+    const closeBtns = document.querySelectorAll('.close-modal, .close-modal-action');
+    closeBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        decisionModal.style.display = 'none';
+      });
+    });
+
+    // Handle saving the new record (Prototype functionality)
+    if (saveDecisionBtn) {
+      saveDecisionBtn.addEventListener('click', () => {
+        // Generate mock data for the new row
+        const mockApprovalId = 'APR' + Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+        const mockSigRef = 'REF-NEW-' + Math.floor(Math.random() * 100);
+        
+        const newApprovalRecord = {
+          approval_id: mockApprovalId,
+          project_id: modalProjSelect.value,
+          approval_stage: modalStageSelect.value,
+          decision: modalDecisionSelect.value,
+          decision_date: new Date().toISOString().split('T')[0],
+          approved_by: 'PER001', // Ideally dynamic, mapping to current mock user
+          signature_reference: mockSigRef,
+          remarks: modalRemarks.value || 'Decision recorded via prototype.'
+        };
+
+        // Append to UI Table instantly (at the top)
+        tbody.innerHTML = renderApprovalRow(newApprovalRecord) + tbody.innerHTML;
+        
+        // Update dashboard counters
+        document.getElementById('card-total').textContent = parseInt(document.getElementById('card-total').textContent) + 1;
+        if (newApprovalRecord.decision === 'Approved') {
+          document.getElementById('card-approved').textContent = parseInt(document.getElementById('card-approved').textContent) + 1;
+        } else {
+          document.getElementById('card-pending').textContent = parseInt(document.getElementById('card-pending').textContent) + 1;
+        }
+
+        // Close modal and alert success
+        decisionModal.style.display = 'none';
+        alert(`Success: ${newApprovalRecord.approval_stage} decision recorded as ${newApprovalRecord.decision}.`);
+      });
+    }
+  }
 });
 </script>
 </body>

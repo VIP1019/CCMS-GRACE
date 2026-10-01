@@ -507,25 +507,37 @@
       <div class="personas-box">
         <div class="personas-title">
           <i class="fas fa-users-cog"></i>
-          3 Authorized User Interfaces (per Proposal)
+          6 Authorized Portal Roles (per Proposal)
         </div>
         <div class="personas-list">
-          <span class="persona-tag" title="User account management, RBAC, system configuration"><i class="fas fa-user-shield" style="margin-right:4px;"></i>Administrator</span>
-          <span class="persona-tag" title="Project/process/funding management, monitoring, reporting"><i class="fas fa-user-tie" style="margin-right:4px;"></i>Extension Office / Coordinator</span>
-          <span class="persona-tag" title="Proposal submission, activities, deliverables per assigned permissions"><i class="fas fa-chalkboard-teacher" style="margin-right:4px;"></i>Project Proponent</span>
+          <span class="persona-tag" title="User account management, RBAC, system configuration">
+            <i class="fas fa-user-shield" style="margin-right:4px;"></i>System Administrator</span>
+          <span class="persona-tag" title="Proposal, project, process, funding monitoring, documentation, reporting">
+            <i class="fas fa-user-tie" style="margin-right:4px;"></i>Extension Coordinator</span>
+          <span class="persona-tag" title="Proposal submission, activities, deliverables, reports per assigned permissions">
+            <i class="fas fa-chalkboard-teacher" style="margin-right:4px;"></i>Project Proponent</span>
+          <span class="persona-tag" title="Reviews and records endorsement actions for proposals raised from the Extension Office">
+            <i class="fas fa-user-graduate" style="margin-right:4px;"></i>Dean / Director</span>
+          <span class="persona-tag" title="Performs OVPRE-level review, eligibility, compliance, Technical Evaluation, institutional processing">
+            <i class="fas fa-building" style="margin-right:4px;"></i>VP for Research & Extension (VPRE)</span>
+          <span class="persona-tag" title="Recording, coordination, status updating, compliance support, document handling (OVPRE-side)">
+            <i class="fas fa-user-cog" style="margin-right:4px;"></i>Assistant Extension Officer</span>
         </div>
         <div style="font-size:0.7rem;color:#9CA3AF;margin-top:0.5rem;text-align:center;">
           <i class="fas fa-info-circle" style="color:#D97706;"></i>
-          Office Assistant/Extensionist is a sub-role under Extension Office/Coordinator
+          VPRE &amp; Assistant Extension Officer are separate portal roles under OVPRE
         </div>
       </div>
 
-      <!-- Demo Quick Login -->
+      <!-- Demo Quick Login — 6 Proposal-Defined Portal Roles -->
       <div class="demo-divider"><span>Quick Demo Access (IT 116 Prototype)</span></div>
       <div class="demo-btns">
-        <button class="demo-btn" id="demo-admin-btn" onclick="quickLogin('admin')"><i class="fas fa-user-shield"></i> System Administrator</button>
+        <button class="demo-btn" id="demo-admin-btn"       onclick="quickLogin('admin')"><i class="fas fa-user-shield"></i> System Administrator</button>
         <button class="demo-btn" id="demo-coordinator-btn" onclick="quickLogin('coordinator')"><i class="fas fa-user-tie"></i> Extension Coordinator</button>
-        <button class="demo-btn" id="demo-proponent-btn" onclick="quickLogin('proponent')"><i class="fas fa-chalkboard-teacher"></i> Project Proponent</button>
+        <button class="demo-btn" id="demo-proponent-btn"   onclick="quickLogin('proponent')"><i class="fas fa-chalkboard-teacher"></i> Project Proponent</button>
+        <button class="demo-btn" id="demo-dean-btn"        onclick="quickLogin('dean')"><i class="fas fa-user-graduate"></i> Dean / Director</button>
+        <button class="demo-btn" id="demo-vpre-btn"        onclick="quickLogin('vpre')"><i class="fas fa-building"></i> VPRE (OVPRE)</button>
+        <button class="demo-btn" id="demo-assistant-btn"   onclick="quickLogin('assistant')"><i class="fas fa-user-cog"></i> Asst. Extension Officer</button>
       </div>
 
       <!-- Footer -->
@@ -553,29 +565,56 @@
 <script src="js/data.js"></script>
 <script src="js/main.js"></script>
 <script>
+  // =============================================================
+  // QUICK LOGIN — 6 Portal Roles per Proposal Section VI
+  // Credentials map matching data.js userAccounts
+  // =============================================================
   function quickLogin(role) {
     const email = document.getElementById('sso-email');
     const pass  = document.getElementById('sso-password');
-    // Credentials map using actual UCN emails from data.js
     const roles = {
       admin:       { email: 'pjuan@ucn.edu.ph',       pass: 'admin2026' },
       coordinator: { email: 'cvillanueva@ucn.edu.ph', pass: 'coord2026' },
-      proponent:   { email: 'larana@ucn.edu.ph',      pass: 'prop2026'  }
+      proponent:   { email: 'larana@ucn.edu.ph',      pass: 'prop2026'  },
+      dean:        { email: 'mgbolos@ucn.edu.ph',      pass: 'dean2026'  },
+      vpre:        { email: 'agvpre@ucn.edu.ph',       pass: 'vpre2026'  },
+      assistant:   { email: 'adelarosa@ucn.edu.ph',   pass: 'asst2026'  }
     };
-    email.value = roles[role].email;
-    pass.value  = roles[role].pass;
-    localStorage.setItem('graceRole', role);
+    if (roles[role]) {
+      email.value = roles[role].email;
+      pass.value  = roles[role].pass;
+      localStorage.setItem('graceRole', role);
+    }
   }
 
   function handleSSOLogin() {
-    const email = document.getElementById('sso-email').value.toLowerCase();
+    const email = document.getElementById('sso-email').value.toLowerCase().trim();
     const btn   = document.getElementById('sso-submit-btn');
     btn.textContent = 'Authenticating...';
     btn.disabled = true;
+
     setTimeout(() => {
-      let role = 'admin';
-      if (email.includes('cvillanueva') || email.includes('mgbolos') || email.includes('adelarosa')) role = 'coordinator';
-      else if (email.includes('larana') || email.includes('msantos') || email.includes('rdeleon') || email.includes('proponent')) role = 'proponent';
+      // Role detection from institutional email (matching data.js userAccounts)
+      let role = 'proponent'; // safe default
+
+      if (email === 'pjuan@ucn.edu.ph' || email.includes('admin')) {
+        role = 'admin';
+      } else if (email === 'cvillanueva@ucn.edu.ph') {
+        role = 'coordinator';
+      } else if (email === 'mgbolos@ucn.edu.ph') {
+        role = 'dean';
+      } else if (email === 'agvpre@ucn.edu.ph' || email.includes('vpre')) {
+        role = 'vpre';
+      } else if (email === 'adelarosa@ucn.edu.ph') {
+        role = 'assistant';
+      } else if (['larana@ucn.edu.ph','msantos@ucn.edu.ph','rdeleon@ucn.edu.ph'].includes(email)) {
+        role = 'proponent';
+      }
+
+      // Respect any role pre-set by quickLogin()
+      const preSet = localStorage.getItem('graceRole');
+      if (preSet) role = preSet;
+
       localStorage.setItem('graceRole', role);
       localStorage.setItem('graceLoggedIn', 'true');
       window.location.href = 'dashboard.html';

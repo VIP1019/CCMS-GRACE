@@ -28,11 +28,14 @@ function injectSidebar() {
   const role = localStorage.getItem('graceRole') || 'proponent';
   const currentPage = window.location.pathname.split('/').pop() || 'index.html';
 
-  // Role-based user config
+  // 6 portal roles per proposal — correctly named personas
   const roleMap = {
-    admin:       { name: 'Prince Jheck T. Juan',    initials: 'PJ', label: 'System Administrator',   workspace: 'ADMIN WORKSPACE',       code: 'CCMS-ADM' },
-    coordinator: { name: 'Crystelle A. Villanueva', initials: 'CV', label: 'Extension Coordinator',   workspace: 'COORDINATOR WORKSPACE', code: 'CCMS-COORD' },
-    proponent:   { name: 'Dr. Mary Grace Bolos',    initials: 'MB', label: 'Project Proponent',       workspace: 'PROPONENT WORKSPACE',   code: 'CCMS-EXT' }
+    admin:       { name: 'Prince Jheck T. Juan',     initials: 'PJ', label: 'System Administrator',          workspace: 'ADMIN WORKSPACE',       code: 'CCMS-ADMIN' },
+    coordinator: { name: 'Crystelle A. Villanueva',  initials: 'CV', label: 'Extension Coordinator',         workspace: 'COORDINATOR WORKSPACE', code: 'CCMS-COORD' },
+    proponent:   { name: 'Lei-anne C. Araña',        initials: 'LA', label: 'Project Proponent',             workspace: 'PROPONENT WORKSPACE',   code: 'CCMS-PROP' },
+    dean:        { name: 'Mary Grace Bolos',         initials: 'MB', label: 'Dean / Director',               workspace: 'DEAN WORKSPACE',        code: 'CCMS-DEAN' },
+    vpre:        { name: 'Arthur Gonzales',          initials: 'AG', label: 'VP for Research & Extension',   workspace: 'VPRE / OVPRE WORKSPACE', code: 'CCMS-VPRE' },
+    assistant:   { name: 'Ana Dela Rosa',            initials: 'AD', label: 'Assistant Extension Officer',   workspace: 'ASST. EXT. WORKSPACE',  code: 'CCMS-ASST' }
   };
   const user = roleMap[role] || roleMap['proponent'];
 
@@ -42,67 +45,142 @@ function injectSidebar() {
     return `<a href="${href}" class="sidebar-nav-item${isActive}"><span class="nav-icon"><i class="fas ${icon}"></i></span><span>${label}</span>${badgeHtml}</a>`;
   }
 
-  // Role-based nav items per Figma
+  // Role-based nav items — per proposal Section VI (6 portal roles)
   let navHTML = '';
   if (role === 'proponent') {
     navHTML = `
-      ${navItem('dashboard.html',    'fa-th-large',        'Dashboard')}
-      ${navItem('proposals.html',    'fa-file-alt',        'Proposals')}
-      ${navItem('projects.html',     'fa-project-diagram', 'Projects')}
-      ${navItem('activities.html',   'fa-calendar-check',  'Activities')}
-      ${navItem('beneficiaries.html','fa-users',           'Beneficiaries')}
-      ${navItem('partners.html',     'fa-handshake',       'Partners')}
-      ${navItem('project-teams.html','fa-id-badge',        'Project Teams')}
-      ${navItem('funding.html',      'fa-coins',           'Funding')}
-      ${navItem('documents.html',    'fa-folder-open',     'Documents')}
-      ${navItem('reports.html',      'fa-chart-bar',       'Reports')}
-      ${navItem('completion.html',   'fa-check-circle',    'Completion')}
-      ${navItem('survey.html',       'fa-poll',            'Satisfaction')}
+      ${navItem('dashboard.html',     'fa-th-large',        'Dashboard')}
+      <div class="sidebar-nav-label">MY PROPOSALS</div>
+      ${navItem('proposals.html',     'fa-file-alt',        'My Proposals')}
+      ${navItem('project-form.html',  'fa-plus-circle',     'Submit Proposal')}
+      <div class="sidebar-nav-label">ACTIVE PROJECTS</div>
+      ${navItem('projects.html',      'fa-project-diagram', 'Projects')}
+      ${navItem('activities.html',    'fa-calendar-check',  'Activities & Training')}
+      ${navItem('beneficiaries.html', 'fa-users',           'Beneficiaries')}
+      ${navItem('partners.html',      'fa-handshake',       'Partners')}
+      ${navItem('participation.html', 'fa-id-badge',        'Participation')}
+      <div class="sidebar-nav-label">DOCUMENTATION</div>
+      ${navItem('documents.html',     'fa-folder-open',     'Documents')}
+      ${navItem('reports.html',       'fa-chart-bar',       'Reports')}
+      ${navItem('completion.html',    'fa-check-circle',    'Completion')}
+      ${navItem('survey.html',        'fa-poll',            'Client Satisfaction')}
       <div class="sidebar-nav-label">USER ACCOUNT</div>
-      ${navItem('notifications.html','fa-bell',            'Notifications', '2')}
-      <a href="#" class="sidebar-nav-item"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>Proponent Profile</span></a>
-      <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>System Logout</span></a>
+      ${navItem('notifications.html', 'fa-bell',            'Notifications', '2')}
+      <a href="#" class="sidebar-nav-item"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>My Profile</span></a>
+      <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>Logout</span></a>
     `;
   } else if (role === 'coordinator') {
     navHTML = `
-      ${navItem('dashboard.html',    'fa-th-large',        'Dashboard')}
-      ${navItem('proposals.html',    'fa-file-alt',        'Proposals', '2')}
-      ${navItem('approvals.html',    'fa-clipboard-check', 'Approvals', '1')}
-      ${navItem('projects.html',     'fa-project-diagram', 'Projects')}
-      ${navItem('activities.html',   'fa-calendar-check',  'Activities')}
-      ${navItem('beneficiaries.html','fa-users',           'Beneficiaries')}
-      ${navItem('partners.html',     'fa-handshake',       'Partners')}
-      ${navItem('funding.html',      'fa-coins',           'Funding')}
-      ${navItem('documents.html',    'fa-folder-open',     'Documents')}
-      ${navItem('reports.html',      'fa-chart-bar',       'Reports')}
-      ${navItem('completion.html',   'fa-check-circle',    'Completion')}
-      ${navItem('survey.html',       'fa-poll',            'Satisfaction')}
+      ${navItem('dashboard.html',     'fa-th-large',        'Dashboard')}
+      <div class="sidebar-nav-label">PROPOSAL MANAGEMENT</div>
+      ${navItem('proposals.html',     'fa-file-alt',        'Proposals', '2')}
+      ${navItem('approvals.html',     'fa-clipboard-check', 'Approval Tracking', '1')}
+      <div class="sidebar-nav-label">PROJECT MANAGEMENT</div>
+      ${navItem('projects.html',      'fa-project-diagram', 'Projects')}
+      ${navItem('activities.html',    'fa-calendar-check',  'Activities & Training')}
+      ${navItem('beneficiaries.html', 'fa-users',           'Beneficiaries')}
+      ${navItem('partners.html',      'fa-handshake',       'Partners')}
+      ${navItem('participation.html', 'fa-id-badge',        'Participation Records')}
+      <div class="sidebar-nav-label">RESOURCES & REPORTING</div>
+      ${navItem('funding.html',       'fa-coins',           'Funding Monitor')}
+      ${navItem('documents.html',     'fa-folder-open',     'Documents')}
+      ${navItem('reports.html',       'fa-chart-bar',       'Reports')}
+      ${navItem('completion.html',    'fa-check-circle',    'Completion')}
+      ${navItem('survey.html',        'fa-poll',            'Client Satisfaction')}
       <div class="sidebar-nav-label">USER ACCOUNT</div>
-      ${navItem('notifications.html','fa-bell',            'Notifications', '3')}
-      <a href="#" class="sidebar-nav-item"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>Officer Profile</span></a>
-      <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>System Logout</span></a>
+      ${navItem('notifications.html', 'fa-bell',            'Notifications', '3')}
+      <a href="#" class="sidebar-nav-item"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>My Profile</span></a>
+      <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>Logout</span></a>
+    `;
+  } else if (role === 'dean') {
+    navHTML = `
+      ${navItem('dashboard.html',     'fa-th-large',        'Dashboard')}
+      <div class="sidebar-nav-label">REVIEW & ENDORSEMENT</div>
+      ${navItem('proposals.html',     'fa-file-alt',        'Proposals for Review', '2')}
+      ${navItem('approvals.html',     'fa-clipboard-check', 'Endorsement Actions', '2')}
+      <div class="sidebar-nav-label">PROJECT OVERVIEW</div>
+      ${navItem('projects.html',      'fa-project-diagram', 'Projects Overview')}
+      ${navItem('documents.html',     'fa-folder-open',     'Documents')}
+      ${navItem('reports.html',       'fa-chart-bar',       'Reports')}
+      <div class="sidebar-nav-label">USER ACCOUNT</div>
+      ${navItem('notifications.html', 'fa-bell',            'Notifications', '2')}
+      <a href="#" class="sidebar-nav-item"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>My Profile</span></a>
+      <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>Logout</span></a>
+    `;
+  } else if (role === 'vpre') {
+    // VPRE: full OVPRE-level review, eligibility, compliance, Technical Evaluation, institutional processing
+    navHTML = `
+      ${navItem('dashboard.html',     'fa-th-large',        'Dashboard')}
+      <div class="sidebar-nav-label">OVPRE PROCESSING</div>
+      ${navItem('proposals.html',     'fa-file-alt',        'Proposals Queue', '3')}
+      ${navItem('approvals.html',     'fa-clipboard-check', 'Approval Pipeline', '2')}
+      <div class="sidebar-nav-label">PROJECT MONITORING</div>
+      ${navItem('projects.html',      'fa-project-diagram', 'All Projects')}
+      ${navItem('activities.html',    'fa-calendar-check',  'Activities')}
+      ${navItem('beneficiaries.html', 'fa-users',           'Beneficiaries')}
+      ${navItem('partners.html',      'fa-handshake',       'Partners')}
+      <div class="sidebar-nav-label">RESOURCES & REPORTING</div>
+      ${navItem('funding.html',       'fa-coins',           'Funding Monitor')}
+      ${navItem('documents.html',     'fa-folder-open',     'Documents')}
+      ${navItem('reports.html',       'fa-chart-bar',       'Reports')}
+      ${navItem('completion.html',    'fa-check-circle',    'Completion')}
+      ${navItem('survey.html',        'fa-poll',            'Client Satisfaction')}
+      <div class="sidebar-nav-label">USER ACCOUNT</div>
+      ${navItem('notifications.html', 'fa-bell',            'Notifications', '4')}
+      <a href="#" class="sidebar-nav-item"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>My Profile</span></a>
+      <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>Logout</span></a>
+    `;
+  } else if (role === 'assistant') {
+    // Assistant Extension Officer: coordination, status recording, compliance support, docs
+    navHTML = `
+      ${navItem('dashboard.html',     'fa-th-large',        'Dashboard')}
+      <div class="sidebar-nav-label">COORDINATION</div>
+      ${navItem('proposals.html',     'fa-file-alt',        'Proposals', '1')}
+      ${navItem('approvals.html',     'fa-clipboard-check', 'Status Tracking')}
+      <div class="sidebar-nav-label">PROJECT SUPPORT</div>
+      ${navItem('projects.html',      'fa-project-diagram', 'Projects')}
+      ${navItem('activities.html',    'fa-calendar-check',  'Activities')}
+      ${navItem('beneficiaries.html', 'fa-users',           'Beneficiaries')}
+      ${navItem('partners.html',      'fa-handshake',       'Partners')}
+      ${navItem('participation.html', 'fa-id-badge',        'Participation')}
+      <div class="sidebar-nav-label">DOCUMENTATION</div>
+      ${navItem('funding.html',       'fa-coins',           'Funding Info')}
+      ${navItem('documents.html',     'fa-folder-open',     'Documents')}
+      ${navItem('reports.html',       'fa-chart-bar',       'Reports')}
+      ${navItem('completion.html',    'fa-check-circle',    'Completion')}
+      ${navItem('survey.html',        'fa-poll',            'Client Satisfaction')}
+      <div class="sidebar-nav-label">USER ACCOUNT</div>
+      ${navItem('notifications.html', 'fa-bell',            'Notifications', '2')}
+      <a href="#" class="sidebar-nav-item"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>My Profile</span></a>
+      <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>Logout</span></a>
     `;
   } else {
+    // admin (default fallback) — full access + system admin panel
     navHTML = `
-      ${navItem('dashboard.html',    'fa-th-large',        'Dashboard')}
-      ${navItem('proposals.html',    'fa-file-alt',        'Proposals', '2')}
-      ${navItem('approvals.html',    'fa-clipboard-check', 'Approvals', '1')}
-      ${navItem('projects.html',     'fa-project-diagram', 'Projects')}
-      ${navItem('activities.html',   'fa-calendar-check',  'Activities')}
-      ${navItem('beneficiaries.html','fa-users',           'Beneficiaries')}
-      ${navItem('partners.html',     'fa-handshake',       'Partners')}
-      ${navItem('funding.html',      'fa-coins',           'Funding')}
-      ${navItem('documents.html',    'fa-folder-open',     'Documents')}
-      ${navItem('reports.html',      'fa-chart-bar',       'Reports')}
-      ${navItem('completion.html',   'fa-check-circle',    'Completion')}
-      ${navItem('survey.html',       'fa-poll',            'Satisfaction')}
+      ${navItem('dashboard.html',     'fa-th-large',        'Dashboard')}
+      <div class="sidebar-nav-label">PROPOSAL MANAGEMENT</div>
+      ${navItem('proposals.html',     'fa-file-alt',        'Proposals', '2')}
+      ${navItem('approvals.html',     'fa-clipboard-check', 'Approvals', '1')}
+      <div class="sidebar-nav-label">PROJECT MANAGEMENT</div>
+      ${navItem('projects.html',      'fa-project-diagram', 'Projects')}
+      ${navItem('activities.html',    'fa-calendar-check',  'Activities')}
+      ${navItem('beneficiaries.html', 'fa-users',           'Beneficiaries')}
+      ${navItem('partners.html',      'fa-handshake',       'Partners')}
+      ${navItem('participation.html', 'fa-id-badge',        'Participation')}
+      <div class="sidebar-nav-label">RESOURCES & REPORTING</div>
+      ${navItem('funding.html',       'fa-coins',           'Funding')}
+      ${navItem('documents.html',     'fa-folder-open',     'Documents')}
+      ${navItem('reports.html',       'fa-chart-bar',       'Reports')}
+      ${navItem('completion.html',    'fa-check-circle',    'Completion')}
+      ${navItem('survey.html',        'fa-poll',            'Satisfaction')}
       <div class="sidebar-nav-label">SYSTEM</div>
-      ${navItem('admin.html',        'fa-cog',             'Admin Panel')}
-      ${navItem('notifications.html','fa-bell',            'Notifications', '2')}
-      <a href="#" class="sidebar-nav-item"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>Officer Profile</span></a>
-      <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>System Logout</span></a>
+      ${navItem('admin.html',         'fa-cog',             'Admin Panel')}
+      ${navItem('notifications.html', 'fa-bell',            'Notifications', '2')}
+      <a href="#" class="sidebar-nav-item"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>Admin Profile</span></a>
+      <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>Logout</span></a>
     `;
   }
+
 
   sidebar.innerHTML = `
     <div class="sidebar-header">
@@ -153,7 +231,6 @@ function injectSidebar() {
       </div>`;
   }
 }
-
 
 /* ==========  NAVBAR  ========== */
 function initNavbar() {
@@ -669,6 +746,16 @@ function initRoleUI() {
       userName = 'Lei-anne A.';
       userInitials = 'LA';
       userRoleStr = 'Project Proponent';
+    } else if (role === 'dean') {
+      userName = 'Mary Grace B.';
+      userInitials = 'MB';
+      userRoleStr = 'College Dean';
+    }
+    // ========== OVPRE USER INFORMATION ADDED ==========
+    else if (role === 'ovpre') {
+      userName = 'OVPRE Administrator';
+      userInitials = 'OV';
+      userRoleStr = 'OVPRE Administrator';
     }
     
     // Update sidebar user info
@@ -688,7 +775,7 @@ function initRoleUI() {
     if (topbarName) topbarName.textContent = userName;
     
     // Hide restricted nav items
-    if (role !== 'admin') {
+    if (role !== 'admin' && role !== 'ovpre') {
       const adminNavs = document.querySelectorAll('.sidebar-nav-item[data-role="admin"], .sidebar-nav-item[href="admin.html"]');
       adminNavs.forEach(nav => nav.style.display = 'none');
     }
@@ -698,6 +785,32 @@ function initRoleUI() {
       // but hiding admin is the main requirement.
       const restrictedNavs = document.querySelectorAll('.sidebar-nav-item[href="funding.html"]');
       restrictedNavs.forEach(nav => nav.style.display = 'none');
+    }
+
+    // ========== OVPRE ADMIN NAVIGATION ACCESS ADDED ==========
+    if (role === 'ovpre') {
+      // OVPRE uses the same system-level navigation as the Admin sidebar.
+      // Restore Admin Panel visibility because the OVPRE sidebar is intentionally
+      // rendered with the Admin navigation structure.
+      const ovpreAdminNavs = document.querySelectorAll('.sidebar-nav-item[href="admin.html"]');
+      ovpreAdminNavs.forEach(nav => nav.style.display = '');
+
+      // Restore global operational navigation for OVPRE.
+      const ovpreGlobalNavs = document.querySelectorAll(
+        '.sidebar-nav-item[href="proposals.html"],' +
+        '.sidebar-nav-item[href="approvals.html"],' +
+        '.sidebar-nav-item[href="projects.html"],' +
+        '.sidebar-nav-item[href="activities.html"],' +
+        '.sidebar-nav-item[href="beneficiaries.html"],' +
+        '.sidebar-nav-item[href="partners.html"],' +
+        '.sidebar-nav-item[href="funding.html"],' +
+        '.sidebar-nav-item[href="documents.html"],' +
+        '.sidebar-nav-item[href="reports.html"],' +
+        '.sidebar-nav-item[href="completion.html"],' +
+        '.sidebar-nav-item[href="survey.html"]'
+      );
+
+      ovpreGlobalNavs.forEach(nav => nav.style.display = '');
     }
 
     // Role-specific Dashboard Content (Only runs on dashboard.html)
@@ -778,7 +891,149 @@ function initRoleUI() {
         if (quickActions.length >= 6) {
            quickActions[0].style.display = 'none'; // New Proposal
         }
+      } else if (role === 'dean') {
+        // Dean sees high-level overview, hide operational quick actions
+        const quickActions = document.querySelectorAll('.quick-action-btn');
+        if (quickActions.length >= 6) {
+           quickActions[0].style.display = 'none'; // New Proposal
+           quickActions[1].style.display = 'none'; // Log Activity
+           quickActions[2].style.display = 'none'; // Upload Doc
+        }
+      }
+
+      /* ============================================================
+         OVPRE GLOBAL DASHBOARD STATISTICS
+         OVPRE is granted global dashboard visibility similar to Admin.
+         This block intentionally does not hide global statistics,
+         pipeline information, funding information, or timeline entries.
+         ============================================================ */
+      if (role === 'ovpre') {
+        // 1. Ensure all dashboard summary cards are visible.
+        const ovpreSummaryCards = document.querySelectorAll('.summary-card');
+        ovpreSummaryCards.forEach(card => {
+          card.style.display = '';
+        });
+
+        // 2. Ensure both summary-card groups are visible.
+        const ovpreSummaryGroups = document.querySelectorAll('.summary-cards');
+        ovpreSummaryGroups.forEach(group => {
+          group.style.display = '';
+        });
+
+        // 3. Ensure global pipeline and funding sections are visible.
+        const ovpreGlobalSection = document.querySelector('.dashboard-grid-equal');
+        if (ovpreGlobalSection) {
+          ovpreGlobalSection.style.display = '';
+        }
+
+        // 4. Ensure dashboard tables remain visible for global monitoring.
+        const ovpreTableContainers = document.querySelectorAll('.table-container');
+        ovpreTableContainers.forEach(table => {
+          table.style.display = '';
+        });
+
+        // 5. Ensure all dashboard timeline entries remain visible.
+        const ovpreTimelines = document.querySelectorAll('.timeline-item');
+        ovpreTimelines.forEach(timeline => {
+          timeline.style.display = '';
+        });
+
+        // 6. Ensure global quick actions are available.
+        const ovpreQuickActions = document.querySelectorAll('.quick-action-btn');
+        ovpreQuickActions.forEach(action => {
+          action.style.display = '';
+        });
+
+        // 7. Restore all global navigation-related dashboard elements.
+        const ovpreDashboardSections = document.querySelectorAll(
+          '.dashboard-grid,' +
+          '.dashboard-grid-equal,' +
+          '.summary-cards,' +
+          '.summary-card,' +
+          '.timeline,' +
+          '.timeline-container'
+        );
+
+        ovpreDashboardSections.forEach(section => {
+          section.style.display = '';
+        });
+
+        // 8. Mark the dashboard as using global statistics for OVPRE.
+        document.body.setAttribute('data-role', 'ovpre');
+        document.body.setAttribute('data-dashboard-scope', 'global');
+
+        // 9. Add a global statistics indicator when a matching dashboard
+        // element exists. This does not replace existing dashboard content.
+        const globalStatsLabels = document.querySelectorAll(
+          '.dashboard-title,' +
+          '.page-title,' +
+          '.section-title'
+        );
+
+        globalStatsLabels.forEach(label => {
+          if (
+            label.textContent &&
+            (
+              label.textContent.toLowerCase().includes('dashboard') ||
+              label.textContent.toLowerCase().includes('statistics') ||
+              label.textContent.toLowerCase().includes('overview')
+            )
+          ) {
+            label.setAttribute('data-ovpre-global-statistics', 'true');
+          }
+        });
+
+        // 10. Ensure hidden global cards from other role-specific
+        // dashboard logic are restored when OVPRE is the active role.
+        const ovpreHiddenCards = document.querySelectorAll(
+          '.summary-card-info,' +
+          '.summary-card-trend'
+        );
+
+        ovpreHiddenCards.forEach(cardElement => {
+          cardElement.style.display = '';
+        });
       }
     }
   }
+}
+
+/* ==========  SYSTEM ADMIN BACKUP & RESTORE  ========== */
+function exportDatabaseBackup() {
+  if (!window.GRACE) {
+    showNotification('Error: Database not found.', 'error');
+    return;
+  }
+  const dataStr = JSON.stringify(window.GRACE, null, 2);
+  const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+  const exportFileDefaultName = `grace_backup_${new Date().toISOString().split('T')[0]}.json`;
+
+  const linkElement = document.createElement('a');
+  linkElement.setAttribute('href', dataUri);
+  linkElement.setAttribute('download', exportFileDefaultName);
+  linkElement.click();
+  showNotification('Database backup exported successfully.', 'success');
+}
+
+function importDatabaseRestore(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const importedData = JSON.parse(e.target.result);
+      if (importedData && importedData.system && importedData.system.name === 'G.R.A.C.E PORTAL') {
+        window.GRACE = importedData;
+        showNotification('System state restored successfully! Please refresh.', 'success');
+        // Optionally refresh the page after a brief timeout
+        setTimeout(() => window.location.reload(), 2000);
+      } else {
+        showNotification('Invalid backup file format.', 'error');
+      }
+    } catch (error) {
+      showNotification('Error reading backup file.', 'error');
+    }
+  };
+  reader.readAsText(file);
 }
