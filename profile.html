@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="G.R.A.C.E PORTAL Profile - Manage your user account and preferences">
+  <title>My Profile | G.R.A.C.E PORTAL</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+      <header class="topbar" id="topbar"></header>
+
+      <div class="dashboard-content">
+        <div class="page-header">
+          <div>
+            <h2>My Profile</h2>
+            <p class="page-subtitle">Manage your account information and preferences</p>
+          </div>
+        </div>
+
+        <div class="grid grid-3" style="gap: 1.5rem;">
+          <!-- Profile Card -->
+          <div class="card" style="grid-column: span 1;">
+            <div class="card-body" style="text-align: center; padding: 2rem 1.5rem;">
+              <div id="profile-avatar" style="width: 100px; height: 100px; border-radius: 50%; background: var(--maroon); color: white; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: bold; margin: 0 auto 1.5rem auto;">
+                --
+              </div>
+              <h3 id="profile-name" style="margin-bottom: 0.5rem;">User Name</h3>
+              <p id="profile-role" style="color: var(--gray-500); font-weight: 500; font-size: 0.9rem; margin-bottom: 1.5rem;">Role Title</p>
+              
+              <div style="background: var(--gray-50); border-radius: var(--radius-md); padding: 1rem; text-align: left; font-size: 0.85rem;">
+                <div style="margin-bottom: 0.75rem;">
+                  <strong style="color: var(--gray-500); display: block; margin-bottom: 0.25rem;">Email Address</strong>
+                  <span id="profile-email">email@ucn.edu.ph</span>
+                </div>
+                <div style="margin-bottom: 0.75rem;">
+                  <strong style="color: var(--gray-500); display: block; margin-bottom: 0.25rem;">Department/Unit</strong>
+                  <span id="profile-dept">College of Computing and Multimedia Studies</span>
+                </div>
+                <div>
+                  <strong style="color: var(--gray-500); display: block; margin-bottom: 0.25rem;">System Workspace</strong>
+                  <span id="profile-workspace">--</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Account Settings -->
+          <div class="card" style="grid-column: span 2;">
+            <div class="card-header">
+              <h4>Account Settings</h4>
+            </div>
+            <div class="card-body">
+              <form>
+                <div class="grid grid-2" style="gap: 1.5rem; margin-bottom: 1.5rem;">
+                  <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-input" id="input-name" readonly>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" id="input-email" readonly>
+                  </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                  <label class="form-label">Contact Number</label>
+                  <input type="text" class="form-input" value="+63 912 345 6789">
+                </div>
+
+                <hr style="border: 0; border-top: 1px solid var(--gray-200); margin: 2rem 0;">
+
+                <h5 style="margin-bottom: 1rem;">Notification Preferences</h5>
+                
+                <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem;">
+                  <label style="display: flex; align-items: center; gap: 0.75rem; font-size: 0.9rem;">
+                    <input type="checkbox" checked> Receive email notifications for assigned tasks
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 0.75rem; font-size: 0.9rem;">
+                    <input type="checkbox" checked> Receive email notifications for document approvals
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 0.75rem; font-size: 0.9rem;">
+                    <input type="checkbox"> Receive daily digest of extension activities
+                  </label>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 1rem;">
+                  <button type="button" class="btn btn-outline">Cancel</button>
+                  <button type="button" class="btn btn-primary" onclick="alert('Settings saved successfully!')">Save Changes</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // User info is loaded automatically by main.js into the 'user' object
+      if (typeof user !== 'undefined') {
+        document.getElementById('profile-avatar').textContent = user.initials;
+        document.getElementById('profile-name').textContent = user.name;
+        document.getElementById('profile-role').textContent = user.label;
+        document.getElementById('profile-workspace').textContent = user.workspace;
+        
+        document.getElementById('input-name').value = user.name;
+        
+        // Find email from data.js
+        const activeRole = localStorage.getItem('graceRole') || 'proponent';
+        const accountInfo = GRACE.userAccounts[activeRole];
+        if (accountInfo) {
+          document.getElementById('profile-email').textContent = accountInfo.email;
+          document.getElementById('input-email').value = accountInfo.email;
+        }
+      }
+    });
+  </script>
+</body>
+</html>

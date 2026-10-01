@@ -66,7 +66,7 @@ function injectSidebar() {
       ${navItem('survey.html',        'fa-poll',            'Client Satisfaction')}
       <div class="sidebar-nav-label">USER ACCOUNT</div>
       ${navItem('notifications.html', 'fa-bell',            'Notifications', '2')}
-      <a href="#" class="sidebar-nav-item"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>My Profile</span></a>
+      ${navItem('profile.html',       'fa-user-circle',     'My Profile')}
       <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>Logout</span></a>
     `;
   } else if (role === 'coordinator') {
@@ -89,7 +89,7 @@ function injectSidebar() {
       ${navItem('survey.html',        'fa-poll',            'Client Satisfaction')}
       <div class="sidebar-nav-label">USER ACCOUNT</div>
       ${navItem('notifications.html', 'fa-bell',            'Notifications', '3')}
-      <a href="#" class="sidebar-nav-item"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>My Profile</span></a>
+      ${navItem('profile.html',       'fa-user-circle',     'My Profile')}
       <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>Logout</span></a>
     `;
   } else if (role === 'dean') {
@@ -104,30 +104,27 @@ function injectSidebar() {
       ${navItem('reports.html',       'fa-chart-bar',       'Reports')}
       <div class="sidebar-nav-label">USER ACCOUNT</div>
       ${navItem('notifications.html', 'fa-bell',            'Notifications', '2')}
-      <a href="#" class="sidebar-nav-item"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>My Profile</span></a>
+      ${navItem('profile.html',       'fa-user-circle',     'My Profile')}
       <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>Logout</span></a>
     `;
   } else if (role === 'vpre') {
-    // VPRE: full OVPRE-level review, eligibility, compliance, Technical Evaluation, institutional processing
+    // VPRE: approval decisions, project status monitoring, funding, docs, reports
+    // NO Proposals, NO Activities, NO Beneficiaries, NO Partners
     navHTML = `
       ${navItem('dashboard.html',     'fa-th-large',        'Dashboard')}
       <div class="sidebar-nav-label">OVPRE PROCESSING</div>
-      ${navItem('proposals.html',     'fa-file-alt',        'Proposals Queue', '3')}
-      ${navItem('approvals.html',     'fa-clipboard-check', 'Approval Pipeline', '2')}
+      ${navItem('approvals.html',     'fa-clipboard-check', 'Approval Pipeline', '3')}
       <div class="sidebar-nav-label">PROJECT MONITORING</div>
       ${navItem('projects.html',      'fa-project-diagram', 'All Projects')}
-      ${navItem('activities.html',    'fa-calendar-check',  'Activities')}
-      ${navItem('beneficiaries.html', 'fa-users',           'Beneficiaries')}
-      ${navItem('partners.html',      'fa-handshake',       'Partners')}
       <div class="sidebar-nav-label">RESOURCES & REPORTING</div>
       ${navItem('funding.html',       'fa-coins',           'Funding Monitor')}
-      ${navItem('documents.html',     'fa-folder-open',     'Documents')}
+      ${navItem('documents.html',     'fa-folder-open',     'Documents & Records')}
       ${navItem('reports.html',       'fa-chart-bar',       'Reports')}
       ${navItem('completion.html',    'fa-check-circle',    'Completion')}
       ${navItem('survey.html',        'fa-poll',            'Client Satisfaction')}
       <div class="sidebar-nav-label">USER ACCOUNT</div>
       ${navItem('notifications.html', 'fa-bell',            'Notifications', '4')}
-      <a href="#" class="sidebar-nav-item"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>My Profile</span></a>
+      ${navItem('profile.html',       'fa-user-circle',     'My Profile')}
       <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>Logout</span></a>
     `;
   } else if (role === 'assistant') {
@@ -151,7 +148,7 @@ function injectSidebar() {
       ${navItem('survey.html',        'fa-poll',            'Client Satisfaction')}
       <div class="sidebar-nav-label">USER ACCOUNT</div>
       ${navItem('notifications.html', 'fa-bell',            'Notifications', '2')}
-      <a href="#" class="sidebar-nav-item"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>My Profile</span></a>
+      ${navItem('profile.html',       'fa-user-circle',     'My Profile')}
       <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>Logout</span></a>
     `;
   } else {
@@ -176,7 +173,7 @@ function injectSidebar() {
       <div class="sidebar-nav-label">SYSTEM</div>
       ${navItem('admin.html',         'fa-cog',             'Admin Panel')}
       ${navItem('notifications.html', 'fa-bell',            'Notifications', '2')}
-      <a href="#" class="sidebar-nav-item"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>Admin Profile</span></a>
+      ${navItem('profile.html',       'fa-user-circle',     'My Profile')}
       <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>Logout</span></a>
     `;
   }

@@ -340,7 +340,7 @@ document.addEventListener('DOMContentLoaded', () => {
         Array.from(modalStageSelect.options).forEach(opt => {
           opt.disabled = (opt.value !== 'Dean/Director Endorsement');
         });
-      } else if (currentRole === 'ovpre') {
+      } else if (currentRole === 'vpre') {
         modalStageSelect.value = 'OVPRE Endorsement';
         Array.from(modalStageSelect.options).forEach(opt => {
           opt.disabled = (opt.value !== 'OVPRE Endorsement');
