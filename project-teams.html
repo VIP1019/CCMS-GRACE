@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="G.R.A.C.E PORTAL - Project Teams">
+  <title>Project Teams | G.R.A.C.E PORTAL</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .custom-list { padding:0; margin:0; list-style:none; display:flex; flex-direction:column; gap:0.5rem; }
+    .custom-list li { background:#f9fafb; border:1px solid #e5e7eb; padding:0.6rem 0.8rem; border-radius:6px; font-size:0.85rem; }
+    .custom-list li i { margin-right: 0.4rem; }
+    .modal-overlay {
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;
+    }
+    .modal-content {
+      background: #fff; padding: 2rem; border-radius: 8px; width: 100%; max-width: 800px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto;
+    }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 1rem; }
+    .modal-header h3 { margin: 0; color: var(--maroon); }
+    .close-modal { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #6b7280; }
+    .info-group { margin-bottom: 1.5rem; }
+    .info-group h5 { margin-bottom: 0.5rem; color: #374151; border-bottom: 2px solid var(--maroon); display: inline-block; padding-bottom: 2px; }
+    .info-group p { font-size: 0.9rem; color: #4b5563; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div class="dashboard-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+      <header class="topbar" id="topbar"></header>
+
+      <div class="dashboard-content">
+        <!-- Page Header -->
+        <div class="page-header">
+          <div>
+            <h2>Project Teams & Assignments</h2>
+            <p class="page-subtitle">View your assigned projects and double-click to see full context and team details.</p>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-container">
+          <div class="table-header">
+            <h4><i class="fas fa-id-badge" style="color:var(--maroon);margin-right:0.5rem;"></i>My Assigned Projects</h4>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Project ID</th>
+                <th>Project Title</th>
+                <th>My Role</th>
+                <th>Team Size</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="teams-tbody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+          <div class="table-footer">
+            <span class="table-info" id="teams-info">Loading...</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Detailed Context Modal -->
+  <div class="modal-overlay" id="team-detail-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="m-title">Project Title</h3>
+        <button class="close-modal" onclick="document.getElementById('team-detail-modal').style.display='none'">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="grid grid-2" style="gap: 2rem;">
+          <div>
+            <div class="info-group">
+              <h5>Project Description</h5>
+              <p id="m-desc"></p>
+            </div>
+            <div class="info-group">
+              <h5>Location / Venue</h5>
+              <p id="m-loc"></p>
+            </div>
+            <div class="info-group">
+              <h5>Team Members</h5>
+              <ul id="m-team" class="custom-list"></ul>
+            </div>
+          </div>
+          <div>
+            <div class="info-group">
+              <h5>Partner Organizations</h5>
+              <ul id="m-partners" class="custom-list"></ul>
+            </div>
+            <div class="info-group">
+              <h5>Beneficiaries</h5>
+              <ul id="m-bens" class="custom-list"></ul>
+            </div>
+            <div class="info-group">
+              <h5>Attached Files</h5>
+              <ul id="m-files" class="custom-list"></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!window.GRACE) return;
+      const tbody = document.getElementById('teams-tbody');
+      const modal = document.getElementById('team-detail-modal');
+      const currentUser = GRACE.getCurrentUser();
+      
+      // Filter projects where current user is a team member, OR show all if not found
+      let myProjects = GRACE.projects;
+      if (currentUser && currentUser.role_id === 'R003') { // Proponent
+         const myTeamRecords = GRACE.projectTeams.filter(pt => pt.person_id === currentUser.person_id);
+         const myProjectIds = myTeamRecords.map(pt => pt.project_id);
+         myProjects = GRACE.projects.filter(p => myProjectIds.includes(p.project_id));
+      }
+
+      myProjects.forEach(proj => {
+         const team = GRACE.getTeamByProject(proj.project_id);
+         const myRole = team.find(t => t.person_id === currentUser?.person_id)?.team_role || 'Member';
+         
+         const tr = document.createElement('tr');
+         tr.style.cursor = 'pointer';
+         tr.title = "Double-click to view project context";
+         tr.innerHTML = `
+           <td><code style="background:var(--gray-100);padding:2px 6px;border-radius:4px;">${proj.project_id}</code></td>
+           <td>
+             <strong>${proj.title}</strong>
+             <div style="font-size:0.75rem;color:var(--gray-500);"><i class="fas fa-mouse-pointer"></i> Double-click to view details</div>
+           </td>
+           <td><span class="badge badge-review">${myRole}</span></td>
+           <td><i class="fas fa-users" style="color:var(--maroon);"></i> ${team.length} Members</td>
+           <td><span class="badge ${proj.project_status==='Completed'?'badge-completed':'badge-progress'}">${proj.project_status}</span></td>
+         `;
+         
+         tr.addEventListener('dblclick', () => {
+            // Populate Modal
+            document.getElementById('m-title').textContent = proj.title;
+            document.getElementById('m-desc').textContent = proj.description;
+            
+            // Location
+            const acts = GRACE.getActivitiesByProject(proj.project_id);
+            document.getElementById('m-loc').textContent = acts.length > 0 ? acts[0].venue : 'Multiple / Refer to Activities module';
+
+            // Team
+            document.getElementById('m-team').innerHTML = team.map(t => `<li><i class="fas fa-user" style="color:var(--maroon);"></i> <strong>${GRACE.getPersonName(t.person_id)}</strong> (${t.team_role})</li>`).join('');
+
+            // Partners
+            const partners = GRACE.getPartnersByProject(proj.project_id);
+            document.getElementById('m-partners').innerHTML = partners.length ? partners.map(p => `<li><i class="fas fa-handshake" style="color:var(--maroon);"></i> ${GRACE.getPartnerById(p.partner_id)?.organization_name} - ${p.partnership_role}</li>`).join('') : '<li>None</li>';
+
+            // Beneficiaries
+            const bens = GRACE.getBeneficiariesByProject(proj.project_id);
+            document.getElementById('m-bens').innerHTML = bens.length ? bens.map(b => `<li><i class="fas fa-users" style="color:var(--maroon);"></i> ${GRACE.getBeneficiaryById(b.beneficiary_id)?.beneficiary_name}</li>`).join('') : '<li>None</li>';
+
+            // Files
+            const docs = GRACE.getDocumentsByProject(proj.project_id);
+            document.getElementById('m-files').innerHTML = docs.length ? docs.map(d => `<li><i class="fas fa-file-alt" style="color:var(--maroon);"></i> <a href="#" style="color:var(--gray-700);text-decoration:none;">${d.file_name}</a> <span style="font-size:0.7rem;color:var(--gray-400);">(${d.file_size})</span></li>`).join('') : '<li>No attached files.</li>';
+
+            modal.style.display = 'flex';
+         });
+         tbody.appendChild(tr);
+      });
+      document.getElementById('teams-info').textContent = `Showing ${myProjects.length} assigned projects`;
+    });
+  </script>
+</body>
+</html>

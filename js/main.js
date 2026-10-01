@@ -5,6 +5,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   injectSidebar();   // Inject ERD-aligned sidebar before anything else
+  injectProfileModal(); // Inject global user profile modal after sidebar injection
   initNavbar();
   initScrollAnimations();
   initCounterAnimations();
@@ -28,14 +29,14 @@ function injectSidebar() {
   const role = localStorage.getItem('graceRole') || 'proponent';
   const currentPage = window.location.pathname.split('/').pop() || 'index.html';
 
-  // 6 portal roles per proposal — correctly named personas
+  // Role-based user config
   const roleMap = {
-    admin:       { name: 'Prince Jheck T. Juan',     initials: 'PJ', label: 'System Administrator',          workspace: 'ADMIN WORKSPACE',       code: 'CCMS-ADMIN' },
-    coordinator: { name: 'Crystelle A. Villanueva',  initials: 'CV', label: 'Extension Coordinator',         workspace: 'COORDINATOR WORKSPACE', code: 'CCMS-COORD' },
-    proponent:   { name: 'Lei-anne C. Araña',        initials: 'LA', label: 'Project Proponent',             workspace: 'PROPONENT WORKSPACE',   code: 'CCMS-PROP' },
-    dean:        { name: 'Mary Grace Bolos',         initials: 'MB', label: 'Dean / Director',               workspace: 'DEAN WORKSPACE',        code: 'CCMS-DEAN' },
-    vpre:        { name: 'Arthur Gonzales',          initials: 'AG', label: 'VP for Research & Extension',   workspace: 'VPRE / OVPRE WORKSPACE', code: 'CCMS-VPRE' },
-    assistant:   { name: 'Ana Dela Rosa',            initials: 'AD', label: 'Assistant Extension Officer',   workspace: 'ASST. EXT. WORKSPACE',  code: 'CCMS-ASST' }
+    admin:       { name: 'Prince Jheck T. Juan',    initials: 'PJ', label: 'System Administrator',   workspace: 'ADMIN WORKSPACE',       code: 'CCMS-ADM' },
+    coordinator: { name: 'Crystelle A. Villanueva', initials: 'CV', label: 'Extension Coordinator',  workspace: 'COORDINATOR WORKSPACE', code: 'CCMS-COORD' },
+    proponent:   { name: 'Dr. Mary Grace Bolos',    initials: 'MB', label: 'Project Proponent',      workspace: 'PROPONENT WORKSPACE',   code: 'CCMS-EXT' },
+    dean:        { name: 'Mary Grace Bolos',        initials: 'MB', label: 'College Dean',           workspace: 'DEAN WORKSPACE',        code: 'CCMS-DEAN' },
+    // ========== OVPRE ROLE ADDED ==========
+    ovpre:       { name: 'OVPRE Administrator',     initials: 'OV', label: 'OVPRE Administrator',     workspace: 'OVPRE WORKSPACE',       code: 'CCMS-OVPRE' }
   };
   const user = roleMap[role] || roleMap['proponent'];
 
@@ -45,139 +46,95 @@ function injectSidebar() {
     return `<a href="${href}" class="sidebar-nav-item${isActive}"><span class="nav-icon"><i class="fas ${icon}"></i></span><span>${label}</span>${badgeHtml}</a>`;
   }
 
-  // Role-based nav items — per proposal Section VI (6 portal roles)
+  // Role-based nav items per Figma
   let navHTML = '';
   if (role === 'proponent') {
     navHTML = `
-      ${navItem('dashboard.html',     'fa-th-large',        'Dashboard')}
-      <div class="sidebar-nav-label">MY PROPOSALS</div>
-      ${navItem('proposals.html',     'fa-file-alt',        'My Proposals')}
-      ${navItem('project-form.html',  'fa-plus-circle',     'Submit Proposal')}
-      <div class="sidebar-nav-label">ACTIVE PROJECTS</div>
-      ${navItem('projects.html',      'fa-project-diagram', 'Projects')}
-      ${navItem('activities.html',    'fa-calendar-check',  'Activities & Training')}
-      ${navItem('beneficiaries.html', 'fa-users',           'Beneficiaries')}
-      ${navItem('partners.html',      'fa-handshake',       'Partners')}
-      ${navItem('participation.html', 'fa-id-badge',        'Participation')}
-      <div class="sidebar-nav-label">DOCUMENTATION</div>
-      ${navItem('documents.html',     'fa-folder-open',     'Documents')}
-      ${navItem('reports.html',       'fa-chart-bar',       'Reports')}
-      ${navItem('completion.html',    'fa-check-circle',    'Completion')}
-      ${navItem('survey.html',        'fa-poll',            'Client Satisfaction')}
+      ${navItem('dashboard.html',     'fa-th-large',         'Dashboard')}
+      ${navItem('proposals.html',     'fa-file-alt',         'Proposals')}
+      ${navItem('projects.html',      'fa-project-diagram',  'Projects')}
+      ${navItem('activities.html',    'fa-calendar-check',   'Activities')}
+      ${navItem('beneficiaries.html', 'fa-users',            'Beneficiaries')}
+      ${navItem('partners.html',      'fa-handshake',        'Partners')}
+      ${navItem('project-teams.html', 'fa-id-badge',         'Project Teams')}
+      ${navItem('funding.html',       'fa-coins',            'Funding')}
+      ${navItem('documents.html',     'fa-folder-open',      'Documents')}
+      ${navItem('reports.html',       'fa-chart-bar',        'Reports')}
+      ${navItem('completion.html',    'fa-check-circle',     'Completion')}
+      ${navItem('survey.html',        'fa-poll',             'Satisfaction')}
       <div class="sidebar-nav-label">USER ACCOUNT</div>
-      ${navItem('notifications.html', 'fa-bell',            'Notifications', '2')}
-      ${navItem('profile.html',       'fa-user-circle',     'My Profile')}
-      <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>Logout</span></a>
+      ${navItem('notifications.html','fa-bell',             'Notifications', '2')}
+      <a href="#" class="sidebar-nav-item" onclick="openModal('profile-modal'); return false;"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>Proponent Profile</span></a>
+      <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>System Logout</span></a>
     `;
   } else if (role === 'coordinator') {
     navHTML = `
-      ${navItem('dashboard.html',     'fa-th-large',        'Dashboard')}
-      <div class="sidebar-nav-label">PROPOSAL MANAGEMENT</div>
-      ${navItem('proposals.html',     'fa-file-alt',        'Proposals', '2')}
-      ${navItem('approvals.html',     'fa-clipboard-check', 'Approval Tracking', '1')}
-      <div class="sidebar-nav-label">PROJECT MANAGEMENT</div>
-      ${navItem('projects.html',      'fa-project-diagram', 'Projects')}
-      ${navItem('activities.html',    'fa-calendar-check',  'Activities & Training')}
-      ${navItem('beneficiaries.html', 'fa-users',           'Beneficiaries')}
-      ${navItem('partners.html',      'fa-handshake',       'Partners')}
-      ${navItem('participation.html', 'fa-id-badge',        'Participation Records')}
-      <div class="sidebar-nav-label">RESOURCES & REPORTING</div>
-      ${navItem('funding.html',       'fa-coins',           'Funding Monitor')}
-      ${navItem('documents.html',     'fa-folder-open',     'Documents')}
-      ${navItem('reports.html',       'fa-chart-bar',       'Reports')}
-      ${navItem('completion.html',    'fa-check-circle',    'Completion')}
-      ${navItem('survey.html',        'fa-poll',            'Client Satisfaction')}
+      ${navItem('dashboard.html',     'fa-th-large',         'Dashboard')}
+      ${navItem('proposals.html',     'fa-file-alt',         'Proposals', '2')}
+      ${navItem('approvals.html',     'fa-clipboard-check',  'Approvals', '1')}
+      ${navItem('projects.html',      'fa-project-diagram',  'Projects')}
+      ${navItem('activities.html',    'fa-calendar-check',   'Activities')}
+      ${navItem('beneficiaries.html', 'fa-users',            'Beneficiaries')}
+      ${navItem('partners.html',      'fa-handshake',        'Partners')}
+      ${navItem('funding.html',       'fa-coins',            'Funding')}
+      ${navItem('documents.html',     'fa-folder-open',      'Documents')}
+      ${navItem('reports.html',       'fa-chart-bar',        'Reports')}
+      ${navItem('completion.html',    'fa-check-circle',     'Completion')}
+      ${navItem('survey.html',        'fa-poll',             'Satisfaction')}
       <div class="sidebar-nav-label">USER ACCOUNT</div>
-      ${navItem('notifications.html', 'fa-bell',            'Notifications', '3')}
-      ${navItem('profile.html',       'fa-user-circle',     'My Profile')}
-      <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>Logout</span></a>
+      ${navItem('notifications.html','fa-bell',             'Notifications', '3')}
+      <a href="#" class="sidebar-nav-item" onclick="openModal('profile-modal'); return false;"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>Officer Profile</span></a>
+      <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>System Logout</span></a>
     `;
   } else if (role === 'dean') {
     navHTML = `
-      ${navItem('dashboard.html',     'fa-th-large',        'Dashboard')}
-      <div class="sidebar-nav-label">REVIEW & ENDORSEMENT</div>
-      ${navItem('proposals.html',     'fa-file-alt',        'Proposals for Review', '2')}
-      ${navItem('approvals.html',     'fa-clipboard-check', 'Endorsement Actions', '2')}
-      <div class="sidebar-nav-label">PROJECT OVERVIEW</div>
-      ${navItem('projects.html',      'fa-project-diagram', 'Projects Overview')}
-      ${navItem('documents.html',     'fa-folder-open',     'Documents')}
-      ${navItem('reports.html',       'fa-chart-bar',       'Reports')}
+      ${navItem('dashboard.html',     'fa-th-large',         'Dashboard')}
+      ${navItem('approvals.html',     'fa-clipboard-check',  'Approvals', '1')}
+      ${navItem('projects.html',      'fa-project-diagram',  'Projects')}
+      ${navItem('reports.html',       'fa-chart-bar',        'Reports')}
       <div class="sidebar-nav-label">USER ACCOUNT</div>
-      ${navItem('notifications.html', 'fa-bell',            'Notifications', '2')}
-      ${navItem('profile.html',       'fa-user-circle',     'My Profile')}
-      <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>Logout</span></a>
+      ${navItem('notifications.html','fa-bell',             'Notifications', '1')}
+      <a href="#" class="sidebar-nav-item" onclick="openModal('profile-modal'); return false;"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>Dean Profile</span></a>
+      <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>System Logout</span></a>
     `;
-  } else if (role === 'vpre') {
-    // VPRE: approval decisions, project status monitoring, funding, docs, reports
-    // NO Proposals, NO Activities, NO Beneficiaries, NO Partners
+  // ========== OVPRE SIDEBAR ADDED — IDENTICAL TO ADMIN SIDEBAR ==========
+  } else if (role === 'ovpre') {
     navHTML = `
-      ${navItem('dashboard.html',     'fa-th-large',        'Dashboard')}
-      <div class="sidebar-nav-label">OVPRE PROCESSING</div>
-      ${navItem('approvals.html',     'fa-clipboard-check', 'Approval Pipeline', '3')}
-      <div class="sidebar-nav-label">PROJECT MONITORING</div>
-      ${navItem('projects.html',      'fa-project-diagram', 'All Projects')}
-      <div class="sidebar-nav-label">RESOURCES & REPORTING</div>
-      ${navItem('funding.html',       'fa-coins',           'Funding Monitor')}
-      ${navItem('documents.html',     'fa-folder-open',     'Documents & Records')}
-      ${navItem('reports.html',       'fa-chart-bar',       'Reports')}
-      ${navItem('completion.html',    'fa-check-circle',    'Completion')}
-      ${navItem('survey.html',        'fa-poll',            'Client Satisfaction')}
-      <div class="sidebar-nav-label">USER ACCOUNT</div>
-      ${navItem('notifications.html', 'fa-bell',            'Notifications', '4')}
-      ${navItem('profile.html',       'fa-user-circle',     'My Profile')}
-      <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>Logout</span></a>
-    `;
-  } else if (role === 'assistant') {
-    // Assistant Extension Officer: coordination, status recording, compliance support, docs
-    navHTML = `
-      ${navItem('dashboard.html',     'fa-th-large',        'Dashboard')}
-      <div class="sidebar-nav-label">COORDINATION</div>
-      ${navItem('proposals.html',     'fa-file-alt',        'Proposals', '1')}
-      ${navItem('approvals.html',     'fa-clipboard-check', 'Status Tracking')}
-      <div class="sidebar-nav-label">PROJECT SUPPORT</div>
-      ${navItem('projects.html',      'fa-project-diagram', 'Projects')}
-      ${navItem('activities.html',    'fa-calendar-check',  'Activities')}
-      ${navItem('beneficiaries.html', 'fa-users',           'Beneficiaries')}
-      ${navItem('partners.html',      'fa-handshake',       'Partners')}
-      ${navItem('participation.html', 'fa-id-badge',        'Participation')}
-      <div class="sidebar-nav-label">DOCUMENTATION</div>
-      ${navItem('funding.html',       'fa-coins',           'Funding Info')}
-      ${navItem('documents.html',     'fa-folder-open',     'Documents')}
-      ${navItem('reports.html',       'fa-chart-bar',       'Reports')}
-      ${navItem('completion.html',    'fa-check-circle',    'Completion')}
-      ${navItem('survey.html',        'fa-poll',            'Client Satisfaction')}
-      <div class="sidebar-nav-label">USER ACCOUNT</div>
-      ${navItem('notifications.html', 'fa-bell',            'Notifications', '2')}
-      ${navItem('profile.html',       'fa-user-circle',     'My Profile')}
-      <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>Logout</span></a>
+      ${navItem('dashboard.html',     'fa-th-large',         'Dashboard')}
+      ${navItem('approvals.html',     'fa-clipboard-check',  'Approvals', '1')}
+      ${navItem('projects.html',      'fa-project-diagram',  'Projects')}
+      ${navItem('funding.html',       'fa-coins',            'Funding')}
+      ${navItem('documents.html',     'fa-folder-open',      'Documents')}
+      ${navItem('reports.html',       'fa-chart-bar',        'Reports')}
+      ${navItem('completion.html',    'fa-check-circle',     'Completion')}
+      ${navItem('survey.html',        'fa-poll',             'Satisfaction')}
+      <div class="sidebar-nav-label">SYSTEM</div>
+      ${navItem('admin.html',         'fa-cog',              'Admin Panel')}
+      ${navItem('notifications.html','fa-bell',             'Notifications', '2')}
+      <a href="#" class="sidebar-nav-item" onclick="openModal('profile-modal'); return false;"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>Officer Profile</span></a>
+      <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>System Logout</span></a>
     `;
   } else {
-    // admin (default fallback) — full access + system admin panel
     navHTML = `
-      ${navItem('dashboard.html',     'fa-th-large',        'Dashboard')}
-      <div class="sidebar-nav-label">PROPOSAL MANAGEMENT</div>
-      ${navItem('proposals.html',     'fa-file-alt',        'Proposals', '2')}
-      ${navItem('approvals.html',     'fa-clipboard-check', 'Approvals', '1')}
-      <div class="sidebar-nav-label">PROJECT MANAGEMENT</div>
-      ${navItem('projects.html',      'fa-project-diagram', 'Projects')}
-      ${navItem('activities.html',    'fa-calendar-check',  'Activities')}
-      ${navItem('beneficiaries.html', 'fa-users',           'Beneficiaries')}
-      ${navItem('partners.html',      'fa-handshake',       'Partners')}
-      ${navItem('participation.html', 'fa-id-badge',        'Participation')}
-      <div class="sidebar-nav-label">RESOURCES & REPORTING</div>
-      ${navItem('funding.html',       'fa-coins',           'Funding')}
-      ${navItem('documents.html',     'fa-folder-open',     'Documents')}
-      ${navItem('reports.html',       'fa-chart-bar',       'Reports')}
-      ${navItem('completion.html',    'fa-check-circle',    'Completion')}
-      ${navItem('survey.html',        'fa-poll',            'Satisfaction')}
+      ${navItem('dashboard.html',     'fa-th-large',         'Dashboard')}
+      ${navItem('proposals.html',     'fa-file-alt',         'Proposals', '2')}
+      ${navItem('approvals.html',     'fa-clipboard-check',  'Approvals', '1')}
+      ${navItem('projects.html',      'fa-project-diagram',  'Projects')}
+      ${navItem('activities.html',    'fa-calendar-check',   'Activities')}
+      ${navItem('beneficiaries.html', 'fa-users',            'Beneficiaries')}
+      ${navItem('partners.html',      'fa-handshake',        'Partners')}
+      ${navItem('funding.html',       'fa-coins',            'Funding')}
+      ${navItem('documents.html',     'fa-folder-open',      'Documents')}
+      ${navItem('reports.html',       'fa-chart-bar',        'Reports')}
+      ${navItem('completion.html',    'fa-check-circle',     'Completion')}
+      ${navItem('survey.html',        'fa-poll',             'Satisfaction')}
       <div class="sidebar-nav-label">SYSTEM</div>
-      ${navItem('admin.html',         'fa-cog',             'Admin Panel')}
-      ${navItem('notifications.html', 'fa-bell',            'Notifications', '2')}
-      ${navItem('profile.html',       'fa-user-circle',     'My Profile')}
-      <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>Logout</span></a>
+      ${navItem('admin.html',         'fa-cog',              'Admin Panel')}
+      ${navItem('notifications.html','fa-bell',             'Notifications', '2')}
+      <a href="#" class="sidebar-nav-item" onclick="openModal('profile-modal'); return false;"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>Officer Profile</span></a>
+      <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>System Logout</span></a>
     `;
   }
-
 
   sidebar.innerHTML = `
     <div class="sidebar-header">
@@ -188,7 +145,7 @@ function injectSidebar() {
       ${navHTML}
     </nav>
     <div class="sidebar-footer">
-      <div class="sidebar-user">
+      <div class="sidebar-user" onclick="openModal('profile-modal'); return false;">
         <div class="sidebar-avatar">${user.initials}</div>
         <div class="sidebar-user-info">
           <div class="sidebar-user-name">${user.name.split(' ').slice(0,3).join(' ')}</div>
@@ -205,7 +162,9 @@ function injectSidebar() {
         <button class="sidebar-toggle" id="sidebar-toggle" style="background:none;border:none;cursor:pointer;margin-right:0.75rem;color:inherit;">
           <i class="fas fa-bars" style="font-size:1rem;color:#6B7280;"></i>
         </button>
-        <div class="topbar-logo-mark">GP</div>
+        <div class="topbar-logo-mark" style="background: transparent; color: inherit; padding: 0;">
+          <img src="img/ccms-logo.png" alt="CCMS Logo" style="width: 36px; height: 36px; border-radius: 50%;">
+        </div>
         <div class="topbar-brand-text">
           <span class="topbar-brand-name">CCMS G.R.A.C.E. PORTAL</span>
           <span class="topbar-brand-tagline">Gateway for Responsive Academic Community Extension • University of Camarines Norte</span>
@@ -217,7 +176,7 @@ function injectSidebar() {
       </div>
       <div class="topbar-right">
         <button class="topbar-icon-btn" title="Notifications"><i class="fas fa-bell"></i><span class="notif-dot"></span></button>
-        <div class="topbar-user" id="topbar-user-menu">
+        <div class="topbar-user" id="topbar-user-menu" role="button" tabindex="0" title="Open User Profile" onclick="openModal('profile-modal'); return false;" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openModal('profile-modal'); }">
           <div class="topbar-user-avatar">${user.initials}</div>
           <div class="topbar-user-details">
             <span class="topbar-user-name">${user.name}</span>
@@ -227,6 +186,360 @@ function injectSidebar() {
         </div>
       </div>`;
   }
+}
+
+/* ==========  USER PROFILE MODAL INJECTION  ========== */
+/*
+   This function dynamically creates the global User Profile modal.
+   It uses GRACE.getCurrentUser() from data.js whenever available
+   and falls back to the active graceRole information when needed.
+*/
+function injectProfileModal() {
+  // Prevent duplicate profile modals when this script is initialized
+  // more than once on the same page.
+  const existingProfileModal = document.getElementById('profile-modal');
+  if (existingProfileModal) {
+    updateProfileModal();
+    return;
+  }
+
+  const profileModal = document.createElement('div');
+  profileModal.id = 'profile-modal';
+  profileModal.className = 'modal';
+  profileModal.setAttribute('role', 'dialog');
+  profileModal.setAttribute('aria-modal', 'true');
+  profileModal.setAttribute('aria-labelledby', 'profile-modal-title');
+
+  profileModal.innerHTML = `
+    <div class="modal-content profile-modal-content" style="max-width:620px;width:calc(100% - 2rem);">
+      <div class="modal-header">
+        <div>
+          <h2 id="profile-modal-title">User Profile</h2>
+          <p style="margin:0.25rem 0 0;color:#6B7280;font-size:0.9rem;">Active G.R.A.C.E. Portal account information</p>
+        </div>
+        <button type="button" class="modal-close" data-modal-close aria-label="Close User Profile">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body profile-modal-body">
+        <div class="profile-modal-identity" style="display:flex;align-items:center;gap:1rem;padding:1rem;margin-bottom:1rem;border-radius:12px;background:#F8FAFC;">
+          <div id="profile-modal-avatar" class="profile-modal-avatar" style="width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.25rem;font-weight:700;background:#E5E7EB;color:#374151;">
+            --
+          </div>
+
+          <div style="min-width:0;">
+            <div id="profile-modal-name" style="font-size:1.1rem;font-weight:700;color:#111827;">
+              Loading...
+            </div>
+            <div id="profile-modal-role" style="font-size:0.9rem;color:#6B7280;margin-top:0.2rem;">
+              Loading...
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-details-grid" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;">
+          <div class="profile-detail-item">
+            <div class="profile-detail-label" style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#6B7280;margin-bottom:0.3rem;">
+              Name
+            </div>
+            <div id="profile-modal-detail-name" class="profile-detail-value" style="font-size:0.95rem;color:#111827;">
+              --
+            </div>
+          </div>
+
+          <div class="profile-detail-item">
+            <div class="profile-detail-label" style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#6B7280;margin-bottom:0.3rem;">
+              Email
+            </div>
+            <div id="profile-modal-email" class="profile-detail-value" style="font-size:0.95rem;color:#111827;word-break:break-word;">
+              --
+            </div>
+          </div>
+
+          <div class="profile-detail-item">
+            <div class="profile-detail-label" style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#6B7280;margin-bottom:0.3rem;">
+              Role
+            </div>
+            <div id="profile-modal-detail-role" class="profile-detail-value" style="font-size:0.95rem;color:#111827;">
+              --
+            </div>
+          </div>
+
+          <div class="profile-detail-item">
+            <div class="profile-detail-label" style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#6B7280;margin-bottom:0.3rem;">
+              Contact Number
+            </div>
+            <div id="profile-modal-contact" class="profile-detail-value" style="font-size:0.95rem;color:#111827;">
+              --
+            </div>
+          </div>
+
+          <div class="profile-detail-item" style="grid-column:1 / -1;">
+            <div class="profile-detail-label" style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#6B7280;margin-bottom:0.3rem;">
+              Affiliation
+            </div>
+            <div id="profile-modal-affiliation" class="profile-detail-value" style="font-size:0.95rem;color:#111827;">
+              --
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary modal-close" data-modal-close>
+          Close
+        </button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(profileModal);
+
+  // Populate the modal immediately after it is created.
+  updateProfileModal();
+
+  // Bind the close buttons because this modal was dynamically injected
+  // after the initial page markup was loaded.
+  const profileCloseButtons = profileModal.querySelectorAll('.modal-close, [data-modal-close]');
+
+  profileCloseButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      profileModal.classList.remove('active');
+
+      const backdrop = document.querySelector('.modal-backdrop');
+      if (backdrop) {
+        backdrop.classList.remove('active');
+      }
+    });
+  });
+
+  // Support closing the dynamically-created profile modal by clicking
+  // directly on the modal background.
+  profileModal.addEventListener('click', (event) => {
+    if (event.target === profileModal) {
+      profileModal.classList.remove('active');
+
+      const backdrop = document.querySelector('.modal-backdrop');
+      if (backdrop) {
+        backdrop.classList.remove('active');
+      }
+    }
+  });
+}
+
+/* ==========  PROFILE USER DATA HELPER  ========== */
+/*
+   Retrieves the active user through GRACE.getCurrentUser().
+   Additional fallback fields are supported so the modal can work
+   with slightly different user-object naming conventions.
+*/
+function getProfileUserData() {
+  const role = localStorage.getItem('graceRole') || 'proponent';
+
+  let currentUser = null;
+
+  if (
+    window.GRACE &&
+    typeof window.GRACE.getCurrentUser === 'function'
+  ) {
+    try {
+      currentUser = window.GRACE.getCurrentUser();
+    } catch (error) {
+      console.warn('Unable to retrieve current user from GRACE.getCurrentUser().', error);
+      currentUser = null;
+    }
+  }
+
+  if (!currentUser || typeof currentUser !== 'object') {
+    currentUser = {};
+  }
+
+  const roleMap = {
+    admin: {
+      name: 'Prince Jheck T. Juan',
+      email: 'admin@ucn.edu.ph',
+      role: 'System Administrator',
+      contactNumber: 'Not provided',
+      affiliation: 'University of Camarines Norte'
+    },
+    coordinator: {
+      name: 'Crystelle A. Villanueva',
+      email: 'coordinator@ucn.edu.ph',
+      role: 'Extension Coordinator',
+      contactNumber: 'Not provided',
+      affiliation: 'University of Camarines Norte'
+    },
+    proponent: {
+      name: 'Dr. Mary Grace Bolos',
+      email: 'proponent@ucn.edu.ph',
+      role: 'Project Proponent',
+      contactNumber: 'Not provided',
+      affiliation: 'University of Camarines Norte'
+    },
+    dean: {
+      name: 'Mary Grace Bolos',
+      email: 'dean@ucn.edu.ph',
+      role: 'College Dean',
+      contactNumber: 'Not provided',
+      affiliation: 'University of Camarines Norte'
+    },
+    ovpre: {
+      name: 'OVPRE Administrator',
+      email: 'ovpre@ucn.edu.ph',
+      role: 'OVPRE Administrator',
+      contactNumber: 'Not provided',
+      affiliation: 'Office of the Vice President for Research and Extension'
+    }
+  };
+
+  const fallbackUser = roleMap[role] || roleMap.proponent;
+
+  const profileName =
+    currentUser.name ||
+    currentUser.fullName ||
+    currentUser.displayName ||
+    fallbackUser.name;
+
+  const profileEmail =
+    currentUser.email ||
+    currentUser.emailAddress ||
+    currentUser.mail ||
+    fallbackUser.email;
+
+  const profileRole =
+    currentUser.roleName ||
+    currentUser.roleLabel ||
+    currentUser.role ||
+    fallbackUser.role;
+
+  const profileContact =
+    currentUser.contactNumber ||
+    currentUser.contact ||
+    currentUser.phone ||
+    currentUser.phoneNumber ||
+    currentUser.mobile ||
+    currentUser.mobileNumber ||
+    fallbackUser.contactNumber;
+
+  const profileAffiliation =
+    currentUser.affiliation ||
+    currentUser.organization ||
+    currentUser.department ||
+    currentUser.office ||
+    currentUser.college ||
+    fallbackUser.affiliation;
+
+  return {
+    name: String(profileName),
+    email: String(profileEmail),
+    role: String(profileRole),
+    contactNumber: String(profileContact),
+    affiliation: String(profileAffiliation)
+  };
+}
+
+/* ==========  PROFILE HTML ESCAPING  ========== */
+/*
+   Prevents profile information retrieved from the data layer
+   from being inserted into the modal as executable HTML.
+*/
+function escapeProfileHTML(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+/* ==========  PROFILE INITIALS HELPER  ========== */
+/*
+   Generates initials for the profile avatar using the user's
+   first and last available name components.
+*/
+function getProfileInitials(name) {
+  const cleanName = String(name || '').trim();
+
+  if (!cleanName) {
+    return 'US';
+  }
+
+  const nameParts = cleanName.split(/\s+/).filter(Boolean);
+
+  if (nameParts.length === 1) {
+    return nameParts[0].substring(0, 2).toUpperCase();
+  }
+
+  const firstInitial = nameParts[0].charAt(0);
+  const lastInitial = nameParts[nameParts.length - 1].charAt(0);
+
+  return `${firstInitial}${lastInitial}`.toUpperCase();
+}
+
+/* ==========  UPDATE PROFILE MODAL  ========== */
+/*
+   Refreshes all profile information whenever the modal is prepared.
+   This ensures the displayed information follows the active user
+   returned by GRACE.getCurrentUser().
+*/
+function updateProfileModal() {
+  const profileModal = document.getElementById('profile-modal');
+  if (!profileModal) return;
+
+  const profileUser = getProfileUserData();
+  const initials = getProfileInitials(profileUser.name);
+
+  const profileAvatar = document.getElementById('profile-modal-avatar');
+  const profileName = document.getElementById('profile-modal-name');
+  const profileRole = document.getElementById('profile-modal-role');
+  const profileDetailName = document.getElementById('profile-modal-detail-name');
+  const profileEmail = document.getElementById('profile-modal-email');
+  const profileDetailRole = document.getElementById('profile-modal-detail-role');
+  const profileContact = document.getElementById('profile-modal-contact');
+  const profileAffiliation = document.getElementById('profile-modal-affiliation');
+
+  if (profileAvatar) {
+    profileAvatar.textContent = initials;
+  }
+
+  if (profileName) {
+    profileName.textContent = profileUser.name;
+  }
+
+  if (profileRole) {
+    profileRole.textContent = profileUser.role;
+  }
+
+  if (profileDetailName) {
+    profileDetailName.textContent = profileUser.name;
+  }
+
+  if (profileEmail) {
+    profileEmail.textContent = profileUser.email;
+  }
+
+  if (profileDetailRole) {
+    profileDetailRole.textContent = profileUser.role;
+  }
+
+  if (profileContact) {
+    profileContact.textContent = profileUser.contactNumber;
+  }
+
+  if (profileAffiliation) {
+    profileAffiliation.textContent = profileUser.affiliation;
+  }
+}
+
+/* ==========  OPEN USER PROFILE  ========== */
+/*
+   Global helper that can be used by dynamically-generated
+   profile links throughout the portal.
+*/
+function openProfileModal() {
+  updateProfileModal();
+  openModal('profile-modal');
 }
 
 /* ==========  NAVBAR  ========== */
@@ -604,6 +917,12 @@ function initModalTriggers() {
 }
 
 function openModal(modalId) {
+  // Refresh profile information immediately before opening
+  // the profile modal so the active user's information is current.
+  if (modalId === 'profile-modal') {
+    updateProfileModal();
+  }
+
   const modal = document.getElementById(modalId);
   const backdrop = document.querySelector('.modal-backdrop');
 
@@ -748,7 +1067,8 @@ function initRoleUI() {
       userInitials = 'MB';
       userRoleStr = 'College Dean';
     }
-    // ========== OVPRE USER INFORMATION ADDED ==========
+
+    /* ========== OVPRE USER INFORMATION ADDED ========== */
     else if (role === 'ovpre') {
       userName = 'OVPRE Administrator';
       userInitials = 'OV';
@@ -784,7 +1104,7 @@ function initRoleUI() {
       restrictedNavs.forEach(nav => nav.style.display = 'none');
     }
 
-    // ========== OVPRE ADMIN NAVIGATION ACCESS ADDED ==========
+    /* ========== OVPRE ADMIN NAVIGATION ACCESS ADDED ========== */
     if (role === 'ovpre') {
       // OVPRE uses the same system-level navigation as the Admin sidebar.
       // Restore Admin Panel visibility because the OVPRE sidebar is intentionally

@@ -42,66 +42,48 @@ const GRACE = {
     allow_new_proposals: true
   },
 
-  /* ===== 1. ROLE =====
-     Per proposal Section VI (Scope): 6 defined system roles:
-     1. Project Proponent
-     2. Extension Coordinator
-     3. Dean/Director
-     4. Vice President for Research and Extension (VPRE) [under OVPRE]
-     5. Assistant Extension Officer [under OVPRE, SEPARATE role from VPRE]
-     6. System Administrator
-     VPRE and Assistant are separate portal roles because their system
-     responsibilities and permissions may differ (proposal, p. Scope).
-     External actors — President, Board Secretary, Board of Trustees —
-     are NOT portal users. Their actions are RECORDED by portal users. */
+  /* ===== 1. ROLE ===== */
+  /* Per proposal: 5 primary user interfaces:
+     (1) Administrator Interface — user/role management, system config
+     (2) Extension Office/Coordinator Interface — project/process/funding management
+         Sub-user: Office Assistant/Extensionist — records OVPRE communications,
+                   updates project status, funding info based on institutional records
+     (3) Project Proponent Interface — proposal submission, activities, deliverables 
+     (4) College Dean Interface — project overview, confirms and endorses proposals 
+     (5) OVPRE Interface — foresees all processes except technical configs/backups */
   roles: [
-    { role_id: 'R001', role_name: 'admin',
-      description: 'System Administrator — user account administration, role and permission configuration, system configuration, records administration. NOT a project decision-maker.',
-      is_active: true },
-    { role_id: 'R002', role_name: 'coordinator',
-      description: 'Extension Coordinator — coordinates and monitors project info, proposal/process status, communications, implementation activities, docs, reports, completion and post-implementation records. Does NOT independently exercise institutional approval authority.',
-      is_active: true },
-    { role_id: 'R003', role_name: 'proponent',
-      description: 'Project Proponent — authorized faculty/project team. Prepares/submits proposals, responds to compliance/revisions, submits implementation updates, manages activities and participation records, uploads documents, submits reports per assigned permissions.',
-      is_active: true },
-    { role_id: 'R004', role_name: 'dean',
-      description: 'Dean/Director — reviews applicable proposals and supporting information; records review, endorsement, return-for-revision, or other authorized actions within assigned institutional authority.',
-      is_active: true },
-    { role_id: 'R005', role_name: 'vpre',
-      description: 'Vice President for Research and Extension (VPRE) — performs authorized OVPRE-level review, processing, decision-recording (eligibility check, compliance review, Technical Evaluation facilitation, subsequent institutional processing), and other functions validated with the beneficiary.',
-      is_active: true },
-    { role_id: 'R006', role_name: 'assistant',
-      description: 'Assistant Extension Officer — authorized OVPRE-related recording, coordination, status updating, communication recording, document handling, compliance-support, and other operational functions. Distinct from VPRE; formal signing authority subject to institutional validation.',
-      is_active: true }
+    { role_id: 'R001', role_name: 'admin',       description: 'System Administrator — full system access, user account management, RBAC, system configuration, and records administration', is_active: true },
+    { role_id: 'R002', role_name: 'coordinator', description: 'Extension Office / Coordinator — proposal and project management, process and status monitoring, communication updates, funding-information recording, documentation, reporting, completion and post-implementation monitoring', is_active: true },
+    { role_id: 'R002A', role_name: 'extensionist', description: 'Office Assistant / Extensionist (sub-role under Coordinator) — authorized to record/update OVPRE-related communications, project status information, and funding information when available, based on authorized institutional records and communications', is_active: true },
+    { role_id: 'R003', role_name: 'proponent',   description: 'Project Proponent — authorized faculty, project leaders, and project team members; submits and updates proposal information, compliance requirements, activities, implementation progress, participation, and supporting documents per assigned permissions', is_active: true },
+    { role_id: 'R004', role_name: 'dean',        description: 'College Dean — confirms and endorses the proposal of the project proponents and extension office coordinator before it can be allowed to be raised to the OVPRE; provides high-level academic oversight.', is_active: true },
+    { role_id: 'R005', role_name: 'ovpre',       description: 'Office of the Vice President of Research and Extension (OVPRE) — system administrator for processes, excluding technical system configurations and backup/restore controls.', is_active: true }
   ],
 
-  /* ===== 2. PERSON =====
-     Note: Mary Grace Bolos = IT 116 INSTRUCTOR. She holds Dean portal role
-     for demo purposes only. She is NOT a system role in the actual implementation.
-     Actual Dean/Director will be determined by the beneficiary. */
+  /* ===== 2. PERSON ===== */
+  /* Note: Mary Grace Bolos is the IT 116 INSTRUCTOR (not a portal user role).
+     She appears here as the Extension Office Head for project-record purposes. */
   persons: [
-    { person_id: 'PER001', first_name: 'Prince Jheck', last_name: 'Juan',       email: 'pjuan@ucn.edu.ph',       contact_no: '09171234567', affiliation: 'CCMS — Information Technology', designation: 'IT 116 Team Leader / System Admin (Demo)' },
-    { person_id: 'PER002', first_name: 'Crystelle',    last_name: 'Villanueva', email: 'cvillanueva@ucn.edu.ph', contact_no: '09182345678', affiliation: 'CCMS — Extension Office',      designation: 'Extension Coordinator' },
-    { person_id: 'PER003', first_name: 'Lei-anne',     last_name: 'Arana',      email: 'larana@ucn.edu.ph',      contact_no: '09193456789', affiliation: 'CCMS — Information Technology', designation: 'Project Proponent / Faculty' },
-    { person_id: 'PER004', first_name: 'Maria',        last_name: 'Santos',     email: 'msantos@ucn.edu.ph',     contact_no: '09204567890', affiliation: 'CCMS — Computer Science',      designation: 'Project Proponent / Faculty' },
-    { person_id: 'PER005', first_name: 'Roberto',      last_name: 'De Leon',    email: 'rdeleon@ucn.edu.ph',     contact_no: '09215678901', affiliation: 'CCMS — Information Systems',   designation: 'Project Proponent / Faculty' },
-    { person_id: 'PER006', first_name: 'Mary Grace',   last_name: 'Bolos',      email: 'mgbolos@ucn.edu.ph',     contact_no: '09226789012', affiliation: 'CCMS — Dean Office',          designation: 'Dean/Director (IT 116 Instructor)' },
-    { person_id: 'PER007', first_name: 'Arthur',       last_name: 'Gonzales',   email: 'agvpre@ucn.edu.ph',      contact_no: '09401234567', affiliation: 'UCN — OVPRE',                 designation: 'Vice President for Research and Extension (VPRE)' },
-    { person_id: 'PER008', first_name: 'Ana',          last_name: 'Dela Rosa',  email: 'adelarosa@ucn.edu.ph',   contact_no: '09301234590', affiliation: 'UCN — OVPRE',                 designation: 'Assistant Extension Officer' }
+    { person_id: 'PER001', first_name: 'Prince Jheck', last_name: 'Juan',       email: 'pjuan@ucn.edu.ph',         contact_no: '09171234567', affiliation: 'CCMS — Information Technology', designation: 'Project Leader / System Admin' },
+    { person_id: 'PER002', first_name: 'Crystelle',    last_name: 'Villanueva', email: 'cvillanueva@ucn.edu.ph',   contact_no: '09182345678', affiliation: 'CCMS — Information Technology', designation: 'Extension Coordinator' },
+    { person_id: 'PER003', first_name: 'Lei-anne',     last_name: 'Araña',      email: 'larana@ucn.edu.ph',        contact_no: '09193456789', affiliation: 'CCMS — Information Technology', designation: 'Project Proponent' },
+    { person_id: 'PER004', first_name: 'Maria',        last_name: 'Santos',     email: 'msantos@ucn.edu.ph',       contact_no: '09204567890', affiliation: 'CCMS — Computer Science',      designation: 'Project Proponent' },
+    { person_id: 'PER005', first_name: 'Roberto',      last_name: 'De Leon',    email: 'rdeleon@ucn.edu.ph',       contact_no: '09215678901', affiliation: 'CCMS — Information Systems',   designation: 'Project Proponent' },
+    { person_id: 'PER006', first_name: 'Mary Grace',   last_name: 'Bolos',      email: 'mgbolos@ucn.edu.ph',       contact_no: '09226789012', affiliation: 'CCMS — Extension Office',      designation: 'Extension Office Head / Dean (IT 116 Instructor)' },
+    { person_id: 'PER007', first_name: 'Ana',          last_name: 'Dela Rosa',  email: 'adelarosa@ucn.edu.ph',     contact_no: '09301234590', affiliation: 'UCN — OVPRE',                  designation: 'Office Assistant / Extensionist' },
+    { person_id: 'PER008', first_name: 'Arthur',       last_name: 'Gonzales',   email: 'ovpre@ucn.edu.ph',         contact_no: '09401234567', affiliation: 'UCN — OVPRE',                  designation: 'Vice President of Research and Extension' }
   ],
 
-  /* ===== 3. USER_ACCOUNT =====
-     6 portal accounts — 1 per role for demo.
-     External institutional actors (President, Board Secretary, BOT) have NO accounts. */
+  /* ===== 3. USER_ACCOUNT ===== */
   userAccounts: [
-    { user_id: 'U001', person_id: 'PER001', role_id: 'R001', username: 'pjuan@ucn.edu.ph',       password_hash: '[bcrypt]', account_status: 'active', created_at: '2026-01-15' },
-    { user_id: 'U002', person_id: 'PER002', role_id: 'R002', username: 'cvillanueva@ucn.edu.ph', password_hash: '[bcrypt]', account_status: 'active', created_at: '2026-01-15' },
-    { user_id: 'U003', person_id: 'PER003', role_id: 'R003', username: 'larana@ucn.edu.ph',      password_hash: '[bcrypt]', account_status: 'active', created_at: '2026-01-15' },
-    { user_id: 'U004', person_id: 'PER004', role_id: 'R003', username: 'msantos@ucn.edu.ph',     password_hash: '[bcrypt]', account_status: 'active', created_at: '2026-01-15' },
-    { user_id: 'U005', person_id: 'PER005', role_id: 'R003', username: 'rdeleon@ucn.edu.ph',     password_hash: '[bcrypt]', account_status: 'active', created_at: '2026-02-01' },
-    { user_id: 'U006', person_id: 'PER006', role_id: 'R004', username: 'mgbolos@ucn.edu.ph',     password_hash: '[bcrypt]', account_status: 'active', created_at: '2026-01-10' },
-    { user_id: 'U007', person_id: 'PER007', role_id: 'R005', username: 'agvpre@ucn.edu.ph',      password_hash: '[bcrypt]', account_status: 'active', created_at: '2026-02-10' },
-    { user_id: 'U008', person_id: 'PER008', role_id: 'R006', username: 'adelarosa@ucn.edu.ph',   password_hash: '[bcrypt]', account_status: 'active', created_at: '2026-01-20' }
+    { user_id: 'U001', person_id: 'PER001', role_id: 'R001',  username: 'pjuan@ucn.edu.ph',       password_hash: '[bcrypt_hashed]', account_status: 'active', created_at: '2026-01-15' },
+    { user_id: 'U002', person_id: 'PER002', role_id: 'R002',  username: 'cvillanueva@ucn.edu.ph', password_hash: '[bcrypt_hashed]', account_status: 'active', created_at: '2026-01-15' },
+    { user_id: 'U003', person_id: 'PER003', role_id: 'R003',  username: 'larana@ucn.edu.ph',      password_hash: '[bcrypt_hashed]', account_status: 'active', created_at: '2026-01-15' },
+    { user_id: 'U004', person_id: 'PER004', role_id: 'R003',  username: 'msantos@ucn.edu.ph',     password_hash: '[bcrypt_hashed]', account_status: 'active', created_at: '2026-01-15' },
+    { user_id: 'U005', person_id: 'PER005', role_id: 'R003',  username: 'rdeleon@ucn.edu.ph',     password_hash: '[bcrypt_hashed]', account_status: 'active', created_at: '2026-02-01' },
+    { user_id: 'U006', person_id: 'PER006', role_id: 'R004',  username: 'mgbolos@ucn.edu.ph',     password_hash: '[bcrypt_hashed]', account_status: 'active', created_at: '2026-01-10' },
+    { user_id: 'U007', person_id: 'PER007', role_id: 'R002A', username: 'adelarosa@ucn.edu.ph',   password_hash: '[bcrypt_hashed]', account_status: 'active', created_at: '2026-01-20' },
+    { user_id: 'U008', person_id: 'PER008', role_id: 'R005',  username: 'ovpre@ucn.edu.ph',       password_hash: '[bcrypt_hashed]', account_status: 'active', created_at: '2026-02-10' }
   ],
 
   /* ===== 4. PROJECT ===== */
@@ -443,7 +425,7 @@ const GRACE = {
   getProjectById(id)           { return this.projects.find(p => p.project_id === id); },
   getPersonById(id)            { return this.persons.find(p => p.person_id === id); },
   getPersonName(id)            { const p = this.getPersonById(id); return p ? `${p.first_name} ${p.last_name}` : 'Unknown'; },
-  getUserByRole(role)          { const map={admin:'U001',coordinator:'U002',proponent:'U003',dean:'U006',ovpre:'U008'}; return this.userAccounts.find(u=>u.user_id===map[role]); },
+  getUserByRole(role)          { const map={admin:'U001',coordinator:'U002',proponent:'U003',dean:'U006',assistant:'U007',vpre:'U008'}; return this.userAccounts.find(u=>u.user_id===map[role]); },
   getActivitiesByProject(pid)  { return this.activities.filter(a => a.project_id === pid); },
   getDocumentsByProject(pid)   { return this.documents.filter(d => d.project_id === pid); },
   getTeamByProject(pid)        { return this.projectTeams.filter(t => t.project_id === pid); },

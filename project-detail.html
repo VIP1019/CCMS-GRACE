@@ -291,31 +291,5 @@
 
   <script src="js/data.js"></script>
   <script src="js/main.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const currentRole = localStorage.getItem('graceRole') || 'proponent';
-      
-      // Hide Activities and Participation tabs for VPRE role
-      if (currentRole === 'vpre') {
-        const activitiesTab = document.querySelector('button[data-tab="tab-activities"]');
-        const participationTab = document.querySelector('button[data-tab="tab-participation"]');
-        
-        if (activitiesTab) activitiesTab.style.display = 'none';
-        if (participationTab) participationTab.style.display = 'none';
-
-        // Add Quick Approval Action button for VPRE
-        const actionsContainer = document.querySelector('.card-body .btn-primary').parentElement;
-        if (actionsContainer) {
-          const btn = document.createElement('a');
-          btn.href = 'approvals.html';
-          btn.className = 'btn btn-sm btn-primary';
-          btn.style.backgroundColor = 'var(--status-progress)';
-          btn.style.borderColor = 'var(--status-progress)';
-          btn.innerHTML = '<i class="fas fa-clipboard-check"></i> Process Approval';
-          actionsContainer.prepend(btn);
-        }
-      }
-    });
-  </script>
 </body>
 </html>

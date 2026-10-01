@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -44,6 +45,440 @@
     }
     .form-group select:disabled {
       background-color: #f3f4f6; color: #6b7280;
+    }
+
+    /* ============================================================
+       OVPRE PROJECT EVALUATION ADDITIONS
+       ============================================================ */
+
+    .ovpre-evaluation-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.68);
+      z-index: 5000;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      overflow-y: auto;
+    }
+
+    .ovpre-evaluation-content {
+      background: #ffffff;
+      width: 100%;
+      max-width: 1100px;
+      max-height: 92vh;
+      overflow-y: auto;
+      border-radius: 14px;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.25);
+      position: relative;
+    }
+
+    .ovpre-evaluation-header {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .ovpre-evaluation-title-wrap {
+      min-width: 0;
+    }
+
+    .ovpre-evaluation-title {
+      margin: 0;
+      color: var(--maroon);
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .ovpre-evaluation-subtitle {
+      margin: 0.35rem 0 0;
+      color: #6b7280;
+      font-size: 0.82rem;
+    }
+
+    .ovpre-close-btn {
+      border: none;
+      background: #f3f4f6;
+      color: #4b5563;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .ovpre-close-btn:hover {
+      background: #e5e7eb;
+    }
+
+    .ovpre-evaluation-body {
+      padding: 1.5rem;
+    }
+
+    .ovpre-project-banner {
+      background: linear-gradient(135deg, rgba(128, 0, 0, 0.08), rgba(128, 0, 0, 0.02));
+      border: 1px solid rgba(128, 0, 0, 0.12);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .ovpre-project-banner h2 {
+      margin: 0 0 0.4rem;
+      color: var(--maroon);
+      font-size: 1.25rem;
+    }
+
+    .ovpre-project-id {
+      display: inline-block;
+      background: #f3f4f6;
+      border-radius: 5px;
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+      font-family: monospace;
+      color: #374151;
+      margin-right: 0.4rem;
+    }
+
+    .ovpre-detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .ovpre-detail-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 1rem;
+      background: #ffffff;
+    }
+
+    .ovpre-detail-card.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .ovpre-detail-card h4 {
+      margin: 0 0 0.75rem;
+      font-size: 0.88rem;
+      color: #374151;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .ovpre-detail-card h4 i {
+      color: var(--maroon);
+    }
+
+    .ovpre-description {
+      color: #4b5563;
+      line-height: 1.65;
+      font-size: 0.88rem;
+      white-space: pre-wrap;
+    }
+
+    .ovpre-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem;
+    }
+
+    .ovpre-meta-item {
+      background: #f9fafb;
+      border-radius: 7px;
+      padding: 0.65rem 0.75rem;
+    }
+
+    .ovpre-meta-label {
+      display: block;
+      font-size: 0.68rem;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-bottom: 0.2rem;
+    }
+
+    .ovpre-meta-value {
+      display: block;
+      font-size: 0.82rem;
+      color: #111827;
+      font-weight: 600;
+      word-break: break-word;
+    }
+
+    .ovpre-related-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      max-height: 230px;
+      overflow-y: auto;
+    }
+
+    .ovpre-related-item {
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
+      border-radius: 7px;
+      padding: 0.65rem 0.75rem;
+      font-size: 0.8rem;
+      color: #374151;
+    }
+
+    .ovpre-related-item strong {
+      color: #111827;
+    }
+
+    .ovpre-empty {
+      color: #9ca3af;
+      font-size: 0.8rem;
+      font-style: italic;
+      padding: 0.5rem 0;
+    }
+
+    .ovpre-document-link {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 0.75rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 7px;
+      text-decoration: none;
+      color: #374151;
+      background: #f9fafb;
+      font-size: 0.8rem;
+    }
+
+    .ovpre-document-link:hover {
+      background: #f3f4f6;
+    }
+
+    .ovpre-document-name {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-width: 0;
+    }
+
+    .ovpre-document-name i {
+      color: var(--maroon);
+    }
+
+    .ovpre-document-name span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .ovpre-evaluation-actions {
+      position: sticky;
+      bottom: 0;
+      background: #ffffff;
+      border-top: 1px solid #e5e7eb;
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+    }
+
+    .ovpre-denial-area {
+      display: none;
+      width: 100%;
+      margin-top: 0.75rem;
+      padding: 1rem;
+      border-radius: 9px;
+      border: 1px solid #fecaca;
+      background: #fff7f7;
+    }
+
+    .ovpre-denial-area.visible {
+      display: block;
+    }
+
+    .ovpre-denial-area label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #991b1b;
+      margin-bottom: 0.45rem;
+    }
+
+    .ovpre-denial-area textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 0.75rem;
+      border: 1px solid #fca5a5;
+      border-radius: 7px;
+      resize: vertical;
+      font-family: inherit;
+      font-size: 0.85rem;
+      box-sizing: border-box;
+    }
+
+    .ovpre-denial-area textarea:focus {
+      outline: none;
+      border-color: #dc2626;
+      box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.1);
+    }
+
+    .ovpre-action-message {
+      width: 100%;
+      font-size: 0.8rem;
+      color: #6b7280;
+      margin-bottom: 0.25rem;
+    }
+
+    .ovpre-approve-btn {
+      background: #059669;
+      border-color: #059669;
+      color: #ffffff;
+    }
+
+    .ovpre-approve-btn:hover {
+      background: #047857;
+    }
+
+    .ovpre-deny-btn {
+      background: #dc2626;
+      border-color: #dc2626;
+      color: #ffffff;
+    }
+
+    .ovpre-deny-btn:hover {
+      background: #b91c1c;
+    }
+
+    .ovpre-confirm-return-btn {
+      background: #991b1b;
+      border-color: #991b1b;
+      color: #ffffff;
+      display: none;
+    }
+
+    .ovpre-confirm-return-btn.visible {
+      display: inline-flex;
+    }
+
+    .ovpre-project-row {
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .ovpre-project-row:hover {
+      background: #f9fafb;
+    }
+
+    .ovpre-project-row td {
+      vertical-align: middle;
+    }
+
+    .ovpre-double-click-hint {
+      font-size: 0.68rem;
+      color: #9ca3af;
+      margin-top: 0.2rem;
+    }
+
+    .ovpre-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.25rem 0.55rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      background: #f3f4f6;
+      color: #4b5563;
+    }
+
+    .ovpre-status-pill.approved {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .ovpre-status-pill.pending {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .ovpre-status-pill.returned {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .ovpre-status-pill.progress {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .ovpre-project-summary {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.65rem;
+    }
+
+    .ovpre-summary-chip {
+      padding: 0.25rem 0.5rem;
+      border-radius: 5px;
+      background: #f3f4f6;
+      color: #4b5563;
+      font-size: 0.7rem;
+    }
+
+    .ovpre-table-active {
+      display: none;
+    }
+
+    .ovpre-table-active.visible {
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      .ovpre-evaluation-modal {
+        padding: 0;
+      }
+
+      .ovpre-evaluation-content {
+        max-height: 100vh;
+        height: 100vh;
+        border-radius: 0;
+      }
+
+      .ovpre-detail-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .ovpre-detail-card.full-width {
+        grid-column: auto;
+      }
+
+      .ovpre-meta-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .ovpre-evaluation-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .ovpre-evaluation-actions .btn {
+        width: 100%;
+        justify-content: center;
+      }
     }
   </style>
 </head>
@@ -158,7 +593,7 @@
         </div>
         <table>
           <thead>
-            <tr>
+            <tr id="approvals-table-head-row">
               <th>Approval ID</th>
               <th>Project</th>
               <th>Approval Stage</th>
@@ -227,8 +662,235 @@
   </div>
 </div>
 
+<!-- ============================================================
+     OVPRE DETAILED PROJECT EVALUATION MODAL
+     Added without removing the existing decision modal.
+     ============================================================ -->
+<div class="ovpre-evaluation-modal" id="ovpre-eval-modal">
+  <div class="ovpre-evaluation-content">
+
+    <div class="ovpre-evaluation-header">
+      <div class="ovpre-evaluation-title-wrap">
+        <h3 class="ovpre-evaluation-title" id="ovpre-eval-project-title">
+          Project Evaluation
+        </h3>
+        <p class="ovpre-evaluation-subtitle" id="ovpre-eval-project-subtitle">
+          Detailed project review and OVPRE evaluation
+        </p>
+      </div>
+
+      <button
+        type="button"
+        class="ovpre-close-btn"
+        id="ovpre-eval-close-btn"
+        title="Close evaluation"
+        aria-label="Close evaluation">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="ovpre-evaluation-body">
+
+      <!-- Project Banner -->
+      <div class="ovpre-project-banner">
+        <h2 id="ovpre-project-name-display">Project Name</h2>
+
+        <div>
+          <span class="ovpre-project-id" id="ovpre-project-id-display">
+            PROJECT-ID
+          </span>
+
+          <span class="ovpre-status-pill" id="ovpre-project-status-display">
+            <i class="fas fa-circle"></i>
+            Pending Review
+          </span>
+        </div>
+
+        <div class="ovpre-project-summary">
+          <span class="ovpre-summary-chip" id="ovpre-beneficiary-count-chip">
+            <i class="fas fa-users"></i> 0 Beneficiaries
+          </span>
+
+          <span class="ovpre-summary-chip" id="ovpre-partner-count-chip">
+            <i class="fas fa-handshake"></i> 0 Partners
+          </span>
+
+          <span class="ovpre-summary-chip" id="ovpre-document-count-chip">
+            <i class="fas fa-file"></i> 0 Documents
+          </span>
+        </div>
+      </div>
+
+      <!-- Project Information -->
+      <div class="ovpre-detail-grid">
+
+        <div class="ovpre-detail-card full-width">
+          <h4>
+            <i class="fas fa-align-left"></i>
+            Project Description
+          </h4>
+
+          <div
+            class="ovpre-description"
+            id="ovpre-project-description">
+            No project description available.
+          </div>
+        </div>
+
+        <div class="ovpre-detail-card">
+          <h4>
+            <i class="fas fa-info-circle"></i>
+            Project Information
+          </h4>
+
+          <div class="ovpre-meta-grid">
+
+            <div class="ovpre-meta-item">
+              <span class="ovpre-meta-label">Project ID</span>
+              <span class="ovpre-meta-value" id="ovpre-meta-project-id">—</span>
+            </div>
+
+            <div class="ovpre-meta-item">
+              <span class="ovpre-meta-label">Status</span>
+              <span class="ovpre-meta-value" id="ovpre-meta-status">—</span>
+            </div>
+
+            <div class="ovpre-meta-item">
+              <span class="ovpre-meta-label">Proponent</span>
+              <span class="ovpre-meta-value" id="ovpre-meta-proponent">—</span>
+            </div>
+
+            <div class="ovpre-meta-item">
+              <span class="ovpre-meta-label">College / Unit</span>
+              <span class="ovpre-meta-value" id="ovpre-meta-college">—</span>
+            </div>
+
+            <div class="ovpre-meta-item">
+              <span class="ovpre-meta-label">Start Date</span>
+              <span class="ovpre-meta-value" id="ovpre-meta-start-date">—</span>
+            </div>
+
+            <div class="ovpre-meta-item">
+              <span class="ovpre-meta-label">End Date</span>
+              <span class="ovpre-meta-value" id="ovpre-meta-end-date">—</span>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Beneficiaries -->
+        <div class="ovpre-detail-card">
+          <h4>
+            <i class="fas fa-users"></i>
+            Beneficiaries
+          </h4>
+
+          <div
+            class="ovpre-related-list"
+            id="ovpre-beneficiaries-list">
+            <div class="ovpre-empty">
+              No beneficiaries available.
+            </div>
+          </div>
+        </div>
+
+        <!-- Partners -->
+        <div class="ovpre-detail-card">
+          <h4>
+            <i class="fas fa-handshake"></i>
+            Partners
+          </h4>
+
+          <div
+            class="ovpre-related-list"
+            id="ovpre-partners-list">
+            <div class="ovpre-empty">
+              No partners available.
+            </div>
+          </div>
+        </div>
+
+        <!-- Documents -->
+        <div class="ovpre-detail-card">
+          <h4>
+            <i class="fas fa-folder-open"></i>
+            Attached Documents
+          </h4>
+
+          <div
+            class="ovpre-related-list"
+            id="ovpre-documents-list">
+            <div class="ovpre-empty">
+              No attached documents available.
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Evaluation Actions -->
+    <div class="ovpre-evaluation-actions">
+
+      <div class="ovpre-action-message" id="ovpre-action-message">
+        Review the complete project information before recording an OVPRE decision.
+      </div>
+
+      <!-- Denial / Return area -->
+      <div class="ovpre-denial-area" id="ovpre-denial-area">
+
+        <label for="ovpre-denial-remarks">
+          Reason for Denial (Will be sent back to Dean/Coordinator/Proponent)
+        </label>
+
+        <textarea
+          id="ovpre-denial-remarks"
+          required
+          placeholder="Enter the reason for denial or required revisions. This field is required before the project can be returned."></textarea>
+
+      </div>
+
+      <button
+        type="button"
+        class="btn btn-outline"
+        id="ovpre-eval-cancel-btn">
+        <i class="fas fa-times"></i>
+        Close
+      </button>
+
+      <button
+        type="button"
+        class="btn ovpre-deny-btn"
+        id="ovpre-deny-btn">
+        <i class="fas fa-undo"></i>
+        Deny / Return
+      </button>
+
+      <button
+        type="button"
+        class="btn ovpre-confirm-return-btn"
+        id="ovpre-confirm-return-btn">
+        <i class="fas fa-paper-plane"></i>
+        Confirm Return
+      </button>
+
+      <button
+        type="button"
+        class="btn ovpre-approve-btn"
+        id="ovpre-approve-btn">
+        <i class="fas fa-check-circle"></i>
+        Approve Project
+      </button>
+
+    </div>
+
+  </div>
+</div>
+
 <script src="js/data.js"></script>
 <script src="js/main.js"></script>
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const tbody = document.getElementById('approvals-tbody');
@@ -340,7 +1002,7 @@ document.addEventListener('DOMContentLoaded', () => {
         Array.from(modalStageSelect.options).forEach(opt => {
           opt.disabled = (opt.value !== 'Dean/Director Endorsement');
         });
-      } else if (currentRole === 'vpre') {
+      } else if (currentRole === 'ovpre') {
         modalStageSelect.value = 'OVPRE Endorsement';
         Array.from(modalStageSelect.options).forEach(opt => {
           opt.disabled = (opt.value !== 'OVPRE Endorsement');
@@ -402,7 +1064,2289 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   }
+
+  /* ============================================================
+     OVPRE PROJECT EVALUATION HUB
+     ============================================================ */
+
+  /*
+   * The following block is intentionally isolated from the
+   * existing approval-record logic above.
+   *
+   * When the active role is OVPRE:
+   * 1. The approval table is converted into a project list.
+   * 2. Each project row supports double-click.
+   * 3. Double-click opens the detailed evaluation modal.
+   * 4. Project information is loaded from GRACE.projects.
+   * 5. Related records are loaded through the GRACE helper methods.
+   * 6. OVPRE can approve or return the project.
+   */
+
+  if (currentRole === 'ovpre') {
+
+    /* ============================================================
+       OVPRE DOM REFERENCES
+       ============================================================ */
+
+    const ovpreEvalModal = document.getElementById('ovpre-eval-modal');
+    const ovpreEvalCloseBtn = document.getElementById('ovpre-eval-close-btn');
+    const ovpreEvalCancelBtn = document.getElementById('ovpre-eval-cancel-btn');
+
+    const ovpreApproveBtn = document.getElementById('ovpre-approve-btn');
+    const ovpreDenyBtn = document.getElementById('ovpre-deny-btn');
+    const ovpreConfirmReturnBtn = document.getElementById('ovpre-confirm-return-btn');
+
+    const ovpreDenialArea = document.getElementById('ovpre-denial-area');
+    const ovpreDenialRemarks = document.getElementById('ovpre-denial-remarks');
+
+    const ovpreEvalProjectTitle = document.getElementById('ovpre-eval-project-title');
+    const ovpreEvalProjectSubtitle = document.getElementById('ovpre-eval-project-subtitle');
+
+    const ovpreProjectNameDisplay = document.getElementById('ovpre-project-name-display');
+    const ovpreProjectIdDisplay = document.getElementById('ovpre-project-id-display');
+    const ovpreProjectStatusDisplay = document.getElementById('ovpre-project-status-display');
+
+    const ovpreProjectDescription = document.getElementById('ovpre-project-description');
+
+    const ovpreMetaProjectId = document.getElementById('ovpre-meta-project-id');
+    const ovpreMetaStatus = document.getElementById('ovpre-meta-status');
+    const ovpreMetaProponent = document.getElementById('ovpre-meta-proponent');
+    const ovpreMetaCollege = document.getElementById('ovpre-meta-college');
+    const ovpreMetaStartDate = document.getElementById('ovpre-meta-start-date');
+    const ovpreMetaEndDate = document.getElementById('ovpre-meta-end-date');
+
+    const ovpreBeneficiariesList = document.getElementById('ovpre-beneficiaries-list');
+    const ovprePartnersList = document.getElementById('ovpre-partners-list');
+    const ovpreDocumentsList = document.getElementById('ovpre-documents-list');
+
+    const ovpreBeneficiaryCountChip = document.getElementById('ovpre-beneficiary-count-chip');
+    const ovprePartnerCountChip = document.getElementById('ovpre-partner-count-chip');
+    const ovpreDocumentCountChip = document.getElementById('ovpre-document-count-chip');
+
+    const ovpreActionMessage = document.getElementById('ovpre-action-message');
+
+    /* ============================================================
+       OVPRE CURRENT PROJECT STATE
+       ============================================================ */
+
+    let ovpreCurrentProject = null;
+
+    /* ============================================================
+       OVPRE SAFE TEXT HELPER
+       ============================================================ */
+
+    function ovpreEscapeHTML(value) {
+      if (value === null || value === undefined) return '';
+
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    /* ============================================================
+       OVPRE GENERIC VALUE HELPER
+       ============================================================ */
+
+    function ovpreGetFirstValue(object, keys, fallback = '') {
+      if (!object) return fallback;
+
+      for (const key of keys) {
+        if (
+          object[key] !== undefined &&
+          object[key] !== null &&
+          object[key] !== ''
+        ) {
+          return object[key];
+        }
+      }
+
+      return fallback;
+    }
+
+    /* ============================================================
+       OVPRE PROJECT STATUS HELPER
+       ============================================================ */
+
+    function ovpreGetProjectStatus(project) {
+      return ovpreGetFirstValue(
+        project,
+        [
+          'status',
+          'project_status',
+          'approval_status',
+          'current_status'
+        ],
+        'Pending Review'
+      );
+    }
+
+    /* ============================================================
+       OVPRE STATUS CLASS HELPER
+       ============================================================ */
+
+    function ovpreGetStatusClass(status) {
+      const normalized = String(status || '').toLowerCase();
+
+      if (
+        normalized.includes('approved') ||
+        normalized.includes('complete') ||
+        normalized.includes('completed')
+      ) {
+        return 'approved';
+      }
+
+      if (
+        normalized.includes('return') ||
+        normalized.includes('denied') ||
+        normalized.includes('reject')
+      ) {
+        return 'returned';
+      }
+
+      if (
+        normalized.includes('progress') ||
+        normalized.includes('review') ||
+        normalized.includes('evaluation')
+      ) {
+        return 'progress';
+      }
+
+      return 'pending';
+    }
+
+    /* ============================================================
+       OVPRE PROJECT STATUS DISPLAY
+       ============================================================ */
+
+    function ovpreSetStatusDisplay(project) {
+      if (!project) return;
+
+      const status = ovpreGetProjectStatus(project);
+      const statusClass = ovpreGetStatusClass(status);
+
+      if (ovpreProjectStatusDisplay) {
+        ovpreProjectStatusDisplay.className = `ovpre-status-pill ${statusClass}`;
+        ovpreProjectStatusDisplay.innerHTML = `
+          <i class="fas fa-circle"></i>
+          ${ovpreEscapeHTML(status)}
+        `;
+      }
+
+      if (ovpreMetaStatus) {
+        ovpreMetaStatus.textContent = status;
+      }
+    }
+
+    /* ============================================================
+       OVPRE RELATED RECORD RETRIEVAL
+       ============================================================ */
+
+    function ovpreGetBeneficiaries(projectId) {
+      try {
+        if (
+          typeof GRACE.getBeneficiariesByProject === 'function'
+        ) {
+          const result = GRACE.getBeneficiariesByProject(projectId);
+
+          if (Array.isArray(result)) {
+            return result;
+          }
+
+          if (result && Array.isArray(result.data)) {
+            return result.data;
+          }
+        }
+      } catch (error) {
+        console.warn(
+          'OVPRE: Unable to retrieve beneficiaries through GRACE helper.',
+          error
+        );
+      }
+
+      return [];
+    }
+
+    function ovpreGetPartners(projectId) {
+      try {
+        if (
+          typeof GRACE.getPartnersByProject === 'function'
+        ) {
+          const result = GRACE.getPartnersByProject(projectId);
+
+          if (Array.isArray(result)) {
+            return result;
+          }
+
+          if (result && Array.isArray(result.data)) {
+            return result.data;
+          }
+        }
+      } catch (error) {
+        console.warn(
+          'OVPRE: Unable to retrieve partners through GRACE helper.',
+          error
+        );
+      }
+
+      return [];
+    }
+
+    function ovpreGetDocuments(projectId) {
+      try {
+        if (
+          typeof GRACE.getDocumentsByProject === 'function'
+        ) {
+          const result = GRACE.getDocumentsByProject(projectId);
+
+          if (Array.isArray(result)) {
+            return result;
+          }
+
+          if (result && Array.isArray(result.data)) {
+            return result.data;
+          }
+        }
+      } catch (error) {
+        console.warn(
+          'OVPRE: Unable to retrieve documents through GRACE helper.',
+          error
+        );
+      }
+
+      return [];
+    }
+
+    /* ============================================================
+       OVPRE PERSON NAME HELPER
+       ============================================================ */
+
+    function ovpreResolvePersonName(personId, fallback = 'Not specified') {
+      if (!personId) return fallback;
+
+      try {
+        if (typeof GRACE.getPersonName === 'function') {
+          const name = GRACE.getPersonName(personId);
+
+          if (name) {
+            return name;
+          }
+        }
+      } catch (error) {
+        console.warn(
+          'OVPRE: Unable to resolve person name.',
+          error
+        );
+      }
+
+      return personId || fallback;
+    }
+
+    /* ============================================================
+       OVPRE BENEFICIARY RENDERING
+       ============================================================ */
+
+    function ovpreRenderBeneficiaries(projectId) {
+      const beneficiaries = ovpreGetBeneficiaries(projectId);
+
+      if (ovpreBeneficiaryCountChip) {
+        ovpreBeneficiaryCountChip.innerHTML =
+          `<i class="fas fa-users"></i> ${beneficiaries.length} Beneficiaries`;
+      }
+
+      if (!ovpreBeneficiariesList) return;
+
+      if (!beneficiaries.length) {
+        ovpreBeneficiariesList.innerHTML = `
+          <div class="ovpre-empty">
+            No beneficiaries are currently connected to this project.
+          </div>
+        `;
+        return;
+      }
+
+      ovpreBeneficiariesList.innerHTML = beneficiaries.map((beneficiary, index) => {
+
+        const name = ovpreGetFirstValue(
+          beneficiary,
+          [
+            'name',
+            'beneficiary_name',
+            'group_name',
+            'organization_name',
+            'beneficiary_group'
+          ],
+          `Beneficiary ${index + 1}`
+        );
+
+        const type = ovpreGetFirstValue(
+          beneficiary,
+          [
+            'type',
+            'beneficiary_type',
+            'category',
+            'classification'
+          ],
+          ''
+        );
+
+        const count = ovpreGetFirstValue(
+          beneficiary,
+          [
+            'count',
+            'population',
+            'number',
+            'estimated_count',
+            'target_count'
+          ],
+          ''
+        );
+
+        const location = ovpreGetFirstValue(
+          beneficiary,
+          [
+            'location',
+            'address',
+            'barangay',
+            'municipality'
+          ],
+          ''
+        );
+
+        return `
+          <div class="ovpre-related-item">
+            <strong>${ovpreEscapeHTML(name)}</strong>
+            ${
+              type
+                ? `<div>Type: ${ovpreEscapeHTML(type)}</div>`
+                : ''
+            }
+            ${
+              count !== ''
+                ? `<div>Target: ${ovpreEscapeHTML(count)}</div>`
+                : ''
+            }
+            ${
+              location
+                ? `<div>Location: ${ovpreEscapeHTML(location)}</div>`
+                : ''
+            }
+          </div>
+        `;
+      }).join('');
+    }
+
+    /* ============================================================
+       OVPRE PARTNER RENDERING
+       ============================================================ */
+
+    function ovpreRenderPartners(projectId) {
+      const partners = ovpreGetPartners(projectId);
+
+      if (ovprePartnerCountChip) {
+        ovprePartnerCountChip.innerHTML =
+          `<i class="fas fa-handshake"></i> ${partners.length} Partners`;
+      }
+
+      if (!ovprePartnersList) return;
+
+      if (!partners.length) {
+        ovprePartnersList.innerHTML = `
+          <div class="ovpre-empty">
+            No partners are currently connected to this project.
+          </div>
+        `;
+        return;
+      }
+
+      ovprePartnersList.innerHTML = partners.map((partner, index) => {
+
+        const name = ovpreGetFirstValue(
+          partner,
+          [
+            'name',
+            'partner_name',
+            'organization_name',
+            'organization',
+            'partner'
+          ],
+          `Partner ${index + 1}`
+        );
+
+        const type = ovpreGetFirstValue(
+          partner,
+          [
+            'type',
+            'partner_type',
+            'organization_type',
+            'category'
+          ],
+          ''
+        );
+
+        const contact = ovpreGetFirstValue(
+          partner,
+          [
+            'contact_person',
+            'contact',
+            'representative',
+            'focal_person'
+          ],
+          ''
+        );
+
+        return `
+          <div class="ovpre-related-item">
+            <strong>${ovpreEscapeHTML(name)}</strong>
+            ${
+              type
+                ? `<div>Type: ${ovpreEscapeHTML(type)}</div>`
+                : ''
+            }
+            ${
+              contact
+                ? `<div>Contact: ${ovpreEscapeHTML(contact)}</div>`
+                : ''
+            }
+          </div>
+        `;
+      }).join('');
+    }
+
+    /* ============================================================
+       OVPRE DOCUMENT RENDERING
+       ============================================================ */
+
+    function ovpreRenderDocuments(projectId) {
+      const documents = ovpreGetDocuments(projectId);
+
+      if (ovpreDocumentCountChip) {
+        ovpreDocumentCountChip.innerHTML =
+          `<i class="fas fa-file"></i> ${documents.length} Documents`;
+      }
+
+      if (!ovpreDocumentsList) return;
+
+      if (!documents.length) {
+        ovpreDocumentsList.innerHTML = `
+          <div class="ovpre-empty">
+            No documents are currently attached to this project.
+          </div>
+        `;
+        return;
+      }
+
+      ovpreDocumentsList.innerHTML = documents.map((document, index) => {
+
+        const documentName = ovpreGetFirstValue(
+          document,
+          [
+            'file_name',
+            'filename',
+            'document_name',
+            'name',
+            'title'
+          ],
+          `Document ${index + 1}`
+        );
+
+        const documentUrl = ovpreGetFirstValue(
+          document,
+          [
+            'file_url',
+            'url',
+            'download_url',
+            'path',
+            'file_path',
+            'href'
+          ],
+          ''
+        );
+
+        const documentType = ovpreGetFirstValue(
+          document,
+          [
+            'document_type',
+            'type',
+            'category'
+          ],
+          ''
+        );
+
+        /*
+         * If a usable URL/path exists, make the file directly accessible.
+         * Otherwise, display the document as a non-link record.
+         */
+        if (documentUrl) {
+          return `
+            <a
+              class="ovpre-document-link"
+              href="${ovpreEscapeHTML(documentUrl)}"
+              target="_blank"
+              rel="noopener noreferrer"
+              download>
+              <span class="ovpre-document-name">
+                <i class="fas fa-file-alt"></i>
+                <span>${ovpreEscapeHTML(documentName)}</span>
+              </span>
+
+              <span>
+                <i class="fas fa-download"></i>
+              </span>
+            </a>
+          `;
+        }
+
+        return `
+          <div class="ovpre-document-link">
+            <span class="ovpre-document-name">
+              <i class="fas fa-file-alt"></i>
+              <span>${ovpreEscapeHTML(documentName)}</span>
+            </span>
+
+            ${
+              documentType
+                ? `<span>${ovpreEscapeHTML(documentType)}</span>`
+                : `<span style="color:#9ca3af;">No file link</span>`
+            }
+          </div>
+        `;
+      }).join('');
+    }
+
+    /* ============================================================
+       OVPRE PROJECT DETAIL RENDERING
+       ============================================================ */
+
+    function ovprePopulateEvaluationModal(project) {
+      if (!project) return;
+
+      ovpreCurrentProject = project;
+
+      const projectId = ovpreGetFirstValue(
+        project,
+        ['project_id', 'id', 'projectId'],
+        '—'
+      );
+
+      const projectTitle = ovpreGetFirstValue(
+        project,
+        ['title', 'project_title', 'name', 'project_name'],
+        'Untitled Project'
+      );
+
+      const description = ovpreGetFirstValue(
+        project,
+        [
+          'description',
+          'project_description',
+          'details',
+          'summary',
+          'abstract'
+        ],
+        'No project description available.'
+      );
+
+      const status = ovpreGetProjectStatus(project);
+
+      const proponentId = ovpreGetFirstValue(
+        project,
+        [
+          'proponent_id',
+          'proponentId',
+          'person_id',
+          'owner_id',
+          'created_by'
+        ],
+        ''
+      );
+
+      const directProponentName = ovpreGetFirstValue(
+        project,
+        [
+          'proponent_name',
+          'proponent',
+          'owner_name'
+        ],
+        ''
+      );
+
+      const proponentName =
+        directProponentName ||
+        ovpreResolvePersonName(
+          proponentId,
+          'Not specified'
+        );
+
+      const college = ovpreGetFirstValue(
+        project,
+        [
+          'college',
+          'college_name',
+          'unit',
+          'office',
+          'department',
+          'affiliation'
+        ],
+        'Not specified'
+      );
+
+      const startDate = ovpreGetFirstValue(
+        project,
+        [
+          'start_date',
+          'project_start',
+          'date_started',
+          'implementation_start'
+        ],
+        'Not specified'
+      );
+
+      const endDate = ovpreGetFirstValue(
+        project,
+        [
+          'end_date',
+          'project_end',
+          'date_ended',
+          'implementation_end'
+        ],
+        'Not specified'
+      );
+
+      if (ovpreEvalProjectTitle) {
+        ovpreEvalProjectTitle.textContent =
+          `OVPRE Project Evaluation — ${projectTitle}`;
+      }
+
+      if (ovpreEvalProjectSubtitle) {
+        ovpreEvalProjectSubtitle.textContent =
+          `${projectId} • Detailed project review and evaluation`;
+      }
+
+      if (ovpreProjectNameDisplay) {
+        ovpreProjectNameDisplay.textContent = projectTitle;
+      }
+
+      if (ovpreProjectIdDisplay) {
+        ovpreProjectIdDisplay.textContent = projectId;
+      }
+
+      if (ovpreProjectDescription) {
+        ovpreProjectDescription.textContent = description;
+      }
+
+      if (ovpreMetaProjectId) {
+        ovpreMetaProjectId.textContent = projectId;
+      }
+
+      if (ovpreMetaProponent) {
+        ovpreMetaProponent.textContent = proponentName;
+      }
+
+      if (ovpreMetaCollege) {
+        ovpreMetaCollege.textContent = college;
+      }
+
+      if (ovpreMetaStartDate) {
+        ovpreMetaStartDate.textContent = startDate;
+      }
+
+      if (ovpreMetaEndDate) {
+        ovpreMetaEndDate.textContent = endDate;
+      }
+
+      ovpreSetStatusDisplay(project);
+
+      ovpreRenderBeneficiaries(projectId);
+      ovpreRenderPartners(projectId);
+      ovpreRenderDocuments(projectId);
+
+      if (ovpreActionMessage) {
+        ovpreActionMessage.textContent =
+          'Review the complete project information before recording an OVPRE decision.';
+      }
+
+      if (ovpreDenialArea) {
+        ovpreDenialArea.classList.remove('visible');
+      }
+
+      if (ovpreConfirmReturnBtn) {
+        ovpreConfirmReturnBtn.classList.remove('visible');
+      }
+
+      if (ovpreDenyBtn) {
+        ovpreDenyBtn.innerHTML =
+          '<i class="fas fa-undo"></i> Deny / Return';
+        ovpreDenyBtn.style.display = 'inline-flex';
+      }
+
+      if (ovpreApproveBtn) {
+        ovpreApproveBtn.style.display = 'inline-flex';
+      }
+
+      if (ovpreDenialRemarks) {
+        ovpreDenialRemarks.value = '';
+      }
+    }
+
+    /* ============================================================
+       OVPRE OPEN EVALUATION MODAL
+       ============================================================ */
+
+    function openOvpreEvaluation(project) {
+      if (!project || !ovpreEvalModal) return;
+
+      ovprePopulateEvaluationModal(project);
+
+      ovpreEvalModal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    /* ============================================================
+       OVPRE CLOSE EVALUATION MODAL
+       ============================================================ */
+
+    function closeOvpreEvaluation() {
+      if (!ovpreEvalModal) return;
+
+      ovpreEvalModal.style.display = 'none';
+      document.body.style.overflow = '';
+
+      ovpreCurrentProject = null;
+
+      if (ovpreDenialArea) {
+        ovpreDenialArea.classList.remove('visible');
+      }
+
+      if (ovpreConfirmReturnBtn) {
+        ovpreConfirmReturnBtn.classList.remove('visible');
+      }
+
+      if (ovpreDenialRemarks) {
+        ovpreDenialRemarks.value = '';
+      }
+    }
+
+    /* ============================================================
+       OVPRE FIND PROJECT
+       ============================================================ */
+
+    function ovpreFindProject(projectId) {
+      if (!projectId || !Array.isArray(GRACE.projects)) {
+        return null;
+      }
+
+      try {
+        if (typeof GRACE.getProjectById === 'function') {
+          const project = GRACE.getProjectById(projectId);
+
+          if (project) {
+            return project;
+          }
+        }
+      } catch (error) {
+        console.warn(
+          'OVPRE: GRACE.getProjectById failed.',
+          error
+        );
+      }
+
+      return GRACE.projects.find(project => {
+        return String(
+          ovpreGetFirstValue(
+            project,
+            ['project_id', 'id', 'projectId'],
+            ''
+          )
+        ) === String(projectId);
+      }) || null;
+    }
+
+    /* ============================================================
+       OVPRE PROJECT LIST STATUS FROM APPROVAL RECORDS
+       ============================================================ */
+
+    function ovpreGetLatestApprovalForProject(projectId) {
+      if (
+        !Array.isArray(GRACE.approvals) ||
+        !projectId
+      ) {
+        return null;
+      }
+
+      const records = GRACE.approvals.filter(
+        approval =>
+          String(approval.project_id) === String(projectId)
+      );
+
+      if (!records.length) {
+        return null;
+      }
+
+      return records[records.length - 1];
+    }
+
+    function ovpreGetProjectEvaluationStatus(project) {
+      const projectStatus = ovpreGetProjectStatus(project);
+
+      const latestApproval =
+        ovpreGetLatestApprovalForProject(
+          ovpreGetFirstValue(
+            project,
+            ['project_id', 'id', 'projectId'],
+            ''
+          )
+        );
+
+      if (latestApproval && latestApproval.decision) {
+        return latestApproval.decision;
+      }
+
+      return projectStatus;
+    }
+
+    /* ============================================================
+       OVPRE PROJECT LIST RENDERING
+       ============================================================ */
+
+    function renderOvpreProjectList() {
+
+      if (!tbody) return;
+
+      /*
+       * Change the existing table heading to make the OVPRE
+       * project-evaluation mode clear.
+       */
+      const tableHeadRow =
+        document.getElementById(
+          'approvals-table-head-row'
+        );
+
+      if (tableHeadRow) {
+        tableHeadRow.innerHTML = `
+          <th>Project ID</th>
+          <th>Project</th>
+          <th>Proponent</th>
+          <th>Project Status</th>
+          <th>Beneficiaries</th>
+          <th>Partners</th>
+          <th>Documents</th>
+          <th>Evaluation</th>
+        `;
+      }
+
+      const tableHeader =
+        document.querySelector(
+          '.table-header h4'
+        );
+
+      if (tableHeader) {
+        tableHeader.innerHTML = `
+          <i
+            class="fas fa-search-plus"
+            style="color:var(--maroon);margin-right:0.5rem;">
+          </i>
+          OVPRE Project Evaluation List
+        `;
+      }
+
+      const tableDescription =
+        document.querySelector(
+          '.table-header span'
+        );
+
+      if (tableDescription) {
+        tableDescription.textContent =
+          'Double-click a project row to open the detailed evaluation hub';
+      }
+
+      tbody.innerHTML = '';
+
+      const projects =
+        Array.isArray(GRACE.projects)
+          ? GRACE.projects
+          : [];
+
+      if (!projects.length) {
+
+        tbody.innerHTML = `
+          <tr>
+            <td
+              colspan="8"
+              style="
+                text-align:center;
+                padding:2rem;
+                color:var(--gray-500);
+              ">
+              <i
+                class="fas fa-folder-open"
+                style="
+                  font-size:2rem;
+                  display:block;
+                  margin-bottom:0.75rem;
+                  color:var(--gray-400);
+                ">
+              </i>
+              No projects are available for OVPRE evaluation.
+            </td>
+          </tr>
+        `;
+
+        info.textContent =
+          'Showing 0 projects for OVPRE evaluation';
+
+        return;
+      }
+
+      projects.forEach(project => {
+
+        const projectId =
+          ovpreGetFirstValue(
+            project,
+            ['project_id', 'id', 'projectId'],
+            '—'
+          );
+
+        const projectTitle =
+          ovpreGetFirstValue(
+            project,
+            ['title', 'project_title', 'name', 'project_name'],
+            'Untitled Project'
+          );
+
+        const projectStatus =
+          ovpreGetProjectEvaluationStatus(project);
+
+        const statusClass =
+          ovpreGetStatusClass(projectStatus);
+
+        const proponentId =
+          ovpreGetFirstValue(
+            project,
+            [
+              'proponent_id',
+              'proponentId',
+              'person_id',
+              'owner_id',
+              'created_by'
+            ],
+            ''
+          );
+
+        const directProponent =
+          ovpreGetFirstValue(
+            project,
+            [
+              'proponent_name',
+              'proponent',
+              'owner_name'
+            ],
+            ''
+          );
+
+        const proponentName =
+          directProponent ||
+          ovpreResolvePersonName(
+            proponentId,
+            'Not specified'
+          );
+
+        const beneficiaries =
+          ovpreGetBeneficiaries(projectId);
+
+        const partners =
+          ovpreGetPartners(projectId);
+
+        const documents =
+          ovpreGetDocuments(projectId);
+
+        const row =
+          document.createElement('tr');
+
+        row.className =
+          'ovpre-project-row';
+
+        row.setAttribute(
+          'data-project-id',
+          projectId
+        );
+
+        row.setAttribute(
+          'title',
+          'Double-click to evaluate this project'
+        );
+
+        row.innerHTML = `
+          <td>
+            <code
+              style="
+                font-size:0.78rem;
+                background:var(--gray-100);
+                padding:2px 6px;
+                border-radius:4px;">
+              ${ovpreEscapeHTML(projectId)}
+            </code>
+          </td>
+
+          <td>
+            <div
+              style="
+                font-weight:600;
+                font-size:0.84rem;">
+              ${ovpreEscapeHTML(projectTitle)}
+            </div>
+
+            <div
+              class="ovpre-double-click-hint">
+              <i class="fas fa-mouse-pointer"></i>
+              Double-click to evaluate
+            </div>
+          </td>
+
+          <td
+            style="
+              font-size:0.82rem;">
+            ${ovpreEscapeHTML(proponentName)}
+          </td>
+
+          <td>
+            <span
+              class="ovpre-status-pill ${statusClass}">
+              <i class="fas fa-circle"></i>
+              ${ovpreEscapeHTML(projectStatus)}
+            </span>
+          </td>
+
+          <td
+            style="
+              font-size:0.82rem;
+              text-align:center;">
+            <i
+              class="fas fa-users"
+              style="color:var(--maroon);">
+            </i>
+            ${beneficiaries.length}
+          </td>
+
+          <td
+            style="
+              font-size:0.82rem;
+              text-align:center;">
+            <i
+              class="fas fa-handshake"
+              style="color:var(--maroon);">
+            </i>
+            ${partners.length}
+          </td>
+
+          <td
+            style="
+              font-size:0.82rem;
+              text-align:center;">
+            <i
+              class="fas fa-file"
+              style="color:var(--maroon);">
+            </i>
+            ${documents.length}
+          </td>
+
+          <td>
+            <button
+              type="button"
+              class="btn btn-sm btn-outline ovpre-open-evaluation-btn"
+              data-project-id="${ovpreEscapeHTML(projectId)}">
+              <i class="fas fa-search-plus"></i>
+              Evaluate
+            </button>
+          </td>
+        `;
+
+        tbody.appendChild(row);
+      });
+
+      info.textContent =
+        `Showing ${projects.length} projects for OVPRE evaluation`;
+
+      /*
+       * The OVPRE list is a project-evaluation hub rather than
+       * a standard approval-record table.
+       */
+      document.getElementById('card-total').textContent =
+        projects.length;
+
+      const ovpreApprovedProjects =
+        projects.filter(project => {
+
+          const status =
+            String(
+              ovpreGetProjectEvaluationStatus(project)
+            ).toLowerCase();
+
+          return (
+            status.includes('approved') ||
+            status.includes('complete')
+          );
+        }).length;
+
+      const ovprePendingProjects =
+        projects.length -
+        ovpreApprovedProjects;
+
+      document.getElementById(
+        'card-approved'
+      ).textContent =
+        ovpreApprovedProjects;
+
+      document.getElementById(
+        'card-pending'
+      ).textContent =
+        ovprePendingProjects;
+
+      /*
+       * Make the existing filters project-aware in OVPRE mode.
+       * The original controls remain in place.
+       */
+      if (projSelect) {
+        projSelect.value = '';
+      }
+
+      /* ============================================================
+         OVPRE DOUBLE-CLICK EVENT
+         ============================================================ */
+
+      tbody
+        .querySelectorAll('.ovpre-project-row')
+        .forEach(row => {
+
+          row.addEventListener(
+            'dblclick',
+            () => {
+
+              const projectId =
+                row.getAttribute(
+                  'data-project-id'
+                );
+
+              const project =
+                ovpreFindProject(projectId);
+
+              if (project) {
+                openOvpreEvaluation(project);
+              } else {
+                showOvpreMessage(
+                  'The selected project could not be loaded.',
+                  'error'
+                );
+              }
+            }
+          );
+        });
+
+      /* ============================================================
+         OVPRE EVALUATE BUTTON EVENT
+         ============================================================ */
+
+      tbody
+        .querySelectorAll(
+          '.ovpre-open-evaluation-btn'
+        )
+        .forEach(button => {
+
+          button.addEventListener(
+            'click',
+            event => {
+
+              event.stopPropagation();
+
+              const projectId =
+                button.getAttribute(
+                  'data-project-id'
+                );
+
+              const project =
+                ovpreFindProject(projectId);
+
+              if (project) {
+                openOvpreEvaluation(project);
+              } else {
+                showOvpreMessage(
+                  'The selected project could not be loaded.',
+                  'error'
+                );
+              }
+            }
+          );
+        });
+    }
+
+    /* ============================================================
+       OVPRE FILTER PROJECT LIST
+       ============================================================ */
+
+    function ovpreFilterProjectList() {
+
+      if (!tbody) return;
+
+      const selectedProject =
+        projSelect
+          ? projSelect.value
+          : '';
+
+      const selectedDecision =
+        document.getElementById(
+          'filter-decision'
+        )?.value || '';
+
+      const rows =
+        tbody.querySelectorAll(
+          '.ovpre-project-row'
+        );
+
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+
+        const projectId =
+          row.getAttribute(
+            'data-project-id'
+          );
+
+        const project =
+          ovpreFindProject(projectId);
+
+        if (!project) {
+          row.style.display = 'none';
+          return;
+        }
+
+        const status =
+          ovpreGetProjectEvaluationStatus(
+            project
+          );
+
+        const projectMatch =
+          !selectedProject ||
+          String(projectId) ===
+          String(selectedProject);
+
+        const decisionMatch =
+          !selectedDecision ||
+          String(status) ===
+          String(selectedDecision);
+
+        if (
+          projectMatch &&
+          decisionMatch
+        ) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      if (info) {
+        info.textContent =
+          `Showing ${visibleCount} of ${rows.length} projects for OVPRE evaluation`;
+      }
+    }
+
+    if (projSelect) {
+      projSelect.addEventListener(
+        'change',
+        () => {
+
+          if (currentRole === 'ovpre') {
+            ovpreFilterProjectList();
+          }
+        }
+      );
+    }
+
+    const ovpreDecisionFilter =
+      document.getElementById(
+        'filter-decision'
+      );
+
+    if (ovpreDecisionFilter) {
+      ovpreDecisionFilter.addEventListener(
+        'change',
+        () => {
+
+          if (currentRole === 'ovpre') {
+            ovpreFilterProjectList();
+          }
+        }
+      );
+    }
+
+    /* ============================================================
+       OVPRE APPROVAL ID GENERATOR
+       ============================================================ */
+
+    function generateOvpreApprovalId() {
+
+      const prefix = 'APR';
+
+      const randomPart =
+        Math.floor(
+          Math.random() * 100000
+        )
+        .toString()
+        .padStart(5, '0');
+
+      return prefix + randomPart;
+    }
+
+    /* ============================================================
+       OVPRE SIGNATURE REFERENCE GENERATOR
+       ============================================================ */
+
+    function generateOvpreSignatureReference() {
+
+      const randomPart =
+        Math.floor(
+          Math.random() * 100000
+        )
+        .toString()
+        .padStart(5, '0');
+
+      return `OVPRE-${randomPart}`;
+    }
+
+    /* ============================================================
+       OVPRE APPROVER IDENTIFICATION
+       ============================================================ */
+
+    function getOvpreApproverId() {
+
+      const storedId =
+        localStorage.getItem(
+          'graceUserId'
+        );
+
+      if (storedId) {
+        return storedId;
+      }
+
+      const currentUser =
+        typeof GRACE.getCurrentUser === 'function'
+          ? GRACE.getCurrentUser()
+          : null;
+
+      if (currentUser) {
+
+        return ovpreGetFirstValue(
+          currentUser,
+          [
+            'person_id',
+            'user_id',
+            'id',
+            'personId'
+          ],
+          'OVPRE'
+        );
+      }
+
+      return 'OVPRE';
+    }
+
+    /* ============================================================
+       OVPRE ADD APPROVAL RECORD
+       ============================================================ */
+
+    function ovpreAddApprovalRecord(
+      project,
+      decision,
+      remarks
+    ) {
+
+      if (!project) {
+        return null;
+      }
+
+      const projectId =
+        ovpreGetFirstValue(
+          project,
+          [
+            'project_id',
+            'id',
+            'projectId'
+          ],
+          ''
+        );
+
+      const approvalRecord = {
+        approval_id:
+          generateOvpreApprovalId(),
+
+        project_id:
+          projectId,
+
+        approval_stage:
+          'OVPRE Endorsement',
+
+        decision:
+          decision,
+
+        decision_date:
+          new Date()
+            .toISOString()
+            .split('T')[0],
+
+        approved_by:
+          getOvpreApproverId(),
+
+        signature_reference:
+          generateOvpreSignatureReference(),
+
+        remarks:
+          remarks
+      };
+
+      /*
+       * Add the approval record to the in-memory GRACE
+       * database when GRACE.approvals is available.
+       */
+      if (
+        Array.isArray(
+          GRACE.approvals
+        )
+      ) {
+        GRACE.approvals.push(
+          approvalRecord
+        );
+      }
+
+      return approvalRecord;
+    }
+
+    /* ============================================================
+       OVPRE PROJECT STATUS UPDATE
+       ============================================================ */
+
+    function ovpreUpdateProjectStatus(
+      project,
+      status
+    ) {
+
+      if (!project) return;
+
+      /*
+       * Update the existing project object directly so the
+       * current frontend session immediately reflects the
+       * OVPRE decision.
+       */
+      if (
+        Object.prototype.hasOwnProperty.call(
+          project,
+          'status'
+        )
+      ) {
+        project.status = status;
+      } else {
+        project.status = status;
+      }
+
+      /*
+       * Preserve compatibility with project structures that
+       * use another status property.
+       */
+      if (
+        Object.prototype.hasOwnProperty.call(
+          project,
+          'project_status'
+        )
+      ) {
+        project.project_status =
+          status;
+      }
+
+      if (
+        Object.prototype.hasOwnProperty.call(
+          project,
+          'approval_status'
+        )
+      ) {
+        project.approval_status =
+          status;
+      }
+
+      if (
+        Object.prototype.hasOwnProperty.call(
+          project,
+          'current_status'
+        )
+      ) {
+        project.current_status =
+          status;
+      }
+
+      /*
+       * If GRACE exposes an update method, use it as well.
+       * This is intentionally optional so the page continues
+       * to work with the existing data.js structure.
+       */
+      try {
+
+        if (
+          typeof GRACE.updateProjectStatus ===
+          'function'
+        ) {
+
+          GRACE.updateProjectStatus(
+            ovpreGetFirstValue(
+              project,
+              [
+                'project_id',
+                'id',
+                'projectId'
+              ],
+              ''
+            ),
+            status
+          );
+        }
+
+      } catch (error) {
+
+        console.warn(
+          'OVPRE: Optional GRACE.updateProjectStatus failed.',
+          error
+        );
+      }
+    }
+
+    /* ============================================================
+       OVPRE REFRESH APPROVAL COUNTERS
+       ============================================================ */
+
+    function refreshOvpreCounters() {
+
+      const projects =
+        Array.isArray(GRACE.projects)
+          ? GRACE.projects
+          : [];
+
+      let approvedCount = 0;
+      let pendingCount = 0;
+
+      projects.forEach(project => {
+
+        const status =
+          String(
+            ovpreGetProjectEvaluationStatus(
+              project
+            )
+          ).toLowerCase();
+
+        if (
+          status.includes('approved') ||
+          status.includes('complete')
+        ) {
+          approvedCount++;
+        } else {
+          pendingCount++;
+        }
+      });
+
+      const totalCard =
+        document.getElementById(
+          'card-total'
+        );
+
+      const approvedCard =
+        document.getElementById(
+          'card-approved'
+        );
+
+      const pendingCard =
+        document.getElementById(
+          'card-pending'
+        );
+
+      if (totalCard) {
+        totalCard.textContent =
+          projects.length;
+      }
+
+      if (approvedCard) {
+        approvedCard.textContent =
+          approvedCount;
+      }
+
+      if (pendingCard) {
+        pendingCard.textContent =
+          pendingCount;
+      }
+    }
+
+    /* ============================================================
+       OVPRE SUCCESS / ERROR MESSAGE
+       ============================================================ */
+
+    function showOvpreMessage(
+      message,
+      type = 'info'
+    ) {
+
+      if (
+        typeof showNotification ===
+        'function'
+      ) {
+
+        showNotification(
+          message,
+          type
+        );
+
+        return;
+      }
+
+      alert(message);
+    }
+
+    /* ============================================================
+       OVPRE APPROVE PROJECT
+       ============================================================ */
+
+    function approveOvpreProject() {
+
+      if (!ovpreCurrentProject) {
+        showOvpreMessage(
+          'No project is currently selected.',
+          'error'
+        );
+        return;
+      }
+
+      const project =
+        ovpreCurrentProject;
+
+      const projectTitle =
+        ovpreGetFirstValue(
+          project,
+          [
+            'title',
+            'project_title',
+            'name',
+            'project_name'
+          ],
+          'Selected Project'
+        );
+
+      /*
+       * Record the OVPRE approval stage.
+       */
+      const approvalRecord =
+        ovpreAddApprovalRecord(
+          project,
+          'Approved',
+          'Project approved by OVPRE after detailed project evaluation.'
+        );
+
+      /*
+       * Update the project status.
+       */
+      ovpreUpdateProjectStatus(
+        project,
+        'Approved'
+      );
+
+      /*
+       * Refresh visible OVPRE project data.
+       */
+      refreshOvpreCounters();
+
+      renderOvpreProjectList();
+
+      /*
+       * Close evaluation modal.
+       */
+      closeOvpreEvaluation();
+
+      showOvpreMessage(
+        `${projectTitle} has been approved by OVPRE.`,
+        'success'
+      );
+
+      /*
+       * Keep a console reference for debugging and
+       * development purposes.
+       */
+      console.log(
+        'OVPRE Project Approval Recorded:',
+        approvalRecord
+      );
+    }
+
+    /* ============================================================
+       OVPRE DENY / RETURN INTERFACE
+       ============================================================ */
+
+    function showOvpreDenialForm() {
+
+      if (!ovpreDenialArea) return;
+
+      ovpreDenialArea.classList.add(
+        'visible'
+      );
+
+      if (ovpreConfirmReturnBtn) {
+        ovpreConfirmReturnBtn.classList.add(
+          'visible'
+        );
+      }
+
+      if (ovpreDenyBtn) {
+        ovpreDenyBtn.style.display =
+          'none';
+      }
+
+      if (ovpreApproveBtn) {
+        ovpreApproveBtn.style.display =
+          'none';
+      }
+
+      if (ovpreActionMessage) {
+        ovpreActionMessage.textContent =
+          'A denial reason is required before the project can be returned.';
+      }
+
+      if (ovpreDenialRemarks) {
+        ovpreDenialRemarks.focus();
+      }
+    }
+
+    /* ============================================================
+       OVPRE CONFIRM RETURN
+       ============================================================ */
+
+    function confirmOvpreReturn() {
+
+      if (!ovpreCurrentProject) {
+        showOvpreMessage(
+          'No project is currently selected.',
+          'error'
+        );
+        return;
+      }
+
+      if (!ovpreDenialRemarks) {
+        showOvpreMessage(
+          'The denial remarks field is unavailable.',
+          'error'
+        );
+        return;
+      }
+
+      const remarks =
+        ovpreDenialRemarks.value.trim();
+
+      /*
+       * Mandatory denial remarks.
+       */
+      if (!remarks) {
+
+        ovpreDenialRemarks.focus();
+
+        ovpreDenialRemarks.setCustomValidity(
+          'A reason for denial is required.'
+        );
+
+        if (
+          typeof ovpreDenialRemarks.reportValidity ===
+          'function'
+        ) {
+          ovpreDenialRemarks.reportValidity();
+        }
+
+        showOvpreMessage(
+          'Please provide a reason for denial before returning the project.',
+          'error'
+        );
+
+        return;
+      }
+
+      ovpreDenialRemarks.setCustomValidity('');
+
+      const project =
+        ovpreCurrentProject;
+
+      const projectTitle =
+        ovpreGetFirstValue(
+          project,
+          [
+            'title',
+            'project_title',
+            'name',
+            'project_name'
+          ],
+          'Selected Project'
+        );
+
+      /*
+       * Record a Returned approval decision with the
+       * mandatory remarks.
+       */
+      const approvalRecord =
+        ovpreAddApprovalRecord(
+          project,
+          'Returned',
+          remarks
+        );
+
+      /*
+       * Update project status so the frontend immediately
+       * reflects that the project has been sent back.
+       */
+      ovpreUpdateProjectStatus(
+        project,
+        'Returned'
+      );
+
+      /*
+       * Refresh project list and counters.
+       */
+      refreshOvpreCounters();
+
+      renderOvpreProjectList();
+
+      /*
+       * Close the evaluation modal.
+       */
+      closeOvpreEvaluation();
+
+      showOvpreMessage(
+        `${projectTitle} has been returned with the provided remarks.`,
+        'success'
+      );
+
+      console.log(
+        'OVPRE Project Returned:',
+        approvalRecord
+      );
+    }
+
+    /* ============================================================
+       OVPRE MODAL EVENT LISTENERS
+       ============================================================ */
+
+    if (ovpreEvalCloseBtn) {
+
+      ovpreEvalCloseBtn.addEventListener(
+        'click',
+        () => {
+          closeOvpreEvaluation();
+        }
+      );
+    }
+
+    if (ovpreEvalCancelBtn) {
+
+      ovpreEvalCancelBtn.addEventListener(
+        'click',
+        () => {
+          closeOvpreEvaluation();
+        }
+      );
+    }
+
+    /*
+     * Close OVPRE evaluation modal when clicking
+     * outside the evaluation content.
+     */
+    if (ovpreEvalModal) {
+
+      ovpreEvalModal.addEventListener(
+        'click',
+        event => {
+
+          if (
+            event.target ===
+            ovpreEvalModal
+          ) {
+            closeOvpreEvaluation();
+          }
+        }
+      );
+    }
+
+    /*
+     * Escape key closes the OVPRE evaluation modal.
+     */
+    document.addEventListener(
+      'keydown',
+      event => {
+
+        if (
+          event.key === 'Escape' &&
+          ovpreEvalModal &&
+          ovpreEvalModal.style.display === 'flex'
+        ) {
+          closeOvpreEvaluation();
+        }
+      }
+    );
+
+    if (ovpreApproveBtn) {
+
+      ovpreApproveBtn.addEventListener(
+        'click',
+        () => {
+          approveOvpreProject();
+        }
+      );
+    }
+
+    if (ovpreDenyBtn) {
+
+      ovpreDenyBtn.addEventListener(
+        'click',
+        () => {
+          showOvpreDenialForm();
+        }
+      );
+    }
+
+    if (ovpreConfirmReturnBtn) {
+
+      ovpreConfirmReturnBtn.addEventListener(
+        'click',
+        () => {
+          confirmOvpreReturn();
+        }
+      );
+    }
+
+    /*
+     * Remove any custom validity message when the user
+     * begins typing the denial reason.
+     */
+    if (ovpreDenialRemarks) {
+
+      ovpreDenialRemarks.addEventListener(
+        'input',
+        () => {
+
+          if (
+            ovpreDenialRemarks.value.trim()
+          ) {
+            ovpreDenialRemarks.setCustomValidity('');
+          }
+        }
+      );
+    }
+
+    /* ============================================================
+       OVPRE FILTER VISIBILITY
+       ============================================================ */
+
+    /*
+     * Stage filtering is not required for the project list,
+     * because the OVPRE view is project-centered rather than
+     * approval-record-centered.
+     *
+     * The control remains in the page to preserve the original
+     * interface and can continue to be used by non-OVPRE roles.
+     */
+    const stageFilter =
+      document.getElementById(
+        'filter-stage'
+      );
+
+    if (
+      stageFilter &&
+      currentRole === 'ovpre'
+    ) {
+
+      stageFilter.style.display =
+        'none';
+
+      const stageFilterGroup =
+        stageFilter.closest(
+          '.filter-group'
+        );
+
+      if (stageFilterGroup) {
+
+        const stageFilterLabel =
+          stageFilterGroup.querySelector(
+            '.filter-label'
+          );
+
+        if (stageFilterLabel) {
+          stageFilterLabel.textContent =
+            'Evaluation:';
+        }
+
+        stageFilterGroup.style.display =
+          'none';
+      }
+    }
+
+    /* ============================================================
+       OVPRE RECORD DECISION BUTTON
+       ============================================================ */
+
+    /*
+     * OVPRE has the detailed evaluation hub, so the generic
+     * Record Decision button remains available for compatibility
+     * with the original page, but the main project workflow is
+     * performed through the evaluation modal.
+     */
+    if (recordBtn) {
+
+      recordBtn.title =
+        'Use the project list and detailed evaluation modal for OVPRE project decisions.';
+    }
+
+    /* ============================================================
+       OVPRE INITIAL PROJECT LIST
+       ============================================================ */
+
+    renderOvpreProjectList();
+
+    refreshOvpreCounters();
+
+    /* ============================================================
+       OVPRE PROJECT FILTER RE-INITIALIZATION
+       ============================================================ */
+
+    /*
+     * The project list is generated after the original approval
+     * rows. This ensures the OVPRE-specific table replaces the
+     * standard approval log without removing the original logic.
+     */
+    if (projSelect) {
+
+      projSelect.innerHTML =
+        '<option value="">All Projects</option>';
+
+      const projects =
+        Array.isArray(GRACE.projects)
+          ? GRACE.projects
+          : [];
+
+      projects.forEach(project => {
+
+        const projectId =
+          ovpreGetFirstValue(
+            project,
+            [
+              'project_id',
+              'id',
+              'projectId'
+            ],
+            ''
+          );
+
+        const projectTitle =
+          ovpreGetFirstValue(
+            project,
+            [
+              'title',
+              'project_title',
+              'name',
+              'project_name'
+            ],
+            'Untitled Project'
+          );
+
+        const option =
+          document.createElement(
+            'option'
+          );
+
+        option.value =
+          projectId;
+
+        option.textContent =
+          `${projectId} — ${String(projectTitle).substring(0,40)}...`;
+
+        projSelect.appendChild(
+          option
+        );
+      });
+    }
+
+    /* ============================================================
+       OVPRE TABLE INFORMATION LABEL
+       ============================================================ */
+
+    if (info) {
+      info.textContent =
+        `Showing ${
+          Array.isArray(GRACE.projects)
+            ? GRACE.projects.length
+            : 0
+        } projects for OVPRE evaluation`;
+    }
+
+    /* ============================================================
+       OVPRE DATA ATTRIBUTE
+       ============================================================ */
+
+    document.body.setAttribute(
+      'data-approval-role',
+      'ovpre'
+    );
+
+    document.body.setAttribute(
+      'data-evaluation-mode',
+      'project'
+    );
+  }
+
+  /* ============================================================
+     NON-OVPRE EXISTING FILTER LOGIC
+     ============================================================ */
+
+  /*
+   * Existing standard approval table filtering is intentionally
+   * preserved for Coordinator, Dean, Proponent, and other roles.
+   */
+  const filterProject =
+    document.getElementById(
+      'filter-project'
+    );
+
+  const filterStage =
+    document.getElementById(
+      'filter-stage'
+    );
+
+  const filterDecision =
+    document.getElementById(
+      'filter-decision'
+    );
+
+  if (
+    currentRole !== 'ovpre'
+  ) {
+
+    function applyStandardApprovalFilters() {
+
+      const selectedProject =
+        filterProject
+          ? filterProject.value
+          : '';
+
+      const selectedStage =
+        filterStage
+          ? filterStage.value
+          : '';
+
+      const selectedDecision =
+        filterDecision
+          ? filterDecision.value
+          : '';
+
+      const rows =
+        tbody.querySelectorAll(
+          'tr'
+        );
+
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+
+        const cells =
+          row.querySelectorAll(
+            'td'
+          );
+
+        if (cells.length < 8) {
+          return;
+        }
+
+        const projectText =
+          cells[1]
+            ? cells[1].textContent.trim()
+            : '';
+
+        const stageText =
+          cells[2]
+            ? cells[2].textContent.trim()
+            : '';
+
+        const decisionText =
+          cells[3]
+            ? cells[3].textContent.trim()
+            : '';
+
+        const projectMatch =
+          !selectedProject ||
+          projectText.includes(
+            selectedProject
+          );
+
+        const stageMatch =
+          !selectedStage ||
+          stageText.includes(
+            selectedStage
+          );
+
+        const decisionMatch =
+          !selectedDecision ||
+          decisionText.includes(
+            selectedDecision
+          );
+
+        if (
+          projectMatch &&
+          stageMatch &&
+          decisionMatch
+        ) {
+
+          row.style.display =
+            '';
+
+          visibleCount++;
+
+        } else {
+
+          row.style.display =
+            'none';
+        }
+      });
+
+      if (info) {
+
+        info.textContent =
+          `Showing ${visibleCount} of ${rows.length} approval records`;
+      }
+    }
+
+    if (filterProject) {
+
+      filterProject.addEventListener(
+        'change',
+        applyStandardApprovalFilters
+      );
+    }
+
+    if (filterStage) {
+
+      filterStage.addEventListener(
+        'change',
+        applyStandardApprovalFilters
+      );
+    }
+
+    if (filterDecision) {
+
+      filterDecision.addEventListener(
+        'change',
+        applyStandardApprovalFilters
+      );
+    }
+  }
 });
 </script>
 </body>
 </html>
+```
