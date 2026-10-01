@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="G.R.A.C.E PORTAL - Beneficiary Management (BENEFICIARY entity per ERD 3NF)">
+  <title>Beneficiaries | G.R.A.C.E PORTAL</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <div class="main-content">
+      <header class="topbar" id="topbar"></header>
+
+      <div class="dashboard-content">
+        <div class="page-header">
+          <div>
+            <h2>Beneficiaries</h2>
+            <p class="page-subtitle">Individuals and communities who <strong>receive</strong> extension services — <em>BENEFICIARY entity (3NF, separate from PARTNER)</em></p>
+          </div>
+          <div class="page-header-actions">
+            <a href="partners.html" class="btn btn-sm btn-outline"><i class="fas fa-handshake"></i> View Partners</a>
+            <button class="btn btn-sm btn-outline"><i class="fas fa-download"></i> Export</button>
+            <button class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> Add Beneficiary</button>
+          </div>
+        </div>
+
+        <!-- ERD Note -->
+        <div style="background:rgba(139,26,26,0.05);border:1px solid rgba(139,26,26,0.2);border-radius:8px;padding:0.85rem 1rem;margin-bottom:1.5rem;display:flex;gap:0.75rem;align-items:flex-start;">
+          <i class="fas fa-info-circle" style="color:var(--maroon);margin-top:2px;flex-shrink:0;"></i>
+          <div style="font-size:0.85rem;color:var(--gray-700);">
+            <strong>ERD Note:</strong> <strong>BENEFICIARY</strong> = the <em>individuals or communities receiving</em> the extension service (trainees, residents, staff). Per 3NF normalization, this is separate from <strong>PARTNER</strong> (organizations that collaborate or commission the project). View <a href="partners.html" style="color:var(--maroon);font-weight:600;">Partners →</a>
+          </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="summary-cards">
+          <div class="summary-card card-maroon">
+            <div class="summary-card-info"><h3 id="card-total">6</h3><p>Beneficiary Groups</p><span class="summary-card-trend up"><i class="fas fa-users"></i> registered</span></div>
+            <div class="summary-card-icon"><i class="fas fa-users"></i></div>
+          </div>
+          <div class="summary-card card-gold">
+            <div class="summary-card-info"><h3>2,850</h3><p>Total Individuals</p><span class="summary-card-trend up"><i class="fas fa-arrow-up"></i> across all projects</span></div>
+            <div class="summary-card-icon"><i class="fas fa-user-friends"></i></div>
+          </div>
+          <div class="summary-card card-blue">
+            <div class="summary-card-info"><h3>3</h3><p>Gov't Employee Groups</p><span class="summary-card-trend"><i class="fas fa-id-card"></i> active</span></div>
+            <div class="summary-card-icon"><i class="fas fa-id-badge"></i></div>
+          </div>
+          <div class="summary-card card-green">
+            <div class="summary-card-info"><h3 id="card-links">7</h3><p>Project Links</p><span class="summary-card-trend"><i class="fas fa-link"></i> via junction table</span></div>
+            <div class="summary-card-icon"><i class="fas fa-link"></i></div>
+          </div>
+        </div>
+
+        <!-- Filter -->
+        <div class="filter-bar">
+          <div class="filter-group">
+            <span class="filter-label">Type:</span>
+            <select class="form-select">
+              <option>All Types</option>
+              <option>Government Employees</option>
+              <option>Community Members</option>
+              <option>Students</option>
+            </select>
+          </div>
+          <div class="filter-group" style="margin-left:auto;">
+            <input type="text" class="form-input" style="padding:0.4rem 0.75rem;font-size:0.85rem;" placeholder="Search beneficiaries...">
+          </div>
+        </div>
+
+        <!-- BENEFICIARY Table -->
+        <div class="table-container" style="margin-bottom:2rem;">
+          <div class="table-header">
+            <h4><i class="fas fa-users" style="color:var(--maroon);margin-right:0.5rem;"></i>BENEFICIARY Table</h4>
+            <span style="font-size:0.8rem;color:var(--gray-500);">beneficiary_id · beneficiary_name · beneficiary_type · address · contact_person · contact_no</span>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Beneficiary ID</th>
+                <th>Beneficiary Name / Group</th>
+                <th>Type</th>
+                <th>Address</th>
+                <th>Contact Person</th>
+                <th>Contact No.</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="beneficiaries-tbody"></tbody>
+          </table>
+          <div class="table-footer">
+            <span class="table-info" id="ben-info">Loading...</span>
+          </div>
+        </div>
+
+        <!-- PROJECT_BENEFICIARY Junction Table -->
+        <div class="table-container">
+          <div class="table-header">
+            <h4><i class="fas fa-link" style="color:var(--maroon);margin-right:0.5rem;"></i>PROJECT_BENEFICIARY Junction Table</h4>
+            <span style="font-size:0.8rem;color:var(--gray-500);">project_id · beneficiary_id · participation_role · remarks</span>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Project</th>
+                <th>Beneficiary Group</th>
+                <th>Participation Role</th>
+                <th>Remarks</th>
+              </tr>
+            </thead>
+            <tbody id="projben-tbody"></tbody>
+          </table>
+          <div class="table-footer">
+            <span class="table-info" id="projben-info">Loading...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  if (!window.GRACE) return;
+  const tbody = document.getElementById('beneficiaries-tbody');
+  const info  = document.getElementById('ben-info');
+  const typeColor = {
+    'Government Employees': '#2563eb',
+    'Community Members':    '#15803d',
+    'Students':             '#7c3aed'
+  };
+  GRACE.beneficiaries.forEach(b => {
+    const color = typeColor[b.beneficiary_type] || 'var(--maroon)';
+    tbody.innerHTML += `<tr>
+      <td><code style="font-size:0.78rem;background:var(--gray-100);padding:2px 6px;border-radius:4px;">${b.beneficiary_id}</code></td>
+      <td><strong style="font-size:0.85rem;">${b.beneficiary_name}</strong></td>
+      <td><span class="badge" style="background:${color}18;color:${color};border:1px solid ${color}30;font-size:0.73rem;">${b.beneficiary_type}</span></td>
+      <td style="font-size:0.82rem;color:var(--gray-600);">${b.address}</td>
+      <td style="font-size:0.82rem;">${b.contact_person}</td>
+      <td style="font-size:0.82rem;">${b.contact_no}</td>
+      <td>
+        <button class="btn btn-sm btn-outline" title="Edit"><i class="fas fa-edit"></i></button>
+      </td>
+    </tr>`;
+  });
+  info.textContent = `Showing ${GRACE.beneficiaries.length} beneficiary records`;
+
+  // PROJECT_BENEFICIARY junction
+  const jtbody = document.getElementById('projben-tbody');
+  const jinfo  = document.getElementById('projben-info');
+  GRACE.projectBeneficiaries.forEach(pb => {
+    const proj = GRACE.getProjectById(pb.project_id);
+    const ben  = GRACE.getBeneficiaryById(pb.beneficiary_id);
+    jtbody.innerHTML += `<tr>
+      <td>
+        <div style="font-weight:600;font-size:0.82rem;">${pb.project_id}</div>
+        <div style="font-size:0.76rem;color:var(--gray-500);">${proj ? proj.title.substring(0,45)+'...' : ''}</div>
+      </td>
+      <td style="font-size:0.83rem;font-weight:500;">${ben ? ben.beneficiary_name : pb.beneficiary_id}</td>
+      <td><span class="badge badge-review" style="font-size:0.75rem;">${pb.participation_role}</span></td>
+      <td style="font-size:0.8rem;color:var(--gray-600);">${pb.remarks}</td>
+    </tr>`;
+  });
+  document.getElementById('card-total').textContent = GRACE.beneficiaries.length;
+  document.getElementById('card-links').textContent  = GRACE.projectBeneficiaries.length;
+  jinfo.textContent = `Showing ${GRACE.projectBeneficiaries.length} project-beneficiary links`;
+});
+</script>
+
+</body>
+</html>

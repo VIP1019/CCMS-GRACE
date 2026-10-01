@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Activity and Implementation Input Form — CCMS G.R.A.C.E. Portal">
+  <title>Activity &amp; Implementation | G.R.A.C.E. Portal</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .act-form-wrap { max-width: 960px; margin: 0 auto; }
+
+    .act-header-row {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem;
+    }
+    .act-title-block h3 { font-size: 1.3rem; font-weight: 800; color: #111827; font-family: 'Poppins', sans-serif; margin: 0; }
+    .act-title-block .act-form-code { font-size: 0.72rem; color: #6B7280; margin-top: 0.2rem; }
+    .act-title-block .act-form-sub { font-size: 0.8rem; color: #6B7280; margin-top: 0.15rem; }
+
+    .act-stepper {
+      display: flex; align-items: center; background: white;
+      border: 1px solid #E5E7EB; border-radius: 8px;
+      padding: 0.4rem 1rem; margin-bottom: 1.25rem; gap: 0; overflow-x: auto;
+    }
+    .astep {
+      display: flex; align-items: center; gap: 0.4rem;
+      padding: 0.4rem 0.85rem; border-bottom: 2px solid transparent;
+      font-size: 0.78rem; font-weight: 500; color: #9CA3AF; cursor: default;
+    }
+    .astep.done { color: #059669; border-bottom-color: #059669; }
+    .astep.active { color: #8B1A1A; border-bottom-color: #8B1A1A; font-weight: 700; }
+    .astep.upcoming { color: #9CA3AF; }
+    .asn {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: #E5E7EB; color: #6B7280;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.68rem; font-weight: 700;
+    }
+    .astep.done .asn { background: #059669; color: white; }
+    .astep.active .asn { background: #8B1A1A; color: white; }
+    .astep-sep { color: #D1D5DB; font-size: 0.75rem; padding: 0 0.1rem; }
+
+    /* Form sections (reuse from project-form styles) */
+    .form-section {
+      background: white; border: 1px solid #E5E7EB;
+      border-radius: 10px; margin-bottom: 1rem; overflow: hidden;
+    }
+    .form-section-head {
+      padding: 0.85rem 1.25rem; border-bottom: 1px solid #F3F4F6;
+      display: flex; align-items: flex-start; justify-content: space-between;
+    }
+    .fsh-left { display: flex; flex-direction: column; gap: 0.15rem; }
+    .fsh-title {
+      display: flex; align-items: center; gap: 0.45rem;
+      font-size: 0.75rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.08em; color: #8B1A1A;
+    }
+    .fsh-title::before { content:''; width:7px; height:7px; background:#8B1A1A; border-radius:50%; flex-shrink:0; }
+    .fsh-desc { font-size: 0.75rem; color: #6B7280; padding-left: 1.1rem; }
+    .fsh-entity { font-size: 0.7rem; color: #9CA3AF; font-style: italic; }
+    .form-section-body { padding: 1.25rem; }
+
+    .fg2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .fg3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+    .fg4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.85rem; }
+    .fg-full { grid-column: 1 / -1; }
+    .fgroup { display: flex; flex-direction: column; gap: 0.35rem; }
+    .flabel { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #374151; }
+    .flabel .req { color: #DC2626; }
+    .finput, .fselect, .ftextarea {
+      width: 100%; padding: 0.6rem 0.85rem;
+      border: 1.5px solid #D1D5DB; border-radius: 7px;
+      font-size: 0.86rem; color: #1F2937; font-family: 'Inter', sans-serif;
+      background: white; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .finput:focus, .fselect:focus, .ftextarea:focus {
+      outline: none; border-color: #8B1A1A;
+      box-shadow: 0 0 0 3px rgba(139,26,26,0.1);
+    }
+    .finput.locked { background: #F9FAFB; color: #6B7280; }
+    .ftextarea { resize: vertical; min-height: 85px; line-height: 1.6; }
+    .fhint { font-size: 0.7rem; color: #9CA3AF; }
+    .fchar-count { font-size: 0.7rem; color: #9CA3AF; text-align: right; }
+
+    /* Date input with icon */
+    .date-field-wrap { position: relative; }
+    .date-field-wrap .date-icon { position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); color: #9CA3AF; font-size: 0.82rem; }
+    .date-field-wrap .finput { padding-left: 2.3rem; }
+
+    /* Project info row */
+    .proj-info-pill {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: #F3F4F6; border: 1px solid #E5E7EB;
+      border-radius: 6px; padding: 0.5rem 0.85rem;
+      font-size: 0.82rem; font-weight: 500; color: #374151;
+    }
+    .proj-status-ongoing {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      background: rgba(139,26,26,0.08); color: #8B1A1A;
+      border: 1px solid rgba(139,26,26,0.15);
+      border-radius: 20px; padding: 0.25rem 0.75rem;
+      font-size: 0.72rem; font-weight: 700;
+    }
+    .proj-status-ongoing::before { content: '●'; font-size: 0.55rem; }
+
+    /* Participants Table */
+    .ptable-wrap { border: 1px solid #E5E7EB; border-radius: 8px; overflow: hidden; }
+    .ptable-head { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; background: #F9FAFB; border-bottom: 1px solid #E5E7EB; }
+    .ptable-head .pt-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #374151; }
+    .ptable-head .pt-count { font-size: 0.72rem; background: #ECFDF5; color: #059669; border: 1px solid #A7F3D0; border-radius: 12px; padding: 0.15rem 0.6rem; font-weight: 600; }
+    .btn-add-part {
+      padding: 0.45rem 0.9rem;
+      background: none; border: 1.5px solid #8B1A1A;
+      color: #8B1A1A; border-radius: 6px;
+      font-size: 0.78rem; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; gap: 0.35rem;
+    }
+    .btn-add-part:hover { background: rgba(139,26,26,0.06); }
+    .ptable { width: 100%; border-collapse: collapse; }
+    .ptable th {
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; color: #6B7280;
+      padding: 0.7rem 1rem; background: #F9FAFB; text-align: left;
+      border-bottom: 1px solid #E5E7EB;
+    }
+    .ptable td { padding: 0.75rem 1rem; font-size: 0.83rem; color: #374151; border-bottom: 1px solid #F3F4F6; }
+    .ptable tr:last-child td { border-bottom: none; }
+    .part-avatar {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 0.68rem; font-weight: 700; color: white;
+      margin-right: 0.5rem;
+    }
+    .att-present {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      background: rgba(5,150,105,0.1); color: #059669;
+      border: 1px solid rgba(5,150,105,0.2); border-radius: 12px;
+      padding: 0.2rem 0.65rem; font-size: 0.72rem; font-weight: 700;
+    }
+    .att-present::before { content: '●'; font-size: 0.5rem; }
+    .att-absent {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      background: rgba(239,68,68,0.1); color: #DC2626;
+      border: 1px solid rgba(239,68,68,0.2); border-radius: 12px;
+      padding: 0.2rem 0.65rem; font-size: 0.72rem; font-weight: 700;
+    }
+    .att-absent::before { content: '●'; font-size: 0.5rem; }
+    .tbl-action-btn { font-size: 0.76rem; font-weight: 600; color: #8B1A1A; background: none; border: none; cursor: pointer; padding: 0.1rem 0.3rem; }
+    .tbl-action-rm { font-size: 0.76rem; font-weight: 600; color: #DC2626; background: none; border: none; cursor: pointer; padding: 0.1rem 0.3rem; }
+
+    /* Implementation Summary */
+    .impl-summary {
+      background: #F9FAFB; border: 1px solid #E5E7EB;
+      border-radius: 8px; padding: 1rem; margin-top: 0;
+    }
+    .impl-sum-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 0.75rem; }
+    .impl-sum-item { display: flex; flex-direction: column; gap: 0.1rem; }
+    .impl-sum-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #6B7280; }
+    .impl-sum-val { font-size: 0.86rem; font-weight: 600; color: #111827; }
+    .impl-note {
+      font-size: 0.72rem; color: #6B7280;
+      background: #F3F4F6; border-radius: 6px; padding: 0.5rem 0.75rem;
+      margin-top: 0.75rem; line-height: 1.6;
+    }
+
+    /* Footer */
+    .form-footer-bar {
+      position: sticky; bottom: 0;
+      background: white; border-top: 1px solid #E5E7EB;
+      padding: 0.85rem 1.25rem;
+      display: flex; align-items: center; justify-content: space-between;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
+    }
+    .ffbar-left { font-size: 0.72rem; color: #9CA3AF; display: flex; flex-direction: column; gap: 0.1rem; }
+    .ffbar-left strong { color: #374151; }
+    .ffbar-actions { display: flex; gap: 0.6rem; }
+    .btn-cancel { padding: 0.55rem 1.1rem; background: none; border: 1.5px solid #D1D5DB; border-radius: 7px; font-size: 0.84rem; font-weight: 600; color: #6B7280; cursor: pointer; }
+    .btn-draft { padding: 0.55rem 1.1rem; background: none; border: 1.5px solid #D1D5DB; border-radius: 7px; font-size: 0.84rem; font-weight: 600; color: #374151; cursor: pointer; }
+    .btn-save-act { padding: 0.55rem 1.4rem; background: linear-gradient(135deg, #8B1A1A, #6B0000); color: white; border: none; border-radius: 7px; font-size: 0.86rem; font-weight: 700; cursor: pointer; font-family: 'Poppins', sans-serif; }
+
+    .breadcrumb { display: flex; align-items: center; gap: 0.35rem; font-size: 0.78rem; color: #9CA3AF; margin-bottom: 1rem; }
+    .breadcrumb a { color: #8B1A1A; text-decoration: none; font-weight: 500; }
+    .breadcrumb .sep { color: #D1D5DB; }
+    .breadcrumb .current { color: #374151; font-weight: 600; }
+  </style>
+</head>
+<body>
+<div class="dashboard-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-content">
+    <header class="topbar" id="topbar"></header>
+    <div class="dashboard-content">
+      <div class="act-form-wrap">
+
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+          <a href="dashboard.html">Dashboard</a>
+          <span class="sep">/</span>
+          <a href="activities.html">Activities</a>
+          <span class="sep">/</span>
+          <span class="current">Activity &amp; Implementation</span>
+        </div>
+
+        <!-- Header Row -->
+        <div class="act-header-row">
+          <div class="act-title-block">
+            <h3>Activity and Implementation <span style="font-size:0.78rem;color:#6B7280;font-weight:500;">Form UCN-CCMS-ACT-028</span></h3>
+            <div class="act-form-sub">Record and monitor project activities, schedules, venues, participants, and implementation status.</div>
+          </div>
+          <div style="text-align:right;font-size:0.75rem;color:#6B7280;">
+            <div style="font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:0.06em;font-size:0.68rem;">DB ENTITY: ACTIVITY &amp; ACTIVITY_PARTICIPANT</div>
+            <div style="margin-top:0.2rem;">Activity Node: <strong>Daet Main Campus</strong></div>
+          </div>
+        </div>
+
+        <!-- Stepper -->
+        <div class="act-stepper">
+          <div class="astep done"><div class="asn"><i class="fas fa-check" style="font-size:0.6rem;"></i></div> Project Context</div>
+          <span class="astep-sep">›</span>
+          <div class="astep active"><div class="asn">2</div> Activity Details</div>
+          <span class="astep-sep">›</span>
+          <div class="astep upcoming"><div class="asn">3</div> Participants &amp; Attendance</div>
+          <span class="astep-sep">›</span>
+          <div class="astep upcoming"><div class="asn">4</div> Review &amp; Finalize</div>
+        </div>
+
+        <!-- Section 1: Project Information -->
+        <div class="form-section">
+          <div class="form-section-head">
+            <div class="fsh-left">
+              <div class="fsh-title">Project Information</div>
+            </div>
+            <div class="fsh-entity">Associated Extension Project Record</div>
+          </div>
+          <div class="form-section-body">
+            <div class="fg3">
+              <div class="fgroup fg-full">
+                <label class="flabel">Project Name <span class="req">*</span></label>
+                <select class="fselect">
+                  <option selected>Community Health Outreach — EXT-2026-001</option>
+                  <option>Basud Municipal Library System — EXT-2026-045</option>
+                  <option>ICT Skills Training — EXT-2026-048</option>
+                </select>
+              </div>
+            </div>
+            <div class="fg3" style="margin-top:0.85rem;">
+              <div class="fgroup">
+                <label class="flabel">Project Status</label>
+                <div style="padding:0.5rem 0;"><span class="proj-status-ongoing">ONGOING</span></div>
+              </div>
+              <div class="fgroup">
+                <label class="flabel">Project Leader / Proponent</label>
+                <div style="font-size:0.85rem;color:#374151;padding:0.5rem 0;font-weight:600;">Dr. Mary Grace Bolos <span style="font-size:0.72rem;color:#9CA3AF;font-weight:400;">(Proponent)</span></div>
+              </div>
+              <div class="fgroup">
+                <label class="flabel">Extension Term Cycle</label>
+                <div style="font-size:0.82rem;color:#6B7280;padding:0.5rem 0;">Extension Term Cycle A</div>
+              </div>
+            </div>
+            <div style="margin-top:0.85rem;padding:0.65rem 0.9rem;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:7px;font-size:0.78rem;color:#065F46;display:flex;align-items:center;gap:0.5rem;">
+              <i class="fas fa-calendar-check" style="color:#059669;"></i>
+              <span>Approved Project Schedule Duration: <strong>September 20, 2026 — December 15, 2026</strong></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Activity Details -->
+        <div class="form-section">
+          <div class="form-section-head">
+            <div class="fsh-left">
+              <div class="fsh-title">Activity Details</div>
+              <div class="fsh-desc">Core activity classification and descriptive specifications</div>
+            </div>
+            <div class="fsh-entity">Entity: ACTIVITY</div>
+          </div>
+          <div class="form-section-body">
+            <div class="fg2" style="margin-bottom:1rem;">
+              <div class="fgroup">
+                <label class="flabel">Activity Name <span class="req">*</span></label>
+                <input class="finput" type="text" value="Community Health Training">
+              </div>
+              <div class="fgroup">
+                <label class="flabel">Activity Type <span class="req">*</span></label>
+                <select class="fselect">
+                  <option selected>Training</option>
+                  <option>Workshop</option>
+                  <option>Seminar</option>
+                  <option>Assessment</option>
+                  <option>Consultancy</option>
+                  <option>Testing</option>
+                  <option>Meeting</option>
+                </select>
+              </div>
+            </div>
+            <div class="fgroup">
+              <label class="flabel">Activity Description <span class="req">*</span></label>
+              <div style="display:flex;justify-content:flex-end;"><span class="fchar-count" style="margin-bottom:0.2rem;">248 / 500 characters</span></div>
+              <textarea class="ftextarea" rows="3">Community training session focused on health awareness, basic sanitation protocols, preventive community healthcare practices, and emergency first-aid response for barangay health workers.</textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3: Schedule and Venue -->
+        <div class="form-section">
+          <div class="form-section-head">
+            <div class="fsh-left">
+              <div class="fsh-title">Schedule and Venue</div>
+              <div class="fsh-desc">Implementation timeline, facility reservation, and operational status</div>
+            </div>
+            <div style="font-size:0.72rem;background:#F3F4F6;border:1px solid #E5E7EB;border-radius:6px;padding:0.25rem 0.65rem;color:#6B7280;font-weight:500;">Single Day Session</div>
+          </div>
+          <div class="form-section-body">
+            <div class="fg4">
+              <div class="fgroup">
+                <label class="flabel">Schedule Start <span class="req">*</span></label>
+                <div class="date-field-wrap">
+                  <i class="fas fa-clock date-icon"></i>
+                  <input class="finput" type="text" value="September 24, 2026 — 08:00 AM">
+                </div>
+              </div>
+              <div class="fgroup">
+                <label class="flabel">Schedule End <span class="req">*</span></label>
+                <div class="date-field-wrap">
+                  <i class="fas fa-clock date-icon"></i>
+                  <input class="finput" type="text" value="September 24, 2026 — 04:00 PM">
+                </div>
+              </div>
+              <div class="fgroup">
+                <label class="flabel">Venue <span class="req">*</span></label>
+                <div class="date-field-wrap">
+                  <i class="fas fa-building date-icon"></i>
+                  <input class="finput" type="text" value="CCMS Extension Training Room">
+                </div>
+              </div>
+              <div class="fgroup">
+                <label class="flabel">Activity Status <span class="req">*</span></label>
+                <select class="fselect">
+                  <option>Ongoing</option>
+                  <option selected>Scheduled</option>
+                  <option>Completed</option>
+                  <option>Cancelled</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 4: Participants & Attendance -->
+        <div class="form-section">
+          <div class="form-section-head">
+            <div class="fsh-left">
+              <div class="fsh-title">Participants and Attendance</div>
+            </div>
+            <button class="btn-add-part"><i class="fas fa-plus"></i> Add Participant</button>
+          </div>
+          <div class="form-section-body" style="padding:0;">
+            <div class="ptable-head">
+              <div style="display:flex;align-items:center;gap:0.75rem;">
+                <span class="pt-title">Participant Name</span>
+                <span class="pt-count">3 participants recorded</span>
+              </div>
+            </div>
+            <table class="ptable">
+              <thead>
+                <tr>
+                  <th>Participant Name</th>
+                  <th>Affiliation / Organization</th>
+                  <th>Contact No.</th>
+                  <th>Attendance Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="part-avatar" style="background:linear-gradient(135deg,#8B1A1A,#DAA520);">MS</span><strong>Maria Santos</strong></td>
+                  <td style="font-size:0.8rem;color:#6B7280;">Community Partner</td>
+                  <td style="font-size:0.8rem;">0917 844 2811</td>
+                  <td><span class="att-present">PRESENT</span></td>
+                  <td><button class="tbl-action-btn">Edit</button> <button class="tbl-action-rm">Remove</button></td>
+                </tr>
+                <tr>
+                  <td><span class="part-avatar" style="background:linear-gradient(135deg,#1D4ED8,#7C3AED);">JD</span><strong>Juan Dela Cruz</strong></td>
+                  <td style="font-size:0.8rem;color:#6B7280;">CCMS Student Leader</td>
+                  <td style="font-size:0.8rem;">0933 512 4498</td>
+                  <td><span class="att-present">PRESENT</span></td>
+                  <td><button class="tbl-action-btn">Edit</button> <button class="tbl-action-rm">Remove</button></td>
+                </tr>
+                <tr>
+                  <td><span class="part-avatar" style="background:linear-gradient(135deg,#DC2626,#F59E0B);">AR</span><strong>Ana Reyes</strong></td>
+                  <td style="font-size:0.8rem;color:#6B7280;">Partner Organization (PRO Daet)</td>
+                  <td style="font-size:0.8rem;">0906 711 6830</td>
+                  <td><span class="att-absent">ABSENT</span></td>
+                  <td><button class="tbl-action-btn">Edit</button> <button class="tbl-action-rm">Remove</button></td>
+                </tr>
+              </tbody>
+            </table>
+            <div style="padding:0.65rem 1rem;font-size:0.72rem;color:#6B7280;background:#F9FAFB;border-top:1px solid #F3F4F6;">
+              ERD Note: Each participant is linked to ACTIVITY via <strong>ACTIVITY_PARTICIPANT</strong> (PK: activity_participant_id).
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 5: Implementation Summary -->
+        <div class="form-section">
+          <div class="form-section-head">
+            <div class="fsh-left">
+              <div class="fsh-title">Implementation Summary</div>
+            </div>
+          </div>
+          <div class="form-section-body">
+            <div class="impl-sum-grid">
+              <div class="impl-sum-item">
+                <div class="impl-sum-label">Activity Status</div>
+                <div class="impl-sum-val"><span class="proj-status-ongoing">Scheduled (Verified)</span></div>
+              </div>
+              <div class="impl-sum-item">
+                <div class="impl-sum-label">Total Participants</div>
+                <div class="impl-sum-val">3 Registered</div>
+              </div>
+              <div class="impl-sum-item">
+                <div class="impl-sum-label">Attendance Rate</div>
+                <div class="impl-sum-val">2 Present; 1 Absent <span style="color:#059669;font-size:0.82rem;font-weight:600;">(66.7%)</span></div>
+              </div>
+              <div class="impl-sum-item">
+                <div class="impl-sum-label">Record Timestamp</div>
+                <div class="impl-sum-val" style="font-size:0.82rem;">Sep 16, 2026 • 10:45 AM</div>
+              </div>
+            </div>
+            <div class="impl-note">
+              <strong>Schedule:</strong> Schedule verified within approved Project Duration (Sep 20 — Dec 15, 2026). Venue facility reservations confirmed.
+              &nbsp;&nbsp;&nbsp;
+              <strong>Note:</strong> Activity record saved to draft. Ready to coordinate and review.
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="form-footer-bar">
+          <div class="ffbar-left">
+            <strong>UCN-CCMS-ACT-028</strong>
+            <span>Form: Activity and Implementation Record</span>
+          </div>
+          <div class="ffbar-actions">
+            <button class="btn-cancel" onclick="window.location.href='activities.html'">Cancel</button>
+            <button class="btn-draft"><i class="fas fa-save"></i> Save Draft</button>
+            <button class="btn-save-act" onclick="alert('Activity record saved successfully!')">Save Activity Record →</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

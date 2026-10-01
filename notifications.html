@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="G.R.A.C.E PORTAL - Notification Center">
+  <title>Notifications | G.R.A.C.E PORTAL</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <div class="main-content">
+      <header class="topbar" id="topbar"></header>
+
+      <div class="dashboard-content">
+        <div class="page-header">
+          <div><h2>Notification Center</h2><p class="page-subtitle">Project updates, approval status changes, deadline reminders, and system alerts</p></div>
+          <div class="page-header-actions">
+            <button class="btn btn-sm btn-outline"><i class="fas fa-check-double"></i> Mark All Read</button>
+          </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="filter-bar">
+          <div class="filter-group">
+            <span class="filter-label">Filter:</span>
+            <select class="form-select">
+              <option>All Notifications</option>
+              <option>Unread Only</option>
+              <option>Approval Updates</option>
+              <option>Funding</option>
+              <option>Deadlines</option>
+              <option>Documents</option>
+              <option>Submissions</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Notifications List -->
+        <div class="notif-list">
+          <!-- Unread -->
+          <div class="notif-item unread">
+            <div class="notif-icon-wrap" style="background: rgba(139,26,26,0.08);">
+              <i class="fas fa-tasks" style="color: var(--maroon);"></i>
+            </div>
+            <div class="notif-body">
+              <h5>Project EXT-2026-048 progress updated</h5>
+              <p>Progress updated to 65% — Module 3: JavaScript Basics is now in progress</p>
+              <div class="notif-meta">
+                <span class="notif-time"><i class="fas fa-clock"></i> 2 hours ago</span>
+                <span class="notif-badge"><span class="badge badge-progress"><span class="badge-dot"></span>Progress</span></span>
+              </div>
+            </div>
+            <div class="notif-dot-indicator"></div>
+          </div>
+
+          <div class="notif-item unread">
+            <div class="notif-icon-wrap" style="background: rgba(218,165,32,0.08);">
+              <i class="fas fa-coins" style="color: var(--gold);"></i>
+            </div>
+            <div class="notif-body">
+              <h5>Funding verified for EXT-2026-041</h5>
+              <p>Institutional funding confirmed — ₱35,000 for ICT Consultancy Services for DOST CamNorte</p>
+              <div class="notif-meta">
+                <span class="notif-time"><i class="fas fa-clock"></i> 5 hours ago</span>
+                <span class="notif-badge"><span class="badge badge-approved"><span class="badge-dot"></span>Funding</span></span>
+              </div>
+            </div>
+            <div class="notif-dot-indicator"></div>
+          </div>
+
+          <!-- Read -->
+          <div class="notif-item">
+            <div class="notif-icon-wrap" style="background: rgba(16,185,129,0.08);">
+              <i class="fas fa-check-circle" style="color: var(--status-completed);"></i>
+            </div>
+            <div class="notif-body">
+              <h5>EXT-2026-038 marked complete</h5>
+              <p>Digital Literacy Program for Brgy. Lag-on — Final report submitted and approved</p>
+              <div class="notif-meta">
+                <span class="notif-time"><i class="fas fa-clock"></i> 1 day ago</span>
+                <span class="notif-badge"><span class="badge badge-completed"><span class="badge-dot"></span>Completed</span></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="notif-item">
+            <div class="notif-icon-wrap" style="background: rgba(59,130,246,0.08);">
+              <i class="fas fa-file-alt" style="color: var(--status-review);"></i>
+            </div>
+            <div class="notif-body">
+              <h5>New proposal submitted</h5>
+              <p>Data Analytics Workshop for CamNorte Provincial Office — awaiting eligibility check</p>
+              <div class="notif-meta">
+                <span class="notif-time"><i class="fas fa-clock"></i> 2 days ago</span>
+                <span class="notif-badge"><span class="badge badge-review"><span class="badge-dot"></span>Submission</span></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="notif-item">
+            <div class="notif-icon-wrap" style="background: rgba(245,158,11,0.08);">
+              <i class="fas fa-calendar-alt" style="color: var(--status-pending);"></i>
+            </div>
+            <div class="notif-body">
+              <h5>Upcoming deadline: Module 3 completion</h5>
+              <p>EXT-2026-048 — Module 3: JavaScript Basics ends Sep 25. Ensure materials and assessments are ready.</p>
+              <div class="notif-meta">
+                <span class="notif-time"><i class="fas fa-clock"></i> 3 days ago</span>
+                <span class="notif-badge"><span class="badge badge-pending"><span class="badge-dot"></span>Deadline</span></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="notif-item">
+            <div class="notif-icon-wrap" style="background: rgba(99,102,241,0.08);">
+              <i class="fas fa-upload" style="color: var(--status-progress);"></i>
+            </div>
+            <div class="notif-body">
+              <h5>Attendance record uploaded</h5>
+              <p>Module 2 attendance records uploaded for EXT-2026-048 — Web Development Training</p>
+              <div class="notif-meta">
+                <span class="notif-time"><i class="fas fa-clock"></i> 5 days ago</span>
+                <span class="notif-badge"><span class="badge" style="background: rgba(99,102,241,0.1); color: #6366F1;"><span class="badge-dot" style="background: #6366F1;"></span>Document</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

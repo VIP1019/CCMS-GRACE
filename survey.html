@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="G.R.A.C.E PORTAL - Client Satisfaction Survey Management">
+  <title>Client Satisfaction | G.R.A.C.E PORTAL</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <div class="main-content">
+      <header class="topbar" id="topbar"></header>
+
+      <div class="dashboard-content">
+        <div class="page-header">
+          <div><h2>Client Satisfaction Surveys</h2><p class="page-subtitle">Manage and analyze beneficiary feedback on extension project effectiveness</p></div>
+          <div class="page-header-actions">
+            <button class="btn btn-sm btn-outline"><i class="fas fa-download"></i> Export</button>
+            <button class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> New Survey</button>
+          </div>
+        </div>
+
+        <!-- Overall Ratings -->
+        <div class="summary-cards">
+          <div class="summary-card card-gold">
+            <div class="summary-card-info"><h3>4.7</h3><p>Overall Average</p><span class="summary-card-trend up"><i class="fas fa-star"></i> out of 5.0</span></div>
+            <div class="summary-card-icon"><i class="fas fa-star"></i></div>
+          </div>
+          <div class="summary-card card-maroon">
+            <div class="summary-card-info"><h3>48</h3><p>Total Responses</p><span class="summary-card-trend up"><i class="fas fa-arrow-up"></i> 96% rate</span></div>
+            <div class="summary-card-icon"><i class="fas fa-poll"></i></div>
+          </div>
+          <div class="summary-card card-green">
+            <div class="summary-card-info"><h3>4.9</h3><p>Recommendation</p><span class="summary-card-trend up"><i class="fas fa-thumbs-up"></i> highest</span></div>
+            <div class="summary-card-icon"><i class="fas fa-thumbs-up"></i></div>
+          </div>
+          <div class="summary-card card-blue">
+            <div class="summary-card-info"><h3>1</h3><p>Surveys Conducted</p><span class="summary-card-trend"><i class="fas fa-clipboard-check"></i> completed</span></div>
+            <div class="summary-card-icon"><i class="fas fa-clipboard-list"></i></div>
+          </div>
+        </div>
+
+        <!-- Survey Detail Card -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+          <div class="card-body">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+              <div>
+                <h3 style="margin-bottom: 0.3rem;">Client Satisfaction Survey — Digital Literacy Program</h3>
+                <p class="text-small text-muted">EXT-2026-038 • Jun 20, 2026 • 48 of 50 respondents (96%)</p>
+              </div>
+              <div style="display: flex; gap: 0.5rem;">
+                <button class="btn btn-sm btn-outline"><i class="fas fa-print"></i> Print</button>
+                <button class="btn btn-sm btn-outline"><i class="fas fa-download"></i> Export PDF</button>
+              </div>
+            </div>
+
+            <!-- Survey Criteria Ratings -->
+            <h4 style="margin-bottom: 1rem;"><i class="fas fa-chart-bar" style="color: var(--maroon); margin-right: 0.5rem;"></i>Survey Results by Criteria</h4>
+            <div class="survey-criteria-grid">
+              <div class="survey-criteria-card">
+                <div class="criteria-header">
+                  <div class="criteria-icon" style="background: rgba(139,26,26,0.08);"><i class="fas fa-bullseye" style="color: var(--maroon);"></i></div>
+                  <div>
+                    <h5>Relevance & Usefulness</h5>
+                    <p class="text-xs text-muted">How relevant and useful was the project to the beneficiaries?</p>
+                  </div>
+                </div>
+                <div class="criteria-rating">
+                  <span class="rating-value" style="color: var(--gold-dark);">4.7</span>
+                  <div class="rating-stars">★★★★★</div>
+                </div>
+                <div class="progress-bar" style="height: 6px;"><div class="progress-bar-fill" style="width: 94%; background: var(--gold);"></div></div>
+              </div>
+
+              <div class="survey-criteria-card">
+                <div class="criteria-header">
+                  <div class="criteria-icon" style="background: rgba(218,165,32,0.08);"><i class="fas fa-award" style="color: var(--gold-dark);"></i></div>
+                  <div>
+                    <h5>Quality of Implementation</h5>
+                    <p class="text-xs text-muted">How would you rate the quality of the project implementation?</p>
+                  </div>
+                </div>
+                <div class="criteria-rating">
+                  <span class="rating-value" style="color: var(--gold-dark);">4.5</span>
+                  <div class="rating-stars">★★★★★</div>
+                </div>
+                <div class="progress-bar" style="height: 6px;"><div class="progress-bar-fill" style="width: 90%; background: var(--gold);"></div></div>
+              </div>
+
+              <div class="survey-criteria-card">
+                <div class="criteria-header">
+                  <div class="criteria-icon" style="background: rgba(16,185,129,0.08);"><i class="fas fa-seedling" style="color: #059669;"></i></div>
+                  <div>
+                    <h5>Benefits & Impact</h5>
+                    <p class="text-xs text-muted">How beneficial was the project to you and your community?</p>
+                  </div>
+                </div>
+                <div class="criteria-rating">
+                  <span class="rating-value" style="color: var(--gold-dark);">4.6</span>
+                  <div class="rating-stars">★★★★★</div>
+                </div>
+                <div class="progress-bar" style="height: 6px;"><div class="progress-bar-fill" style="width: 92%; background: var(--status-completed);"></div></div>
+              </div>
+
+              <div class="survey-criteria-card">
+                <div class="criteria-header">
+                  <div class="criteria-icon" style="background: rgba(59,130,246,0.08);"><i class="fas fa-smile" style="color: #2563EB;"></i></div>
+                  <div>
+                    <h5>Overall Satisfaction</h5>
+                    <p class="text-xs text-muted">How satisfied are you with the overall project experience?</p>
+                  </div>
+                </div>
+                <div class="criteria-rating">
+                  <span class="rating-value" style="color: var(--gold-dark);">4.8</span>
+                  <div class="rating-stars">★★★★★</div>
+                </div>
+                <div class="progress-bar" style="height: 6px;"><div class="progress-bar-fill" style="width: 96%; background: var(--status-completed);"></div></div>
+              </div>
+
+              <div class="survey-criteria-card" style="grid-column: 1 / -1;">
+                <div class="criteria-header">
+                  <div class="criteria-icon" style="background: rgba(245,158,11,0.08);"><i class="fas fa-share-alt" style="color: #D97706;"></i></div>
+                  <div>
+                    <h5>Willingness to Recommend</h5>
+                    <p class="text-xs text-muted">Would you recommend this extension program to others?</p>
+                  </div>
+                </div>
+                <div class="criteria-rating">
+                  <span class="rating-value" style="color: var(--gold-dark);">4.9</span>
+                  <div class="rating-stars">★★★★★</div>
+                </div>
+                <div class="progress-bar" style="height: 6px;"><div class="progress-bar-fill" style="width: 98%; background: var(--gold);"></div></div>
+              </div>
+            </div>
+
+            <!-- Comments -->
+            <h4 style="margin: 1.5rem 0 1rem;"><i class="fas fa-comments" style="color: var(--gold); margin-right: 0.5rem;"></i>Beneficiary Feedback</h4>
+            <div class="feedback-list">
+              <div class="feedback-item">
+                <div class="feedback-avatar"><i class="fas fa-user"></i></div>
+                <div class="feedback-content">
+                  <p>"Very helpful program, learned a lot about internet safety."</p>
+                  <span class="text-xs text-muted">Respondent #12 • Jun 20, 2026</span>
+                </div>
+                <div class="feedback-rating"><i class="fas fa-star" style="color: var(--gold);"></i> 5.0</div>
+              </div>
+              <div class="feedback-item">
+                <div class="feedback-avatar"><i class="fas fa-user"></i></div>
+                <div class="feedback-content">
+                  <p>"The trainers were patient and knowledgeable."</p>
+                  <span class="text-xs text-muted">Respondent #23 • Jun 20, 2026</span>
+                </div>
+                <div class="feedback-rating"><i class="fas fa-star" style="color: var(--gold);"></i> 4.8</div>
+              </div>
+              <div class="feedback-item">
+                <div class="feedback-avatar"><i class="fas fa-user"></i></div>
+                <div class="feedback-content">
+                  <p>"We hope there will be more programs like this."</p>
+                  <span class="text-xs text-muted">Respondent #35 • Jun 20, 2026</span>
+                </div>
+                <div class="feedback-rating"><i class="fas fa-star" style="color: var(--gold);"></i> 5.0</div>
+              </div>
+              <div class="feedback-item">
+                <div class="feedback-avatar"><i class="fas fa-user"></i></div>
+                <div class="feedback-content">
+                  <p>"I can now access government services online on my own."</p>
+                  <span class="text-xs text-muted">Respondent #41 • Jun 20, 2026</span>
+                </div>
+                <div class="feedback-rating"><i class="fas fa-star" style="color: var(--gold);"></i> 4.9</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

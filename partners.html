@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="G.R.A.C.E PORTAL — Partners. Manage partner organizations and project partnerships.">
+  <title>Partners | G.R.A.C.E PORTAL</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+<div class="dashboard-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+
+  <div class="main-content">
+    <header class="topbar" id="topbar"></header>
+
+    <div class="dashboard-content">
+      <div class="page-header">
+        <div>
+          <h2>Partner Organizations</h2>
+          <p class="page-subtitle">Organizations that commission, co-sponsor, or co-implement extension projects — <em>PARTNER table (separate from BENEFICIARY per 3NF)</em></p>
+        </div>
+        <div class="page-header-actions">
+          <button class="btn btn-sm btn-outline"><i class="fas fa-download"></i> Export</button>
+          <button class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> Add Partner</button>
+        </div>
+      </div>
+
+      <!-- ERD Note -->
+      <div class="alert alert-info" style="margin-bottom:1.5rem;padding:0.85rem 1rem;border-radius:8px;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);display:flex;gap:0.75rem;align-items:flex-start;">
+        <i class="fas fa-info-circle" style="color:#2563eb;margin-top:2px;flex-shrink:0;"></i>
+        <div style="font-size:0.85rem;color:var(--gray-700);">
+          <strong>ERD Note:</strong> <strong>PARTNER</strong> = organizations that <em>collaborate or commission</em> the project (LGUs, agencies, barangays).
+          <strong>BENEFICIARY</strong> = individuals or communities that <em>receive the service</em>. These are two distinct 3NF entities linked to projects via <code>PROJECT_PARTNER</code> and <code>PROJECT_BENEFICIARY</code> junction tables.
+        </div>
+      </div>
+
+      <!-- Summary Cards -->
+      <div class="summary-cards">
+        <div class="summary-card card-maroon">
+          <div class="summary-card-info"><h3 id="card-total">6</h3><p>Partner Organizations</p><span class="summary-card-trend up"><i class="fas fa-handshake"></i> registered</span></div>
+          <div class="summary-card-icon"><i class="fas fa-handshake"></i></div>
+        </div>
+        <div class="summary-card card-gold">
+          <div class="summary-card-info"><h3>3</h3><p>LGU Partners</p><span class="summary-card-trend up"><i class="fas fa-landmark"></i> active</span></div>
+          <div class="summary-card-icon"><i class="fas fa-landmark"></i></div>
+        </div>
+        <div class="summary-card card-blue">
+          <div class="summary-card-info"><h3>1</h3><p>Gov't Agencies</p><span class="summary-card-trend"><i class="fas fa-building"></i> partnered</span></div>
+          <div class="summary-card-icon"><i class="fas fa-building"></i></div>
+        </div>
+        <div class="summary-card card-green">
+          <div class="summary-card-info"><h3 id="card-partnerships">7</h3><p>Active Partnerships</p><span class="summary-card-trend up"><i class="fas fa-link"></i> project links</span></div>
+          <div class="summary-card-icon"><i class="fas fa-link"></i></div>
+        </div>
+      </div>
+
+      <!-- Filter -->
+      <div class="filter-bar">
+        <div class="filter-group">
+          <span class="filter-label">Type:</span>
+          <select class="form-select" id="filter-type">
+            <option value="">All Types</option>
+            <option>Local Government Unit</option>
+            <option>Government Agency</option>
+            <option>Barangay Government</option>
+            <option>Provincial Government</option>
+            <option>NGO</option>
+            <option>Private Organization</option>
+          </select>
+        </div>
+        <div class="filter-group" style="margin-left:auto;">
+          <input type="text" class="form-input" style="padding:0.4rem 0.75rem;font-size:0.85rem;" placeholder="Search partner..." id="partner-search">
+        </div>
+      </div>
+
+      <!-- Partners Table -->
+      <div class="table-container" style="margin-bottom:2rem;">
+        <div class="table-header">
+          <h4><i class="fas fa-handshake" style="color:var(--maroon);margin-right:0.5rem;"></i>PARTNER Table</h4>
+          <span style="font-size:0.8rem;color:var(--gray-500);">partner_id · organization_name · organization_type · address · contact_person · contact_no</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Partner ID</th>
+              <th>Organization Name</th>
+              <th>Type</th>
+              <th>Address</th>
+              <th>Contact Person</th>
+              <th>Contact No.</th>
+              <th>Projects</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="partners-tbody"></tbody>
+        </table>
+        <div class="table-footer">
+          <span class="table-info" id="partners-info">Loading...</span>
+        </div>
+      </div>
+
+      <!-- PROJECT_PARTNER Junction Table -->
+      <div class="table-container">
+        <div class="table-header">
+          <h4><i class="fas fa-link" style="color:var(--maroon);margin-right:0.5rem;"></i>PROJECT_PARTNER Junction Table</h4>
+          <span style="font-size:0.8rem;color:var(--gray-500);">project_id · partner_id · partnership_role · remarks</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Project</th>
+              <th>Partner Organization</th>
+              <th>Partnership Role</th>
+              <th>Remarks</th>
+            </tr>
+          </thead>
+          <tbody id="partnerships-tbody"></tbody>
+        </table>
+        <div class="table-footer">
+          <span class="table-info" id="partnerships-info">Loading...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  if (!window.GRACE) return;
+
+  // Populate PARTNER table
+  const tbody = document.getElementById('partners-tbody');
+  const info  = document.getElementById('partners-info');
+  GRACE.partners.forEach(p => {
+    // Count projects this partner is linked to
+    const projectCount = GRACE.projectPartners.filter(pp => pp.partner_id === p.partner_id).length;
+    const typeColor = {
+      'Local Government Unit': '#7c3aed',
+      'Government Agency': '#0369a1',
+      'Barangay Government': '#15803d',
+      'Provincial Government': '#b45309'
+    };
+    const color = typeColor[p.organization_type] || 'var(--maroon)';
+    tbody.innerHTML += `<tr>
+      <td><code style="font-size:0.78rem;background:var(--gray-100);padding:2px 6px;border-radius:4px;">${p.partner_id}</code></td>
+      <td><strong style="font-size:0.85rem;">${p.organization_name}</strong></td>
+      <td><span class="badge" style="background:${color}20;color:${color};border:1px solid ${color}40;font-size:0.73rem;">${p.organization_type}</span></td>
+      <td style="font-size:0.82rem;color:var(--gray-600);">${p.address}</td>
+      <td style="font-size:0.82rem;">${p.contact_person}</td>
+      <td style="font-size:0.82rem;">${p.contact_no}</td>
+      <td><span class="badge badge-approved">${projectCount} project${projectCount!==1?'s':''}</span></td>
+      <td>
+        <button class="btn btn-sm btn-outline" title="View partnerships"><i class="fas fa-link"></i></button>
+        <button class="btn btn-sm btn-outline" title="Edit"><i class="fas fa-edit"></i></button>
+      </td>
+    </tr>`;
+  });
+  info.textContent = `Showing ${GRACE.partners.length} partner organizations`;
+
+  // Populate PROJECT_PARTNER junction table
+  const jtbody = document.getElementById('partnerships-tbody');
+  const jinfo  = document.getElementById('partnerships-info');
+  GRACE.projectPartners.forEach(pp => {
+    const proj    = GRACE.getProjectById(pp.project_id);
+    const partner = GRACE.getPartnerById(pp.partner_id);
+    jtbody.innerHTML += `<tr>
+      <td>
+        <div style="font-weight:600;font-size:0.82rem;">${pp.project_id}</div>
+        <div style="font-size:0.76rem;color:var(--gray-500);">${proj ? proj.title.substring(0,45)+'...' : ''}</div>
+      </td>
+      <td style="font-size:0.83rem;font-weight:500;">${partner ? partner.organization_name : pp.partner_id}</td>
+      <td><span class="badge badge-review" style="font-size:0.75rem;">${pp.partnership_role}</span></td>
+      <td style="font-size:0.8rem;color:var(--gray-600);">${pp.remarks}</td>
+    </tr>`;
+  });
+  document.getElementById('card-total').textContent = GRACE.partners.length;
+  document.getElementById('card-partnerships').textContent = GRACE.projectPartners.length;
+  jinfo.textContent = `Showing ${GRACE.projectPartners.length} partnership links`;
+});
+</script>
+</body>
+</html>

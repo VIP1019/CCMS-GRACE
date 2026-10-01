@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="G.R.A.C.E PORTAL Projects - View and manage extension projects">
+  <title>Projects | G.R.A.C.E PORTAL</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+      <header class="topbar" id="topbar"></header>
+
+      <div class="dashboard-content">
+        <!-- Page Header -->
+        <div class="page-header">
+          <div>
+            <h2>Extension Projects</h2>
+            <p class="page-subtitle">48 total projects • 18 active • 7 pending approval</p>
+          </div>
+          <div class="page-header-actions">
+            <div class="view-toggle">
+              <button class="active" data-view="grid" title="Grid View"><i class="fas fa-th-large"></i></button>
+              <button data-view="list" title="List View"><i class="fas fa-list"></i></button>
+            </div>
+            <a href="project-form.html" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> New Project</a>
+          </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+          <div class="filter-group">
+            <span class="filter-label">Status:</span>
+            <select class="form-select" data-filter-status=".project-card">
+              <option value="all">All Status</option>
+              <option value="pending">Pending</option>
+              <option value="review">In Review</option>
+              <option value="approved">Approved</option>
+              <option value="progress">In Progress</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">Type:</span>
+            <select class="form-select">
+              <option>All Types</option>
+              <option>Skills Training</option>
+              <option>Consultancy</option>
+              <option>System Development</option>
+              <option>Community Service</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">Year:</span>
+            <select class="form-select">
+              <option>2026</option>
+              <option>2025</option>
+              <option>2024</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Projects Grid -->
+        <div class="projects-grid">
+          <!-- Project Card 1 -->
+          <a href="project-detail.html" class="project-card" data-status="progress">
+            <div class="project-card-header">
+              <div>
+                <h4>Web Development Training for Daet LGU Employees</h4>
+                <span class="project-id">EXT-2026-048</span>
+              </div>
+              <span class="badge badge-progress"><span class="badge-dot"></span>In Progress</span>
+            </div>
+            <div class="project-card-meta">
+              <span class="meta-item"><i class="fas fa-tag"></i> Skills Training</span>
+              <span class="meta-item"><i class="fas fa-calendar"></i> Aug 28 – Oct 15</span>
+              <span class="meta-item"><i class="fas fa-map-marker-alt"></i> Daet, CamNorte</span>
+            </div>
+            <div class="project-card-progress">
+              <div class="progress-bar-container">
+                <div class="progress-bar"><div class="progress-bar-fill" style="width: 65%;"></div></div>
+                <span class="progress-label">65%</span>
+              </div>
+            </div>
+            <div class="project-card-footer">
+              <div class="project-card-avatars">
+                <div class="avatar-sm" style="background: var(--maroon);">PJ</div>
+                <div class="avatar-sm" style="background: var(--gold);">CV</div>
+                <div class="avatar-sm" style="background: var(--status-review);">LA</div>
+                <div class="avatar-sm avatar-more">+3</div>
+              </div>
+              <span class="text-xs text-muted">Updated 2h ago</span>
+            </div>
+          </a>
+
+          <!-- Project Card 2 -->
+          <a href="project-detail.html" class="project-card" data-status="review">
+            <div class="project-card-header">
+              <div>
+                <h4>Basud Municipal Library Management System</h4>
+                <span class="project-id">EXT-2026-045</span>
+              </div>
+              <span class="badge badge-review"><span class="badge-dot"></span>In Review</span>
+            </div>
+            <div class="project-card-meta">
+              <span class="meta-item"><i class="fas fa-tag"></i> System Development</span>
+              <span class="meta-item"><i class="fas fa-calendar"></i> Jun 01 – Sep 30</span>
+              <span class="meta-item"><i class="fas fa-map-marker-alt"></i> Basud, CamNorte</span>
+            </div>
+            <div class="project-card-progress">
+              <div class="progress-bar-container">
+                <div class="progress-bar"><div class="progress-bar-fill" style="width: 85%;"></div></div>
+                <span class="progress-label">85%</span>
+              </div>
+            </div>
+            <div class="project-card-footer">
+              <div class="project-card-avatars">
+                <div class="avatar-sm" style="background: var(--status-progress);">MR</div>
+                <div class="avatar-sm" style="background: var(--maroon);">JS</div>
+                <div class="avatar-sm avatar-more">+5</div>
+              </div>
+              <span class="text-xs text-muted">Updated 1d ago</span>
+            </div>
+          </a>
+
+          <!-- Project Card 3 -->
+          <a href="project-detail.html" class="project-card" data-status="approved">
+            <div class="project-card-header">
+              <div>
+                <h4>ICT Consultancy Services for DOST CamNorte</h4>
+                <span class="project-id">EXT-2026-041</span>
+              </div>
+              <span class="badge badge-approved"><span class="badge-dot"></span>Approved</span>
+            </div>
+            <div class="project-card-meta">
+              <span class="meta-item"><i class="fas fa-tag"></i> Consultancy</span>
+              <span class="meta-item"><i class="fas fa-calendar"></i> Jul 15 – Dec 15</span>
+              <span class="meta-item"><i class="fas fa-map-marker-alt"></i> Daet, CamNorte</span>
+            </div>
+            <div class="project-card-progress">
+              <div class="progress-bar-container">
+                <div class="progress-bar"><div class="progress-bar-fill" style="width: 30%;"></div></div>
+                <span class="progress-label">30%</span>
+              </div>
+            </div>
+            <div class="project-card-footer">
+              <div class="project-card-avatars">
+                <div class="avatar-sm" style="background: var(--gold-dark);">AC</div>
+                <div class="avatar-sm" style="background: var(--status-completed);">RM</div>
+              </div>
+              <span class="text-xs text-muted">Updated 3d ago</span>
+            </div>
+          </a>
+
+          <!-- Project Card 4 -->
+          <a href="project-detail.html" class="project-card" data-status="completed">
+            <div class="project-card-header">
+              <div>
+                <h4>Digital Literacy Program for Brgy. Lag-on</h4>
+                <span class="project-id">EXT-2026-038</span>
+              </div>
+              <span class="badge badge-completed"><span class="badge-dot"></span>Completed</span>
+            </div>
+            <div class="project-card-meta">
+              <span class="meta-item"><i class="fas fa-tag"></i> Community Service</span>
+              <span class="meta-item"><i class="fas fa-calendar"></i> Apr 10 – Jun 20</span>
+              <span class="meta-item"><i class="fas fa-map-marker-alt"></i> Daet, CamNorte</span>
+            </div>
+            <div class="project-card-progress">
+              <div class="progress-bar-container">
+                <div class="progress-bar"><div class="progress-bar-fill" style="width: 100%;"></div></div>
+                <span class="progress-label">100%</span>
+              </div>
+            </div>
+            <div class="project-card-footer">
+              <div class="project-card-avatars">
+                <div class="avatar-sm" style="background: var(--maroon);">PJ</div>
+                <div class="avatar-sm" style="background: var(--status-review);">LA</div>
+                <div class="avatar-sm avatar-more">+8</div>
+              </div>
+              <span class="text-xs text-muted">Completed Jun 20</span>
+            </div>
+          </a>
+
+          <!-- Project Card 5 -->
+          <a href="project-detail.html" class="project-card" data-status="pending">
+            <div class="project-card-header">
+              <div>
+                <h4>Data Analytics Workshop for CamNorte Provincial Office</h4>
+                <span class="project-id">EXT-2026-035</span>
+              </div>
+              <span class="badge badge-pending"><span class="badge-dot"></span>Pending</span>
+            </div>
+            <div class="project-card-meta">
+              <span class="meta-item"><i class="fas fa-tag"></i> Skills Training</span>
+              <span class="meta-item"><i class="fas fa-calendar"></i> Sep 01 – Nov 30</span>
+              <span class="meta-item"><i class="fas fa-map-marker-alt"></i> Daet, CamNorte</span>
+            </div>
+            <div class="project-card-progress">
+              <div class="progress-bar-container">
+                <div class="progress-bar"><div class="progress-bar-fill" style="width: 10%;"></div></div>
+                <span class="progress-label">10%</span>
+              </div>
+            </div>
+            <div class="project-card-footer">
+              <div class="project-card-avatars">
+                <div class="avatar-sm" style="background: var(--gold);">CV</div>
+              </div>
+              <span class="text-xs text-muted">Submitted Sep 01</span>
+            </div>
+          </a>
+
+          <!-- Project Card 6 -->
+          <a href="project-detail.html" class="project-card" data-status="progress">
+            <div class="project-card-header">
+              <div>
+                <h4>Network Infrastructure Assessment for Vinzons Municipal Hall</h4>
+                <span class="project-id">EXT-2026-033</span>
+              </div>
+              <span class="badge badge-progress"><span class="badge-dot"></span>In Progress</span>
+            </div>
+            <div class="project-card-meta">
+              <span class="meta-item"><i class="fas fa-tag"></i> Consultancy</span>
+              <span class="meta-item"><i class="fas fa-calendar"></i> Aug 01 – Oct 31</span>
+              <span class="meta-item"><i class="fas fa-map-marker-alt"></i> Vinzons, CamNorte</span>
+            </div>
+            <div class="project-card-progress">
+              <div class="progress-bar-container">
+                <div class="progress-bar"><div class="progress-bar-fill" style="width: 50%;"></div></div>
+                <span class="progress-label">50%</span>
+              </div>
+            </div>
+            <div class="project-card-footer">
+              <div class="project-card-avatars">
+                <div class="avatar-sm" style="background: var(--status-progress);">DL</div>
+                <div class="avatar-sm" style="background: var(--maroon);">ET</div>
+                <div class="avatar-sm avatar-more">+2</div>
+              </div>
+              <span class="text-xs text-muted">Updated 5h ago</span>
+            </div>
+          </a>
+        </div>
+
+        <!-- Pagination -->
+        <div style="display: flex; justify-content: center; margin-top: 2rem;">
+          <div class="pagination">
+            <button class="page-btn"><i class="fas fa-chevron-left"></i></button>
+            <button class="page-btn active" data-page="1">1</button>
+            <button class="page-btn" data-page="2">2</button>
+            <button class="page-btn" data-page="3">3</button>
+            <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

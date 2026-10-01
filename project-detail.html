@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="G.R.A.C.E PORTAL Project Detail - View extension project information">
+  <title>Project Detail | G.R.A.C.E PORTAL</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+      <header class="topbar" id="topbar"></header>
+
+      <div class="dashboard-content">
+        <!-- Back button -->
+        <a href="projects.html" style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--maroon); font-weight: 600; font-size: 0.88rem; margin-bottom: 1.5rem;">
+          <i class="fas fa-arrow-left"></i> Back to Projects
+        </a>
+
+        <!-- Project Header Card -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+          <div class="card-body" style="padding: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                  <span class="badge badge-progress"><span class="badge-dot"></span>In Progress</span>
+                  <span class="text-xs text-muted">EXT-2026-048</span>
+                </div>
+                <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Web Development Training for Daet LGU Employees</h2>
+                <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; font-size: 0.85rem; color: var(--gray-500);">
+                  <span><i class="fas fa-tag" style="color: var(--maroon);"></i> Skills Enhancement Training</span>
+                  <span><i class="fas fa-calendar" style="color: var(--gold);"></i> Aug 28 – Oct 15, 2026</span>
+                  <span><i class="fas fa-map-marker-alt" style="color: var(--maroon);"></i> Daet, Camarines Norte</span>
+                  <span><i class="fas fa-user" style="color: var(--gold);"></i> External Request (Daet LGU)</span>
+                </div>
+              </div>
+              <div style="display: flex; gap: 0.5rem;">
+                <button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i> Edit</button>
+                <button class="btn btn-sm btn-primary"><i class="fas fa-print"></i> Print</button>
+              </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div style="margin-top: 1.5rem;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span class="text-small font-semibold">Overall Progress</span>
+                <span class="text-small font-bold text-maroon">65%</span>
+              </div>
+              <div class="progress-bar" style="height: 10px;">
+                <div class="progress-bar-fill" style="width: 65%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Approval Progress Stepper -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+          <div class="card-body">
+            <h4 style="margin-bottom: 1rem;"><i class="fas fa-route" style="color: var(--maroon); margin-right: 0.5rem;"></i>Approval Progress</h4>
+            <div class="stepper">
+              <div class="step completed">
+                <div class="step-circle"><i class="fas fa-check"></i></div>
+                <span class="step-label">Proposal Submitted</span>
+              </div>
+              <div class="step completed">
+                <div class="step-circle"><i class="fas fa-check"></i></div>
+                <span class="step-label">Under Evaluation</span>
+              </div>
+              <div class="step completed">
+                <div class="step-circle"><i class="fas fa-check"></i></div>
+                <span class="step-label">Head of Extension Approved</span>
+              </div>
+              <div class="step active">
+                <div class="step-circle">4</div>
+                <span class="step-label">Implementation</span>
+              </div>
+              <div class="step">
+                <div class="step-circle">5</div>
+                <span class="step-label">Completion &amp; Report</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabbed Content -->
+        <div class="card" data-tabs>
+          <div class="tabs" style="padding: 0 1.5rem;">
+            <button class="tab-btn active" data-tab="tab-overview">Overview</button>
+            <button class="tab-btn" data-tab="tab-activities">Activities</button>
+            <button class="tab-btn" data-tab="tab-funding">Funding</button>
+            <button class="tab-btn" data-tab="tab-participation">Participation</button>
+            <button class="tab-btn" data-tab="tab-documents">Documents</button>
+            <button class="tab-btn" data-tab="tab-results">Results</button>
+          </div>
+
+          <!-- Overview Tab -->
+          <div class="tab-panel active" id="tab-overview">
+            <div class="card-body">
+              <div class="grid grid-2" style="gap: 2rem;">
+                <div>
+                  <h4 style="margin-bottom: 1rem;">Project Description</h4>
+                  <p>A comprehensive web development training program designed for employees of the Daet Local Government Unit. The training covers HTML, CSS, JavaScript, and basic web application development to enhance the digital skills of government workers.</p>
+                  <h5 style="margin-top: 1.5rem; margin-bottom: 0.75rem;">Objectives</h5>
+                  <ul style="list-style: disc; padding-left: 1.5rem; color: var(--gray-600); font-size: 0.9rem;">
+                    <li style="margin-bottom: 0.5rem;">Train 30 LGU employees on fundamental web development technologies</li>
+                    <li style="margin-bottom: 0.5rem;">Develop participants' ability to create and maintain basic government websites</li>
+                    <li style="margin-bottom: 0.5rem;">Provide hands-on project experience in building web applications</li>
+                    <li style="margin-bottom: 0.5rem;">Deliver training materials and documentation for future reference</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 style="margin-bottom: 1rem;">Project Details</h4>
+                  <table style="width: 100%;">
+                    <tbody>
+                      <tr><td style="padding: 0.6rem 0; color: var(--gray-500); font-size: 0.85rem; width: 140px;">Project ID</td><td style="padding: 0.6rem 0; font-weight: 600;">EXT-2026-048</td></tr>
+                      <tr><td style="padding: 0.6rem 0; color: var(--gray-500); font-size: 0.85rem;">Project Type</td><td style="padding: 0.6rem 0; font-weight: 600;">Skills Enhancement Training</td></tr>
+                      <tr><td style="padding: 0.6rem 0; color: var(--gray-500); font-size: 0.85rem;">Origin</td><td style="padding: 0.6rem 0; font-weight: 600;">External Request</td></tr>
+                      <tr><td style="padding: 0.6rem 0; color: var(--gray-500); font-size: 0.85rem;">Requesting Party</td><td style="padding: 0.6rem 0; font-weight: 600;">Daet LGU</td></tr>
+                      <tr><td style="padding: 0.6rem 0; color: var(--gray-500); font-size: 0.85rem;">Project Lead</td><td style="padding: 0.6rem 0; font-weight: 600;">Prof. Juan, Prince Jheck T.</td></tr>
+                      <tr><td style="padding: 0.6rem 0; color: var(--gray-500); font-size: 0.85rem;">Start Date</td><td style="padding: 0.6rem 0; font-weight: 600;">August 28, 2026</td></tr>
+                      <tr><td style="padding: 0.6rem 0; color: var(--gray-500); font-size: 0.85rem;">End Date</td><td style="padding: 0.6rem 0; font-weight: 600;">October 15, 2026</td></tr>
+                      <tr><td style="padding: 0.6rem 0; color: var(--gray-500); font-size: 0.85rem;">Beneficiaries</td><td style="padding: 0.6rem 0; font-weight: 600;">30 LGU Employees</td></tr>
+                      <tr><td style="padding: 0.6rem 0; color: var(--gray-500); font-size: 0.85rem;">Funding Source</td><td style="padding: 0.6rem 0; font-weight: 600;">Institutional (₱45,000)</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Activities Tab -->
+          <div class="tab-panel" id="tab-activities">
+            <div class="card-body">
+              <h4 style="margin-bottom: 1rem;">Project Activities &amp; Deliverables</h4>
+              <table style="width: 100%;">
+                <thead>
+                  <tr>
+                    <th>Activity</th>
+                    <th>Schedule</th>
+                    <th>Deliverable</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Module 1: HTML Fundamentals</strong><br><span class="text-xs text-muted">Lecture & Lab exercises</span></td>
+                    <td class="text-small">Aug 28 – Sep 4</td>
+                    <td class="text-small">Training materials, attendance records</td>
+                    <td><span class="badge badge-completed"><span class="badge-dot"></span>Done</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Module 2: CSS & Styling</strong><br><span class="text-xs text-muted">Responsive design workshop</span></td>
+                    <td class="text-small">Sep 5 – Sep 12</td>
+                    <td class="text-small">Workshop output, exercise submissions</td>
+                    <td><span class="badge badge-completed"><span class="badge-dot"></span>Done</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Module 3: JavaScript Basics</strong><br><span class="text-xs text-muted">Interactive web programming</span></td>
+                    <td class="text-small">Sep 13 – Sep 25</td>
+                    <td class="text-small">Programming exercises, mini-project</td>
+                    <td><span class="badge badge-progress"><span class="badge-dot"></span>In Progress</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Module 4: Final Project</strong><br><span class="text-xs text-muted">Capstone web application</span></td>
+                    <td class="text-small">Sep 26 – Oct 10</td>
+                    <td class="text-small">Working website, presentation</td>
+                    <td><span class="badge badge-pending"><span class="badge-dot"></span>Upcoming</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Project Evaluation</strong><br><span class="text-xs text-muted">Assessment & reporting</span></td>
+                    <td class="text-small">Oct 11 – Oct 15</td>
+                    <td class="text-small">Evaluation report, certificates</td>
+                    <td><span class="badge badge-pending"><span class="badge-dot"></span>Upcoming</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Funding Tab -->
+          <div class="tab-panel" id="tab-funding">
+            <div class="card-body">
+              <h4 style="margin-bottom: 1.5rem;">Funding Information</h4>
+              <div class="grid grid-3" style="margin-bottom: 1.5rem;">
+                <div class="funding-card institutional">
+                  <div class="funding-label">Institutional Funding</div>
+                  <div class="funding-amount">₱45,000</div>
+                  <span class="badge badge-approved"><span class="badge-dot"></span>Verified</span>
+                </div>
+                <div class="funding-card external">
+                  <div class="funding-label">External/Beneficiary</div>
+                  <div class="funding-amount">₱0</div>
+                  <span class="badge" style="background: var(--gray-100); color: var(--gray-500);">N/A</span>
+                </div>
+                <div class="funding-card pending-fund">
+                  <div class="funding-label">Total Budget</div>
+                  <div class="funding-amount">₱45,000</div>
+                  <span class="badge badge-approved"><span class="badge-dot"></span>Complete</span>
+                </div>
+              </div>
+              <h5 style="margin-bottom: 0.75rem;">Budget Breakdown</h5>
+              <table style="width: 100%;">
+                <thead><tr><th>Item</th><th>Amount</th><th>Source</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr><td>Training Materials & Supplies</td><td>₱12,000</td><td>Institutional</td><td><span class="badge badge-approved"><span class="badge-dot"></span>Released</span></td></tr>
+                  <tr><td>Equipment & Software</td><td>₱15,000</td><td>Institutional</td><td><span class="badge badge-approved"><span class="badge-dot"></span>Released</span></td></tr>
+                  <tr><td>Transportation & Logistics</td><td>₱8,000</td><td>Institutional</td><td><span class="badge badge-progress"><span class="badge-dot"></span>Partial</span></td></tr>
+                  <tr><td>Miscellaneous</td><td>₱10,000</td><td>Institutional</td><td><span class="badge badge-pending"><span class="badge-dot"></span>Pending</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Participation Tab -->
+          <div class="tab-panel" id="tab-participation">
+            <div class="card-body">
+              <h4 style="margin-bottom: 1rem;">Faculty &amp; Student Participation</h4>
+              <h5 style="margin-bottom: 0.75rem; margin-top: 1rem;">Faculty Members (4)</h5>
+              <table style="width: 100%;">
+                <thead><tr><th>Name</th><th>Department</th><th>Role</th><th>Hours</th></tr></thead>
+                <tbody>
+                  <tr><td><strong>Prof. Juan, Prince Jheck T.</strong></td><td>CCMS - IT</td><td>Project Lead / Trainer</td><td>48</td></tr>
+                  <tr><td><strong>Prof. Villanueva, Crystelle A.</strong></td><td>CCMS - IT</td><td>Co-Trainer</td><td>36</td></tr>
+                  <tr><td><strong>Prof. Araña, Lei-anne C.</strong></td><td>CCMS - IT</td><td>Co-Trainer</td><td>36</td></tr>
+                  <tr><td><strong>Prof. Santos, Maria R.</strong></td><td>CCMS - CS</td><td>Technical Support</td><td>24</td></tr>
+                </tbody>
+              </table>
+              <h5 style="margin-bottom: 0.75rem; margin-top: 1.5rem;">Student Assistants (6)</h5>
+              <table style="width: 100%;">
+                <thead><tr><th>Name</th><th>Course/Year</th><th>Role</th><th>Hours</th></tr></thead>
+                <tbody>
+                  <tr><td>Reyes, Mark A.</td><td>BSIT 4A</td><td>Lab Assistant</td><td>24</td></tr>
+                  <tr><td>Cruz, Anna B.</td><td>BSIT 4A</td><td>Lab Assistant</td><td>24</td></tr>
+                  <tr><td>Garcia, Jose C.</td><td>BSIT 3A</td><td>Documentation</td><td>18</td></tr>
+                  <tr><td>Lopez, Sarah D.</td><td>BSIT 3B</td><td>Documentation</td><td>18</td></tr>
+                  <tr><td>Torres, Miguel E.</td><td>BSIT 3A</td><td>Technical Support</td><td>20</td></tr>
+                  <tr><td>Ramos, Ella F.</td><td>BSIT 2A</td><td>Logistics</td><td>12</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Documents Tab -->
+          <div class="tab-panel" id="tab-documents">
+            <div class="card-body">
+              <h4 style="margin-bottom: 1rem;">Project Documents</h4>
+              <div class="grid grid-2" style="gap: 1rem;">
+                <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; border: 1px solid var(--gray-100); border-radius: var(--radius-lg); transition: all var(--transition-fast); cursor: pointer;" onmouseover="this.style.borderColor='var(--maroon)'" onmouseout="this.style.borderColor='var(--gray-100)'">
+                  <div style="width: 44px; height: 44px; border-radius: var(--radius-md); background: rgba(239,68,68,0.1); display: flex; align-items: center; justify-content: center; color: #DC2626; font-size: 1.2rem;"><i class="fas fa-file-pdf"></i></div>
+                  <div><div style="font-weight: 600; font-size: 0.88rem;">Project Proposal</div><span class="text-xs text-muted">PDF • 2.4 MB • Aug 15, 2026</span></div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; border: 1px solid var(--gray-100); border-radius: var(--radius-lg); transition: all var(--transition-fast); cursor: pointer;" onmouseover="this.style.borderColor='var(--maroon)'" onmouseout="this.style.borderColor='var(--gray-100)'">
+                  <div style="width: 44px; height: 44px; border-radius: var(--radius-md); background: rgba(16,185,129,0.1); display: flex; align-items: center; justify-content: center; color: #059669; font-size: 1.2rem;"><i class="fas fa-file-excel"></i></div>
+                  <div><div style="font-weight: 600; font-size: 0.88rem;">Budget Breakdown</div><span class="text-xs text-muted">XLSX • 156 KB • Aug 20, 2026</span></div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; border: 1px solid var(--gray-100); border-radius: var(--radius-lg); transition: all var(--transition-fast); cursor: pointer;" onmouseover="this.style.borderColor='var(--maroon)'" onmouseout="this.style.borderColor='var(--gray-100)'">
+                  <div style="width: 44px; height: 44px; border-radius: var(--radius-md); background: rgba(59,130,246,0.1); display: flex; align-items: center; justify-content: center; color: #2563EB; font-size: 1.2rem;"><i class="fas fa-file-word"></i></div>
+                  <div><div style="font-weight: 600; font-size: 0.88rem;">MOA / MOU</div><span class="text-xs text-muted">DOCX • 890 KB • Aug 22, 2026</span></div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; border: 1px solid var(--gray-100); border-radius: var(--radius-lg); transition: all var(--transition-fast); cursor: pointer;" onmouseover="this.style.borderColor='var(--maroon)'" onmouseout="this.style.borderColor='var(--gray-100)'">
+                  <div style="width: 44px; height: 44px; border-radius: var(--radius-md); background: rgba(245,158,11,0.1); display: flex; align-items: center; justify-content: center; color: #D97706; font-size: 1.2rem;"><i class="fas fa-file-powerpoint"></i></div>
+                  <div><div style="font-weight: 600; font-size: 0.88rem;">Training Modules</div><span class="text-xs text-muted">PPTX • 5.2 MB • Aug 26, 2026</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Results Tab -->
+          <div class="tab-panel" id="tab-results">
+            <div class="card-body">
+              <h4 style="margin-bottom: 1rem;">Post-Implementation Results</h4>
+              <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                <span>This project is currently in progress. Post-implementation results will be recorded upon project completion.</span>
+              </div>
+              <p style="color: var(--gray-500); font-size: 0.9rem;">Results including completed activities, implementation outcomes, beneficiary feedback, and evaluation data will be documented here once the project reaches completion.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

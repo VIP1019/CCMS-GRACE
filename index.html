@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="CCMS G.R.A.C.E PORTAL: A Web-Based Extension Project Management and Monitoring System for the CCMS Extension Office. Governance, Recording, Administration, Coordination & Evaluation.">
+  <title>G.R.A.C.E PORTAL | Extension Project Management System</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar" id="main-navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="navbar-brand">
+        <div class="logo-icon">GP</div>
+        <div class="brand-text">
+          <span class="brand-name">G.R.A.C.E PORTAL</span>
+          <span class="brand-sub">CCMS Extension Office</span>
+        </div>
+      </a>
+
+      <button class="navbar-toggle" id="nav-toggle" aria-label="Toggle navigation">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <ul class="navbar-nav" id="nav-menu">
+        <li><a href="index.html" class="nav-link active">Home</a></li>
+        <li class="nav-dropdown">
+          <a href="#about" class="nav-link dropdown-toggle">About <span class="chevron">▼</span></a>
+          <div class="dropdown-menu">
+            <a href="#about" class="dropdown-item">About G.R.A.C.E PORTAL</a>
+            <a href="#services" class="dropdown-item">Extension Services</a>
+            <a href="#" class="dropdown-item">CCMS Extension Office</a>
+          </div>
+        </li>
+        <li><a href="#services" class="nav-link">Services</a></li>
+        <li><a href="#news" class="nav-link">Updates</a></li>
+        <li><a href="#contact" class="nav-link">Contact</a></li>
+        <li><a href="login.html" class="nav-link btn-nav-login">Login</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== SUB-HEADER ===== -->
+  <div class="sub-header">
+    <div class="sub-header-inner">
+      <div class="breadcrumb">
+        <a href="index.html"><i class="fas fa-home"></i> Home</a>
+      </div>
+      <div class="time-display"></div>
+    </div>
+  </div>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-shapes">
+      <div class="hero-shape"></div>
+      <div class="hero-shape"></div>
+      <div class="hero-shape"></div>
+    </div>
+    <div class="hero-content container">
+      <div class="hero-badge">
+        <span class="dot"></span>
+        CCMS Extension Office
+      </div>
+      <h1>Govern. Record.<br><span>Coordinate.</span></h1>
+      <p>CCMS G.R.A.C.E PORTAL — A centralized web-based system for managing, recording, and monitoring extension project information from proposal submission and approval through implementation, completion, and post-implementation evaluation.</p>
+      <div class="hero-acronym-bar">
+        <span class="acronym-item"><strong>G</strong>overnance</span>
+        <span class="acronym-dot">•</span>
+        <span class="acronym-item"><strong>R</strong>ecording</span>
+        <span class="acronym-dot">•</span>
+        <span class="acronym-item"><strong>A</strong>dministration</span>
+        <span class="acronym-dot">•</span>
+        <span class="acronym-item"><strong>C</strong>oordination</span>
+        <span class="acronym-dot">•</span>
+        <span class="acronym-item"><strong>E</strong>valuation</span>
+      </div>
+      <div class="hero-actions">
+        <a href="login.html" class="btn btn-primary btn-lg">
+          <i class="fas fa-sign-in-alt"></i> Get Started
+        </a>
+        <a href="#about" class="btn btn-secondary btn-lg">
+          <i class="fas fa-info-circle"></i> Learn More
+        </a>
+      </div>
+    </div>
+    <div class="hero-illustration">
+      <svg viewBox="0 0 420 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Abstract project management illustration -->
+        <circle cx="210" cy="210" r="180" fill="rgba(218,165,32,0.08)" stroke="rgba(218,165,32,0.2)" stroke-width="2"/>
+        <circle cx="210" cy="210" r="130" fill="rgba(139,26,26,0.08)" stroke="rgba(139,26,26,0.2)" stroke-width="2"/>
+        <!-- Central hub -->
+        <circle cx="210" cy="210" r="45" fill="rgba(139,26,26,0.85)" stroke="rgba(218,165,32,0.8)" stroke-width="3"/>
+        <text x="210" y="205" text-anchor="middle" fill="white" font-family="Poppins" font-size="11" font-weight="700">G.R.A.C.E</text>
+        <text x="210" y="222" text-anchor="middle" fill="rgba(218,165,32,1)" font-family="Poppins" font-size="9" font-weight="600">PORTAL</text>
+        <!-- Connected nodes -->
+        <circle cx="210" cy="80" r="28" fill="rgba(218,165,32,0.8)"/>
+        <text x="210" y="77" text-anchor="middle" fill="white" font-family="Poppins" font-size="8" font-weight="600">PROPOSAL</text>
+        <text x="210" y="88" text-anchor="middle" fill="white" font-family="Poppins" font-size="7">TRACKING</text>
+        <line x1="210" y1="108" x2="210" y2="165" stroke="rgba(218,165,32,0.4)" stroke-width="2" stroke-dasharray="4 3"/>
+
+        <circle cx="330" cy="160" r="28" fill="rgba(59,130,246,0.8)"/>
+        <text x="330" y="157" text-anchor="middle" fill="white" font-family="Poppins" font-size="8" font-weight="600">APPROVAL</text>
+        <text x="330" y="168" text-anchor="middle" fill="white" font-family="Poppins" font-size="7">PIPELINE</text>
+        <line x1="302" y1="160" x2="253" y2="195" stroke="rgba(59,130,246,0.4)" stroke-width="2" stroke-dasharray="4 3"/>
+
+        <circle cx="340" cy="280" r="28" fill="rgba(16,185,129,0.8)"/>
+        <text x="340" y="277" text-anchor="middle" fill="white" font-family="Poppins" font-size="8" font-weight="600">FUNDING</text>
+        <text x="340" y="288" text-anchor="middle" fill="white" font-family="Poppins" font-size="7">STATUS</text>
+        <line x1="312" y1="270" x2="253" y2="230" stroke="rgba(16,185,129,0.4)" stroke-width="2" stroke-dasharray="4 3"/>
+
+        <circle cx="210" cy="350" r="28" fill="rgba(245,158,11,0.8)"/>
+        <text x="210" y="347" text-anchor="middle" fill="white" font-family="Poppins" font-size="7" font-weight="600">BENEFICIARY</text>
+        <text x="210" y="358" text-anchor="middle" fill="white" font-family="Poppins" font-size="7">RECORDS</text>
+        <line x1="210" y1="322" x2="210" y2="255" stroke="rgba(245,158,11,0.4)" stroke-width="2" stroke-dasharray="4 3"/>
+
+        <circle cx="80" cy="280" r="28" fill="rgba(99,102,241,0.8)"/>
+        <text x="80" y="277" text-anchor="middle" fill="white" font-family="Poppins" font-size="8" font-weight="600">REPORTS</text>
+        <text x="80" y="288" text-anchor="middle" fill="white" font-family="Poppins" font-size="7">&amp; DOCS</text>
+        <line x1="108" y1="270" x2="167" y2="230" stroke="rgba(99,102,241,0.4)" stroke-width="2" stroke-dasharray="4 3"/>
+
+        <circle cx="90" cy="150" r="28" fill="rgba(239,68,68,0.7)"/>
+        <text x="90" y="147" text-anchor="middle" fill="white" font-family="Poppins" font-size="7" font-weight="600">ACTIVITIES</text>
+        <text x="90" y="158" text-anchor="middle" fill="white" font-family="Poppins" font-size="7">&amp; SCHEDULE</text>
+        <line x1="118" y1="155" x2="167" y2="195" stroke="rgba(239,68,68,0.4)" stroke-width="2" stroke-dasharray="4 3"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ===== QUICK LINKS ===== -->
+  <section class="section-sm" style="background: var(--white);">
+    <div class="container">
+      <div class="quick-links animate-on-scroll">
+        <a href="login.html" class="quick-link-badge">
+          <div class="badge-icon"><i class="fas fa-project-diagram"></i></div>
+          <span class="badge-label">Project Monitoring</span>
+        </a>
+        <a href="login.html" class="quick-link-badge">
+          <div class="badge-icon"><i class="fas fa-check-double"></i></div>
+          <span class="badge-label">Approval Tracking</span>
+        </a>
+        <a href="login.html" class="quick-link-badge">
+          <div class="badge-icon"><i class="fas fa-coins"></i></div>
+          <span class="badge-label">Funding Status</span>
+        </a>
+        <a href="login.html" class="quick-link-badge">
+          <div class="badge-icon"><i class="fas fa-users"></i></div>
+          <span class="badge-label">Participation</span>
+        </a>
+        <a href="login.html" class="quick-link-badge">
+          <div class="badge-icon"><i class="fas fa-calendar-alt"></i></div>
+          <span class="badge-label">Activities</span>
+        </a>
+        <a href="login.html" class="quick-link-badge">
+          <div class="badge-icon"><i class="fas fa-handshake"></i></div>
+          <span class="badge-label">Beneficiaries</span>
+        </a>
+        <a href="login.html" class="quick-link-badge">
+          <div class="badge-icon"><i class="fas fa-file-alt"></i></div>
+          <span class="badge-label">Documents</span>
+        </a>
+        <a href="login.html" class="quick-link-badge">
+          <div class="badge-icon"><i class="fas fa-chart-line"></i></div>
+          <span class="badge-label">Post-Evaluation</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ABOUT ===== -->
+  <section class="section" id="about" style="background: var(--light-gray);">
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <h2>About <span class="text-maroon">G.R.A.C.E PORTAL</span></h2>
+        <span class="gold-bar"></span>
+        <p>Empowering the CCMS Extension Office with a centralized and organized mechanism for managing extension projects throughout their lifecycle.</p>
+      </div>
+
+      <div class="grid grid-2" style="align-items: center; gap: 3rem;">
+        <div class="animate-on-scroll delay-1">
+          <h3 style="margin-bottom: 1rem;">Bridging Institutions &amp; Communities</h3>
+          <p>The CCMS Extension Office manages extension activities that connect the institution with communities, organizations, and partner agencies through Skills Enhancement Training, Consultancy Services, System Development and Implementation, and other community-oriented extension services.</p>
+          <p>G.R.A.C.E PORTAL provides a centralized mechanism for recording, updating, and monitoring project proposals, approval status, funding, beneficiaries, project teams, activities, schedules, deliverables, implementation progress, documentation, reports, and post-implementation results.</p>
+          <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+            <a href="#services" class="btn btn-primary">
+              <i class="fas fa-arrow-right"></i> Our Services
+            </a>
+            <a href="login.html" class="btn btn-outline">
+              <i class="fas fa-sign-in-alt"></i> Access System
+            </a>
+          </div>
+        </div>
+        <div class="animate-on-scroll delay-2" style="display: flex; flex-direction: column; gap: 1rem;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="feature-card" style="padding: 1.2rem;">
+              <div class="icon-box maroon-bg" style="width: 48px; height: 48px; font-size: 1.2rem; margin-bottom: 0.75rem;">
+                <i class="fas fa-tasks"></i>
+              </div>
+              <h5 style="font-size: 0.95rem; margin-bottom: 4px;">Project Tracking</h5>
+              <p style="font-size: 0.8rem; margin-bottom: 0;">Real-time status updates</p>
+            </div>
+            <div class="feature-card" style="padding: 1.2rem;">
+              <div class="icon-box gold-bg" style="width: 48px; height: 48px; font-size: 1.2rem; margin-bottom: 0.75rem;">
+                <i class="fas fa-stamp"></i>
+              </div>
+              <h5 style="font-size: 0.95rem; margin-bottom: 4px;">Approval Pipeline</h5>
+              <p style="font-size: 0.8rem; margin-bottom: 0;">Transparent approval flow</p>
+            </div>
+            <div class="feature-card" style="padding: 1.2rem;">
+              <div class="icon-box gold-bg" style="width: 48px; height: 48px; font-size: 1.2rem; margin-bottom: 0.75rem;">
+                <i class="fas fa-hand-holding-usd"></i>
+              </div>
+              <h5 style="font-size: 0.95rem; margin-bottom: 4px;">Funding Monitor</h5>
+              <p style="font-size: 0.8rem; margin-bottom: 0;">Track funding sources</p>
+            </div>
+            <div class="feature-card" style="padding: 1.2rem;">
+              <div class="icon-box maroon-bg" style="width: 48px; height: 48px; font-size: 1.2rem; margin-bottom: 0.75rem;">
+                <i class="fas fa-chart-bar"></i>
+              </div>
+              <h5 style="font-size: 0.95rem; margin-bottom: 4px;">Smart Reports</h5>
+              <p style="font-size: 0.8rem; margin-bottom: 0;">Consolidated summaries</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SERVICES / FEATURES ===== -->
+  <section class="section" id="services" style="background: var(--white);">
+    <div class="container">
+      <div class="section-header text-center animate-on-scroll">
+        <h2>Extension Services &amp; System Features</h2>
+        <span class="gold-bar" style="margin: 0.5rem auto 0;"></span>
+        <p style="margin: 1rem auto 0;">Comprehensive tools to support every phase of the extension project lifecycle.</p>
+      </div>
+
+      <div class="grid grid-4" style="margin-top: 2rem;">
+        <div class="feature-card animate-on-scroll delay-1">
+          <div class="icon-box maroon-bg"><i class="fas fa-clipboard-check"></i></div>
+          <h4>Proposal Management</h4>
+          <p>Record, track, and manage extension project proposals with applicable evaluation and approval status throughout the proposal lifecycle.</p>
+        </div>
+        <div class="feature-card animate-on-scroll delay-2">
+          <div class="icon-box gold-bg"><i class="fas fa-route"></i></div>
+          <h4>Approval Pipeline</h4>
+          <p>Track proposals through Eligibility Check, Technical Evaluation, Head of Extension approval, Defense, Division Office endorsement, and MOA stages.</p>
+        </div>
+        <div class="feature-card animate-on-scroll delay-3">
+          <div class="icon-box maroon-bg"><i class="fas fa-money-check-alt"></i></div>
+          <h4>Funding Status Monitoring</h4>
+          <p>Record and view project funding information including institutional funding, external sources, approved budget, and current funding status.</p>
+        </div>
+        <div class="feature-card animate-on-scroll delay-4">
+          <div class="icon-box gold-bg"><i class="fas fa-user-graduate"></i></div>
+          <h4>Participation Tracking</h4>
+          <p>Systematically record and monitor participation of faculty members and students in extension activities across all projects.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-4" style="margin-top: 1.5rem;">
+        <div class="feature-card animate-on-scroll delay-1">
+          <div class="icon-box gold-bg"><i class="fas fa-calendar-check"></i></div>
+          <h4>Activity &amp; Training</h4>
+          <p>Manage extension activities, training sessions, schedules, venues, participants, deliverables, and implementation information.</p>
+        </div>
+        <div class="feature-card animate-on-scroll delay-2">
+          <div class="icon-box maroon-bg"><i class="fas fa-handshake"></i></div>
+          <h4>Beneficiary Management</h4>
+          <p>Record and organize information about beneficiaries, requesting parties, partner organizations, and their participation in extension activities.</p>
+        </div>
+        <div class="feature-card animate-on-scroll delay-3">
+          <div class="icon-box gold-bg"><i class="fas fa-file-invoice"></i></div>
+          <h4>Documentation &amp; Reports</h4>
+          <p>Organize narrative reports, attendance records, photographs, certificates, travel documents, and supporting records for monitoring and evaluation.</p>
+        </div>
+        <div class="feature-card animate-on-scroll delay-4">
+          <div class="icon-box maroon-bg"><i class="fas fa-poll"></i></div>
+          <h4>Post-Implementation</h4>
+          <p>Record completed activities, implementation results, beneficiary outcomes, client satisfaction, and evaluation data for future planning.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== STATS ===== -->
+  <section class="section stats-section" id="stats">
+    <div class="container">
+      <div class="grid grid-4">
+        <div class="stat-card animate-on-scroll delay-1">
+          <div class="stat-icon"><i class="fas fa-project-diagram"></i></div>
+          <div class="stat-number" data-counter="48">0</div>
+          <div class="stat-label">Extension Projects</div>
+        </div>
+        <div class="stat-card animate-on-scroll delay-2">
+          <div class="stat-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+          <div class="stat-number" data-counter="125">0</div>
+          <div class="stat-label">Faculty Participants</div>
+        </div>
+        <div class="stat-card animate-on-scroll delay-3">
+          <div class="stat-icon"><i class="fas fa-users"></i></div>
+          <div class="stat-number" data-counter="2850">0</div>
+          <div class="stat-label">Community Beneficiaries</div>
+        </div>
+        <div class="stat-card animate-on-scroll delay-4">
+          <div class="stat-icon"><i class="fas fa-handshake"></i></div>
+          <div class="stat-number" data-counter="35">0</div>
+          <div class="stat-label">Partner Organizations</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== NEWS & UPDATES ===== -->
+  <section class="section" id="news" style="background: var(--light-gray);">
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <h2>Extension News &amp; Updates</h2>
+        <span class="gold-bar"></span>
+        <p>Stay updated with the latest extension activities, events, and project milestones.</p>
+      </div>
+
+      <div class="grid grid-4">
+        <div class="news-card animate-on-scroll delay-1">
+          <div class="news-image" style="background: linear-gradient(135deg, var(--maroon), var(--gold)); display: flex; align-items: center; justify-content: center;">
+            <i class="fas fa-laptop-code" style="font-size: 4rem; color: rgba(255,255,255,0.3);"></i>
+          </div>
+          <div class="news-overlay">
+            <div class="news-date">August 28, 2026</div>
+            <div class="news-title">CCMS Conducts Skills Enhancement Training on Web Development for Daet LGU</div>
+          </div>
+        </div>
+        <div class="news-card animate-on-scroll delay-2">
+          <div class="news-image" style="background: linear-gradient(135deg, #1A1A2E, var(--maroon-dark)); display: flex; align-items: center; justify-content: center;">
+            <i class="fas fa-database" style="font-size: 4rem; color: rgba(255,255,255,0.3);"></i>
+          </div>
+          <div class="news-overlay">
+            <div class="news-date">August 15, 2026</div>
+            <div class="news-title">System Development Project for Basud Municipal Library Now in Testing Phase</div>
+          </div>
+        </div>
+        <div class="news-card animate-on-scroll delay-3">
+          <div class="news-image" style="background: linear-gradient(135deg, var(--gold-dark), var(--gold)); display: flex; align-items: center; justify-content: center;">
+            <i class="fas fa-award" style="font-size: 4rem; color: rgba(255,255,255,0.3);"></i>
+          </div>
+          <div class="news-overlay">
+            <div class="news-date">July 30, 2026</div>
+            <div class="news-title">Extension Office Receives Recognition for Community Outreach Programs</div>
+          </div>
+        </div>
+        <div class="news-card animate-on-scroll delay-4">
+          <div class="news-image" style="background: linear-gradient(135deg, #374151, #1F2937); display: flex; align-items: center; justify-content: center;">
+            <i class="fas fa-handshake" style="font-size: 4rem; color: rgba(255,255,255,0.3);"></i>
+          </div>
+          <div class="news-overlay">
+            <div class="news-date">July 15, 2026</div>
+            <div class="news-title">CCMS Partners with DOST for ICT Consultancy Services in Camarines Norte</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center" style="margin-top: 2rem;">
+        <a href="#" class="btn btn-gold animate-on-scroll">
+          View More News and Updates <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CTA SECTION ===== -->
+  <section class="section" style="background: linear-gradient(135deg, var(--maroon-dark), var(--maroon), var(--dark-bg)); color: var(--white);">
+    <div class="container text-center">
+      <div class="animate-on-scroll" style="max-width: 650px; margin: 0 auto;">
+        <h2 style="color: var(--white); margin-bottom: 1rem;">Ready to Streamline Extension Projects?</h2>
+        <p style="color: rgba(255,255,255,0.75); font-size: 1.05rem;">Access the G.R.A.C.E PORTAL system to manage proposals, track approvals, monitor funding, record participation, organize documentation, and generate comprehensive reports.</p>
+        <div style="display: flex; justify-content: center; gap: 1rem; margin-top: 2rem; flex-wrap: wrap;">
+          <a href="login.html" class="btn btn-gold btn-lg">
+            <i class="fas fa-sign-in-alt"></i> Login to G.R.A.C.E PORTAL
+          </a>
+          <a href="#contact" class="btn btn-secondary btn-lg">
+            <i class="fas fa-envelope"></i> Contact Us
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer" id="contact">
+    <div class="footer-main container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <div class="footer-logo-icon">GP</div>
+            <span class="footer-logo-text">G.R.A.C.E PORTAL</span>
+          </div>
+          <p>A Web-Based Extension Project Management and Monitoring System for the CCMS Extension Office. Developed by Team Thriv3 for IT 116: System Analysis and Design.</p>
+          <p style="font-size: 0.82rem; color: rgba(255,255,255,0.4);">
+            <strong style="color: rgba(255,255,255,0.6);">Proponents:</strong><br>
+            Juan, Prince Jheck T.<br>
+            Villanueva, Crystelle A.<br>
+            Araña, Lei-anne C.<br>
+            BS Information Technology – 3A
+          </p>
+        </div>
+
+        <div class="footer-section">
+          <h5>Quick Links</h5>
+          <ul class="footer-links">
+            <li><a href="index.html"><i class="fas fa-chevron-right" style="font-size:0.6rem;"></i> Home</a></li>
+            <li><a href="#about"><i class="fas fa-chevron-right" style="font-size:0.6rem;"></i> About</a></li>
+            <li><a href="#services"><i class="fas fa-chevron-right" style="font-size:0.6rem;"></i> Services</a></li>
+            <li><a href="#news"><i class="fas fa-chevron-right" style="font-size:0.6rem;"></i> Updates</a></li>
+            <li><a href="login.html"><i class="fas fa-chevron-right" style="font-size:0.6rem;"></i> Login</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h5>System Modules</h5>
+          <ul class="footer-links">
+            <li><a href="login.html"><i class="fas fa-chevron-right" style="font-size:0.6rem;"></i> Dashboard</a></li>
+            <li><a href="login.html"><i class="fas fa-chevron-right" style="font-size:0.6rem;"></i> Projects</a></li>
+            <li><a href="login.html"><i class="fas fa-chevron-right" style="font-size:0.6rem;"></i> Activities</a></li>
+            <li><a href="login.html"><i class="fas fa-chevron-right" style="font-size:0.6rem;"></i> Beneficiaries</a></li>
+            <li><a href="login.html"><i class="fas fa-chevron-right" style="font-size:0.6rem;"></i> Reports</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h5>Contact Info</h5>
+          <ul class="footer-contact">
+            <li>
+              <span class="contact-icon"><i class="fas fa-map-marker-alt"></i></span>
+              <span>CCMS Extension Office, F. Pimentel Ave., Daet, 4600 Camarines Norte</span>
+            </li>
+            <li>
+              <span class="contact-icon"><i class="fas fa-envelope"></i></span>
+              <span>extension@ccms.edu.ph</span>
+            </li>
+            <li>
+              <span class="contact-icon"><i class="fas fa-phone"></i></span>
+              <span>(054) 721-XXXX</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p>Copyright &copy; 2026 CCMS G.R.A.C.E PORTAL | Team Thriv3 — IT 116: System Analysis and Design | Instructor: Mary Grace Bolos</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scroll to Top -->
+  <button class="scroll-top" id="scroll-top" aria-label="Scroll to top">
+    <i class="fas fa-chevron-up"></i>
+  </button>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

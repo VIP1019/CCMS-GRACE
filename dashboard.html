@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Dashboard Overview — CCMS G.R.A.C.E. Portal">
+  <title>Dashboard | G.R.A.C.E. Portal</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    /* Dashboard specific overrides */
+    .dashboard-wrap { max-width: 1100px; margin: 0 auto; }
+    
+    /* Summary Cards Row 1 */
+    .ds-cards-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1rem;
+    }
+    .ds-card {
+      background: white; border: 1px solid #E5E7EB; border-radius: 12px;
+      padding: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem;
+      position: relative; overflow: hidden;
+    }
+    .ds-card::after {
+      content: ''; position: absolute; right: -15px; bottom: -15px;
+      font-family: 'Font Awesome 5 Free'; font-weight: 900; font-size: 5rem;
+      color: rgba(0,0,0,0.02); line-height: 1; pointer-events: none;
+    }
+    .ds-card.c-maroon::after { content: '\f542'; color: rgba(139,26,26,0.04); }
+    .ds-card.c-gold::after { content: '\f0ae'; color: rgba(218,165,32,0.05); }
+    .ds-card.c-blue::after { content: '\f15c'; color: rgba(59,130,246,0.04); }
+    .ds-card.c-green::after { content: '\f058'; color: rgba(16,185,129,0.04); }
+
+    .dsc-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #6B7280; }
+    .dsc-val { font-size: 1.8rem; font-weight: 800; font-family: 'Poppins', sans-serif; color: #111827; line-height: 1.2; }
+    .dsc-trend { font-size: 0.72rem; font-weight: 600; display: flex; align-items: center; gap: 0.3rem; }
+    .dsc-trend.up { color: #059669; }
+    .dsc-trend.down { color: #DC2626; }
+
+    /* Summary Cards Row 2 (Secondary Metrics) */
+    .ds-metrics-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem;
+    }
+    .dsm-card {
+      background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 8px;
+      padding: 1rem; display: flex; align-items: center; gap: 1rem;
+    }
+    .dsm-icon {
+      width: 42px; height: 42px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+    }
+    .dsm-icon.i-purple { background: rgba(124,58,237,0.1); color: #7C3AED; }
+    .dsm-icon.i-orange { background: rgba(249,115,22,0.1); color: #F97316; }
+    .dsm-icon.i-teal { background: rgba(20,184,166,0.1); color: #14B8A6; }
+    .dsm-icon.i-rose { background: rgba(225,29,72,0.1); color: #E11D48; }
+    
+    .dsm-info { display: flex; flex-direction: column; gap: 0.15rem; }
+    .dsm-val { font-size: 1.1rem; font-weight: 800; color: #1F2937; line-height: 1.1; }
+    .dsm-label { font-size: 0.7rem; color: #6B7280; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+
+    /* Main Grid Layout */
+    .ds-main-grid {
+      display: grid; grid-template-columns: 2fr 1fr; gap: 1.25rem; margin-bottom: 1.5rem;
+    }
+
+    /* Section styling */
+    .ds-section {
+      background: white; border: 1px solid #E5E7EB; border-radius: 12px; overflow: hidden;
+    }
+    .ds-sec-head {
+      padding: 1rem 1.25rem; border-bottom: 1px solid #F3F4F6;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .ds-sec-title {
+      font-size: 0.85rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.06em; color: #374151; display: flex; align-items: center; gap: 0.5rem;
+    }
+    .ds-sec-title i { color: #8B1A1A; }
+    .ds-sec-action { font-size: 0.75rem; font-weight: 600; color: #8B1A1A; text-decoration: none; }
+    .ds-sec-action:hover { text-decoration: underline; }
+    
+    /* Table styling for Dashboard */
+    .ds-table { width: 100%; border-collapse: collapse; }
+    .ds-table th {
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+      color: #6B7280; background: #F9FAFB; padding: 0.75rem 1.25rem; text-align: left;
+      border-bottom: 1px solid #E5E7EB;
+    }
+    .ds-table td { padding: 0.85rem 1.25rem; border-bottom: 1px solid #F3F4F6; font-size: 0.82rem; color: #374151; }
+    .ds-table tr:last-child td { border-bottom: none; }
+    
+    .ds-pcode { font-size: 0.7rem; color: #6B7280; display: block; margin-top: 0.15rem; }
+    .ds-status {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      border-radius: 12px; padding: 0.2rem 0.6rem; font-size: 0.68rem; font-weight: 700;
+    }
+    .ds-status.s-ongoing { background: rgba(59,130,246,0.1); color: #2563EB; border: 1px solid rgba(59,130,246,0.2); }
+    .ds-status.s-review { background: rgba(245,158,11,0.1); color: #D97706; border: 1px solid rgba(245,158,11,0.2); }
+    .ds-status.s-approved { background: rgba(16,185,129,0.1); color: #059669; border: 1px solid rgba(16,185,129,0.2); }
+    
+    .ds-progress-bar { width: 100%; height: 6px; background: #E5E7EB; border-radius: 3px; overflow: hidden; margin-bottom: 0.25rem; }
+    .ds-progress-fill { height: 100%; background: #8B1A1A; border-radius: 3px; }
+    .ds-progress-text { font-size: 0.68rem; color: #6B7280; font-weight: 600; }
+
+    /* Quick Actions Grid */
+    .qa-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; padding: 1.25rem;
+    }
+    .qa-btn {
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem;
+      padding: 1rem 0.5rem; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 8px;
+      color: #374151; text-decoration: none; transition: all 0.2s;
+    }
+    .qa-btn:hover { background: white; border-color: #8B1A1A; color: #8B1A1A; transform: translateY(-2px); box-shadow: 0 4px 6px rgba(139,26,26,0.06); }
+    .qa-btn i { font-size: 1.3rem; color: #8B1A1A; }
+    .qa-btn span { font-size: 0.72rem; font-weight: 600; text-align: center; }
+
+    /* Upcoming Deadlines */
+    .dl-list { display: flex; flex-direction: column; }
+    .dl-item {
+      display: flex; align-items: center; gap: 1rem; padding: 1rem 1.25rem;
+      border-bottom: 1px solid #F3F4F6;
+    }
+    .dl-item:last-child { border-bottom: none; }
+    .dl-date {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      width: 48px; height: 48px; background: #FFFBEB; border: 1px solid #FDE68A;
+      border-radius: 8px; color: #B45309; flex-shrink: 0;
+    }
+    .dl-date .d { font-size: 1.1rem; font-weight: 800; line-height: 1; }
+    .dl-date .m { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; margin-top: 0.1rem; }
+    .dl-info { flex: 1; }
+    .dl-title { font-size: 0.8rem; font-weight: 700; color: #1F2937; margin-bottom: 0.15rem; }
+    .dl-proj { font-size: 0.7rem; color: #6B7280; }
+
+    /* Secondary Grid (Bottom row) */
+    .ds-sub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+
+    /* Approval Pipeline */
+    .pipe-wrap { padding: 2rem 1.25rem; }
+    .pipe-stages { display: flex; align-items: center; justify-content: space-between; position: relative; }
+    .pipe-stages::before {
+      content: ''; position: absolute; left: 10%; right: 10%; top: 32px;
+      height: 2px; background: #E5E7EB; z-index: 0;
+    }
+    .pipe-stage { display: flex; flex-direction: column; align-items: center; gap: 0.6rem; position: relative; z-index: 1; }
+    .pipe-circle {
+      width: 64px; height: 64px; border-radius: 50%; background: white;
+      border: 3px solid white; display: flex; align-items: center; justify-content: center;
+      font-size: 1.25rem; font-weight: 800; font-family: var(--font-heading); box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+    .pipe-stage:nth-child(1) .pipe-circle { color: #F59E0B; border-color: #FDE68A; }
+    .pipe-stage:nth-child(2) .pipe-circle { color: #3B82F6; border-color: #BFDBFE; }
+    .pipe-stage:nth-child(3) .pipe-circle { color: #8B1A1A; border-color: rgba(139,26,26,0.3); }
+    .pipe-stage:nth-child(4) .pipe-circle { color: #10B981; border-color: #A7F3D0; }
+    .pipe-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #4B5563; }
+    
+    /* Funding Overview */
+    .fund-list { padding: 1.25rem; }
+    .fund-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.75rem 0; border-bottom: 1px solid #F3F4F6;
+    }
+    .fund-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .fr-left { display: flex; align-items: center; gap: 0.6rem; }
+    .fr-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .fr-dot.c1 { background: #8B1A1A; }
+    .fr-dot.c2 { background: #DAA520; }
+    .fr-dot.c3 { background: #F59E0B; }
+    .fr-label { font-size: 0.8rem; font-weight: 600; color: #374151; }
+    .fr-val { font-size: 0.95rem; font-weight: 700; color: #111827; font-family: 'Inter', sans-serif; }
+    
+    .fund-total-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 1rem; margin-top: 0.5rem; border-top: 1px dashed #D1D5DB;
+    }
+    .ft-label { font-size: 0.82rem; font-weight: 800; color: #1F2937; text-transform: uppercase; }
+    .ft-val { font-size: 1.2rem; font-weight: 800; color: #8B1A1A; font-family: 'Poppins', sans-serif; }
+
+    /* Responsiveness */
+    @media (max-width: 1024px) {
+      .ds-cards-grid, .ds-metrics-grid { grid-template-columns: repeat(2, 1fr); }
+      .ds-main-grid { grid-template-columns: 1fr; }
+      .ds-sub-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .ds-cards-grid, .ds-metrics-grid { grid-template-columns: 1fr; }
+      .pipe-stages::before { display: none; }
+      .pipe-stages { flex-direction: column; gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="dashboard-layout">
+  <!-- Dynamic Sidebar -->
+  <aside class="sidebar" id="sidebar"></aside>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Dynamic Topbar -->
+    <header class="topbar" id="topbar"></header>
+
+    <div class="dashboard-content">
+      <div class="dashboard-wrap">
+        
+        <!-- Welcome & Breadcrumb handled implicitly via topbar styling, but adding title here -->
+        <div style="margin-bottom: 1.25rem;">
+          <h2 style="font-size: 1.4rem; font-weight: 800; font-family: 'Poppins', sans-serif; color: #111827; margin: 0;">Dashboard Overview</h2>
+          <p style="font-size: 0.82rem; color: #6B7280; margin-top: 0.2rem;">Welcome back! Here is your extension project and operational summary.</p>
+        </div>
+
+        <!-- Primary Cards -->
+        <div class="ds-cards-grid">
+          <div class="ds-card c-maroon">
+            <div class="dsc-title">Total Projects</div>
+            <div class="dsc-val">48</div>
+            <div class="dsc-trend up"><i class="fas fa-arrow-up"></i> <span>12% from last year</span></div>
+          </div>
+          <div class="ds-card c-gold">
+            <div class="dsc-title">Active Projects</div>
+            <div class="dsc-val">18</div>
+            <div class="dsc-trend up"><i class="fas fa-arrow-up"></i> <span>5 new this month</span></div>
+          </div>
+          <div class="ds-card c-blue">
+            <div class="dsc-title">Proposals Pending</div>
+            <div class="dsc-val">7</div>
+            <div class="dsc-trend down"><i class="fas fa-arrow-down"></i> <span>Awaiting review</span></div>
+          </div>
+          <div class="ds-card c-green">
+            <div class="dsc-title">Proposals Approved</div>
+            <div class="dsc-val">23</div>
+            <div class="dsc-trend up"><i class="fas fa-arrow-up"></i> <span>8 verified this year</span></div>
+          </div>
+        </div>
+
+        <!-- Secondary Metrics -->
+        <div class="ds-metrics-grid">
+          <div class="dsm-card">
+            <div class="dsm-icon i-purple"><i class="fas fa-calendar-check"></i></div>
+            <div class="dsm-info">
+              <div class="dsm-val">12</div>
+              <div class="dsm-label">Activities</div>
+            </div>
+          </div>
+          <div class="dsm-card">
+            <div class="dsm-icon i-orange"><i class="fas fa-handshake"></i></div>
+            <div class="dsm-info">
+              <div class="dsm-val">35</div>
+              <div class="dsm-label">Partners</div>
+            </div>
+          </div>
+          <div class="dsm-card">
+            <div class="dsm-icon i-teal"><i class="fas fa-users"></i></div>
+            <div class="dsm-info">
+              <div class="dsm-val">450+</div>
+              <div class="dsm-label">Beneficiaries</div>
+            </div>
+          </div>
+          <div class="dsm-card">
+            <div class="dsm-icon i-rose"><i class="fas fa-star"></i></div>
+            <div class="dsm-info">
+              <div class="dsm-val">4.8</div>
+              <div class="dsm-label">Satisfaction</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Dashboard Grid -->
+        <div class="ds-main-grid">
+          <!-- Left Col: Recent Projects Table -->
+          <div class="ds-section">
+            <div class="ds-sec-head">
+              <div class="ds-sec-title"><i class="fas fa-folder-open"></i> Recent Projects Overview</div>
+              <a href="projects.html" class="ds-sec-action">View All Projects</a>
+            </div>
+            <table class="ds-table">
+              <thead>
+                <tr>
+                  <th>Project Name &amp; Code</th>
+                  <th>Classification</th>
+                  <th>Status</th>
+                  <th>Implementation</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <strong>Community Health Outreach</strong>
+                    <span class="ds-pcode">EXT-2026-001</span>
+                  </td>
+                  <td>Community Service</td>
+                  <td><span class="ds-status s-ongoing">Ongoing</span></td>
+                  <td>
+                    <div class="ds-progress-bar"><div class="ds-progress-fill" style="width: 65%;"></div></div>
+                    <div class="ds-progress-text">65% Completed</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Basud Municipal Library System</strong>
+                    <span class="ds-pcode">EXT-2026-045</span>
+                  </td>
+                  <td>System Development</td>
+                  <td><span class="ds-status s-review">In Review</span></td>
+                  <td>
+                    <div class="ds-progress-bar"><div class="ds-progress-fill" style="width: 85%;"></div></div>
+                    <div class="ds-progress-text">85% Completed</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>ICT Consultancy - DOST Partner</strong>
+                    <span class="ds-pcode">EXT-2026-041</span>
+                  </td>
+                  <td>Consultancy</td>
+                  <td><span class="ds-status s-approved">Approved</span></td>
+                  <td>
+                    <div class="ds-progress-bar"><div class="ds-progress-fill" style="width: 30%;"></div></div>
+                    <div class="ds-progress-text">30% Completed</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Digital Literacy in Brgy. Lag-on</strong>
+                    <span class="ds-pcode">EXT-2026-038</span>
+                  </td>
+                  <td>Skills Training</td>
+                  <td><span class="ds-status s-approved" style="background:rgba(16,185,129,0.1);color:#059669;border-color:rgba(16,185,129,0.2);">Completed</span></td>
+                  <td>
+                    <div class="ds-progress-bar"><div class="ds-progress-fill" style="width: 100%;background:#059669;"></div></div>
+                    <div class="ds-progress-text">100% Completed</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Data Analytics Workshop</strong>
+                    <span class="ds-pcode">EXT-2026-035</span>
+                  </td>
+                  <td>Skills Training</td>
+                  <td><span class="ds-status" style="background:#F3F4F6;color:#4B5563;border:1px solid #E5E7EB;">Pending</span></td>
+                  <td>
+                    <div class="ds-progress-bar"><div class="ds-progress-fill" style="width: 10%;"></div></div>
+                    <div class="ds-progress-text">10% Completed</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Right Col: Quick Actions & Deadlines -->
+          <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+            
+            <div class="ds-section">
+              <div class="ds-sec-head">
+                <div class="ds-sec-title"><i class="fas fa-bolt" style="color:#F59E0B;"></i> Quick Actions</div>
+              </div>
+              <div class="qa-grid">
+                <a href="project-form.html" class="qa-btn">
+                  <i class="fas fa-plus-circle"></i>
+                  <span>New Proposal</span>
+                </a>
+                <a href="activities.html" class="qa-btn">
+                  <i class="fas fa-calendar-alt"></i>
+                  <span>Log Activity</span>
+                </a>
+                <a href="documents.html" class="qa-btn">
+                  <i class="fas fa-file-upload"></i>
+                  <span>Upload Doc</span>
+                </a>
+                <a href="reports.html" class="qa-btn">
+                  <i class="fas fa-chart-pie"></i>
+                  <span>Reports</span>
+                </a>
+              </div>
+            </div>
+
+            <div class="ds-section" style="flex: 1;">
+              <div class="ds-sec-head">
+                <div class="ds-sec-title"><i class="fas fa-clock" style="color:#D97706;"></i> Upcoming Deadlines</div>
+              </div>
+              <div class="dl-list">
+                <div class="dl-item">
+                  <div class="dl-date"><span class="d">25</span><span class="m">Sep</span></div>
+                  <div class="dl-info">
+                    <div class="dl-title">Module 3 Training Delivery</div>
+                    <div class="dl-proj">EXT-2026-001 • Comm. Health</div>
+                  </div>
+                </div>
+                <div class="dl-item">
+                  <div class="dl-date" style="background:#EFF6FF;color:#1D4ED8;border-color:#BFDBFE;"><span class="d">30</span><span class="m">Sep</span></div>
+                  <div class="dl-info">
+                    <div class="dl-title">System Testing Phase</div>
+                    <div class="dl-proj">EXT-2026-045 • Library System</div>
+                  </div>
+                </div>
+                <div class="dl-item">
+                  <div class="dl-date" style="background:#F3F4F6;color:#4B5563;border-color:#E5E7EB;"><span class="d">15</span><span class="m">Oct</span></div>
+                  <div class="dl-info">
+                    <div class="dl-title">Final Project Report</div>
+                    <div class="dl-proj">EXT-2026-048 • Web Dev Training</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Bottom Grid: Pipeline & Funding -->
+        <div class="ds-sub-grid">
+          
+          <div class="ds-section">
+            <div class="ds-sec-head">
+              <div class="ds-sec-title"><i class="fas fa-route"></i> Approval Pipeline</div>
+              <div class="ds-sec-action" style="font-weight:400;color:#6B7280;text-decoration:none;">This Semester</div>
+            </div>
+            <div class="pipe-wrap">
+              <div class="pipe-stages">
+                <div class="pipe-stage">
+                  <div class="pipe-circle">3</div>
+                  <div class="pipe-label">Eligibility</div>
+                </div>
+                <div class="pipe-stage">
+                  <div class="pipe-circle">2</div>
+                  <div class="pipe-label">Tech Eval</div>
+                </div>
+                <div class="pipe-stage">
+                  <div class="pipe-circle">1</div>
+                  <div class="pipe-label">Defense</div>
+                </div>
+                <div class="pipe-stage">
+                  <div class="pipe-circle">1</div>
+                  <div class="pipe-label">Approved</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ds-section">
+            <div class="ds-sec-head">
+              <div class="ds-sec-title"><i class="fas fa-wallet" style="color:#DAA520;"></i> Funding Overview</div>
+              <a href="funding.html" class="ds-sec-action">Manage Funds</a>
+            </div>
+            <div class="fund-list">
+              <div class="fund-row">
+                <div class="fr-left">
+                  <div class="fr-dot c1"></div>
+                  <div class="fr-label">Institutional Funding</div>
+                </div>
+                <div class="fr-val">₱285,000.00</div>
+              </div>
+              <div class="fund-row">
+                <div class="fr-left">
+                  <div class="fr-dot c2"></div>
+                  <div class="fr-label">External / Partner</div>
+                </div>
+                <div class="fr-val">₱120,000.00</div>
+              </div>
+              <div class="fund-row">
+                <div class="fr-left">
+                  <div class="fr-dot c3"></div>
+                  <div class="fr-label">Pending Verification</div>
+                </div>
+                <div class="fr-val" style="color:#6B7280;">₱55,000.00</div>
+              </div>
+              <div class="fund-total-row">
+                <div class="ft-label">Total Allocated</div>
+                <div class="ft-val">₱460,000.00</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

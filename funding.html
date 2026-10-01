@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Funding Information Form — CCMS G.R.A.C.E. Portal">
+  <title>Funding Information | G.R.A.C.E. Portal</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .fund-form-wrap { max-width: 960px; margin: 0 auto; }
+
+    /* Breadcrumb */
+    .breadcrumb { display: flex; align-items: center; gap: 0.35rem; font-size: 0.78rem; color: #9CA3AF; margin-bottom: 1rem; }
+    .breadcrumb a { color: #8B1A1A; text-decoration: none; font-weight: 500; }
+    .breadcrumb .sep { color: #D1D5DB; }
+    .breadcrumb .current { color: #374151; font-weight: 600; }
+
+    /* Page header */
+    .fund-header-row {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem;
+    }
+    .fund-title-block h3 { font-size: 1.35rem; font-weight: 800; color: #111827; font-family: 'Poppins', sans-serif; margin: 0; }
+    .fund-title-block .form-badge {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      background: #F3F4F6; border: 1px solid #E5E7EB;
+      border-radius: 6px; padding: 0.2rem 0.6rem;
+      font-size: 0.72rem; font-weight: 600; color: #374151;
+      margin-left: 0.5rem;
+    }
+    .fund-title-block .form-desc { font-size: 0.8rem; color: #6B7280; margin-top: 0.3rem; }
+    .fund-entity-tag {
+      display: flex; align-items: flex-start; flex-direction: column; gap: 0.3rem;
+      text-align: right;
+    }
+    .entity-badge {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-size: 0.68rem; color: #6B7280;
+    }
+    .entity-badge::before { content: '●'; color: #F59E0B; }
+    .entity-badge strong { color: #374151; }
+    .auth-record-badge {
+      background: rgba(139,26,26,0.08); color: #8B1A1A;
+      border: 1px solid rgba(139,26,26,0.2);
+      border-radius: 4px; padding: 0.15rem 0.5rem;
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.04em;
+    }
+
+    /* Success notice */
+    .fund-success-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      background: #ECFDF5; border: 1px solid #A7F3D0;
+      border-left: 4px solid #059669; border-radius: 8px;
+      padding: 0.8rem 1rem; margin-bottom: 1rem;
+      font-size: 0.82rem; color: #065F46;
+    }
+    .fund-success-bar .sync-time { font-size: 0.72rem; color: #059669; }
+
+    /* Monitoring Only notice */
+    .fund-notice-amber {
+      display: flex; gap: 0.75rem; align-items: flex-start;
+      background: #FFFBEB; border: 1px solid #FDE68A;
+      border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 1rem;
+    }
+    .fund-notice-amber .fn-icon { color: #F59E0B; font-size: 1rem; margin-top: 2px; flex-shrink: 0; }
+    .fund-notice-amber .fn-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: #92400E; margin-bottom: 0.3rem; }
+    .fund-notice-amber .fn-body { font-size: 0.8rem; color: #78350F; line-height: 1.6; }
+
+    /* Form sections */
+    .form-section { background: white; border: 1px solid #E5E7EB; border-radius: 10px; margin-bottom: 1rem; overflow: hidden; }
+    .form-section-head { padding: 0.85rem 1.25rem; border-bottom: 1px solid #F3F4F6; display: flex; align-items: flex-start; justify-content: space-between; }
+    .fsh-left { display: flex; flex-direction: column; gap: 0.15rem; }
+    .fsh-title { display: flex; align-items: center; gap: 0.45rem; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #8B1A1A; }
+    .fsh-title::before { content:''; width:7px; height:7px; background:#8B1A1A; border-radius:50%; flex-shrink:0; }
+    .fsh-desc { font-size: 0.75rem; color: #6B7280; padding-left: 1.1rem; }
+    .fsh-entity { font-size: 0.7rem; color: #9CA3AF; font-style: italic; }
+    .form-section-body { padding: 1.25rem; }
+
+    .fg2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .fg3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+    .fgroup { display: flex; flex-direction: column; gap: 0.35rem; }
+    .flabel { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #374151; }
+    .flabel .req { color: #DC2626; }
+    .flabel .sys-tag { font-size: 0.65rem; font-weight: 500; color: #9CA3AF; background: #F3F4F6; border-radius: 4px; padding: 0.05rem 0.4rem; text-transform: none; letter-spacing: 0; }
+    .finput, .fselect, .ftextarea {
+      width: 100%; padding: 0.6rem 0.85rem;
+      border: 1.5px solid #D1D5DB; border-radius: 7px;
+      font-size: 0.86rem; color: #1F2937; font-family: 'Inter', sans-serif;
+      background: white; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .finput:focus, .fselect:focus, .ftextarea:focus { outline: none; border-color: #8B1A1A; box-shadow: 0 0 0 3px rgba(139,26,26,0.1); }
+    .finput.locked { background: #F9FAFB; color: #6B7280; cursor: not-allowed; }
+    .ftextarea { resize: vertical; min-height: 75px; line-height: 1.6; }
+    .fhint { font-size: 0.7rem; color: #9CA3AF; }
+
+    /* Currency input */
+    .currency-wrap { position: relative; }
+    .currency-wrap .c-sym { position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); color: #374151; font-weight: 600; font-size: 0.88rem; }
+    .currency-wrap .finput { padding-left: 1.7rem; }
+    .currency-label { font-size: 0.68rem; color: #9CA3AF; text-align: right; }
+
+    /* Status pills */
+    .proj-status-ongoing { display: inline-flex; align-items: center; gap: 0.35rem; background: rgba(139,26,26,0.08); color: #8B1A1A; border: 1px solid rgba(139,26,26,0.15); border-radius: 20px; padding: 0.25rem 0.75rem; font-size: 0.72rem; font-weight: 700; }
+    .proj-status-ongoing::before { content: '●'; font-size: 0.55rem; }
+
+    /* Date input icon */
+    .date-wrap { position: relative; }
+    .date-wrap .di { position: absolute; right: 0.85rem; top: 50%; transform: translateY(-50%); color: #9CA3AF; font-size: 0.82rem; pointer-events: none; }
+
+    /* Disbursement table */
+    .disb-table { width: 100%; border-collapse: collapse; }
+    .disb-table th { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #6B7280; padding: 0.65rem 1rem; background: #F9FAFB; text-align: left; border-bottom: 1px solid #E5E7EB; }
+    .disb-table td { padding: 0.75rem 1rem; font-size: 0.83rem; color: #374151; border-bottom: 1px solid #F3F4F6; }
+    .disb-table tr:last-child td { border-bottom: none; }
+    .badge-released { background: #ECFDF5; color: #059669; border: 1px solid #A7F3D0; border-radius: 12px; padding: 0.2rem 0.6rem; font-size: 0.72rem; font-weight: 700; }
+    .badge-partial { background: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE; border-radius: 12px; padding: 0.2rem 0.6rem; font-size: 0.72rem; font-weight: 700; }
+    .badge-pending { background: #FFFBEB; color: #92400E; border: 1px solid #FDE68A; border-radius: 12px; padding: 0.2rem 0.6rem; font-size: 0.72rem; font-weight: 700; }
+    .btn-add-disb { padding: 0.4rem 0.85rem; background: none; border: 1.5px solid #8B1A1A; color: #8B1A1A; border-radius: 6px; font-size: 0.76rem; font-weight: 700; cursor: pointer; }
+
+    /* Footer bar */
+    .form-footer-bar { position: sticky; bottom: 0; background: white; border-top: 1px solid #E5E7EB; padding: 0.85rem 1.25rem; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 -2px 8px rgba(0,0,0,0.06); }
+    .ffbar-left { font-size: 0.72rem; color: #9CA3AF; }
+    .ffbar-actions { display: flex; gap: 0.6rem; }
+    .btn-cancel { padding: 0.55rem 1.1rem; background: none; border: 1.5px solid #D1D5DB; border-radius: 7px; font-size: 0.84rem; font-weight: 600; color: #6B7280; cursor: pointer; }
+    .btn-save-fund { padding: 0.55rem 1.4rem; background: linear-gradient(135deg, #8B1A1A, #6B0000); color: white; border: none; border-radius: 7px; font-size: 0.86rem; font-weight: 700; cursor: pointer; font-family: 'Poppins', sans-serif; }
+  </style>
+</head>
+<body>
+<div class="dashboard-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-content">
+    <header class="topbar" id="topbar"></header>
+    <div class="dashboard-content">
+      <div class="fund-form-wrap">
+
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+          <a href="dashboard.html">Dashboard</a>
+          <span class="sep">/</span>
+          <a href="projects.html">Projects</a>
+          <span class="sep">/</span>
+          <a href="funding.html">Funding</a>
+          <span class="sep">/</span>
+          <span class="current">Funding Information</span>
+        </div>
+
+        <!-- Header Row -->
+        <div class="fund-header-row">
+          <div class="fund-title-block">
+            <h3>Funding Information <span class="form-badge">Form UCN-CCMS-FND-03C</span></h3>
+            <div class="form-desc">Record and monitor authorized funding information associated with an extension project.</div>
+          </div>
+          <div class="fund-entity-tag">
+            <div class="entity-badge"><strong>DB ENTITY: PROJECT_FUNDING &amp; FUNDING_SOURCE</strong></div>
+            <div style="display:flex;align-items:center;gap:0.4rem;">
+              <span style="font-size:0.72rem;color:#6B7280;">Extension Office / Coordinator</span>
+              <span class="auth-record-badge">Authorized Record</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Success Bar -->
+        <div class="fund-success-bar">
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <i class="fas fa-check-circle" style="color:#059669;"></i>
+            Funding record updated successfully for project <strong>EXT-2026-001.</strong>
+          </div>
+          <div class="sync-time">Sync timestamp: Sep 16, 2026 • 10:45 AM</div>
+        </div>
+
+        <!-- Monitoring Notice -->
+        <div class="fund-notice-amber">
+          <div class="fn-icon"><i class="fas fa-sync-alt"></i></div>
+          <div>
+            <div class="fn-title">Funding Monitoring Only</div>
+            <div class="fn-body">
+              Funding information is recorded strictly for project documentation and monitoring purposes. The portal does not perform fund allocation, fund release, accounting, or funding-eligibility decisions. All financial disbursements follow external institutional treasury guidelines.
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 1: Project Information -->
+        <div class="form-section">
+          <div class="form-section-head">
+            <div class="fsh-left">
+              <div class="fsh-title">Project Information</div>
+            </div>
+            <div class="fsh-entity">Associated Extension Project Record</div>
+          </div>
+          <div class="form-section-body">
+            <div class="fg2" style="margin-bottom:1rem;">
+              <div class="fgroup">
+                <label class="flabel">Select Project <span class="req">*</span></label>
+                <select class="fselect">
+                  <option selected>Community Health Outreach — EXT-2026-001</option>
+                  <option>Basud Library System — EXT-2026-045</option>
+                  <option>ICT Skills Training — EXT-2026-048</option>
+                </select>
+              </div>
+              <div class="fg2" style="gap:0.75rem;">
+                <div class="fgroup">
+                  <label class="flabel">Project Status</label>
+                  <div style="padding:0.5rem 0;"><span class="proj-status-ongoing">ONGOING</span></div>
+                </div>
+                <div class="fgroup">
+                  <label class="flabel">Project Leader</label>
+                  <div style="font-size:0.84rem;color:#374151;padding:0.5rem 0;font-weight:600;">Dr. Mary Grace Bolos <span style="font-size:0.72rem;color:#9CA3AF;font-weight:400;">(Proponent)</span></div>
+                </div>
+              </div>
+            </div>
+            <div style="padding:0.65rem 0.9rem;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:7px;font-size:0.78rem;color:#065F46;display:flex;justify-content:space-between;align-items:center;">
+              <span><i class="fas fa-calendar-check" style="color:#059669;margin-right:0.4rem;"></i>Approved Project Schedule Duration: <strong>September 20, 2026 – December 15, 2026</strong></span>
+              <span style="font-size:0.7rem;color:#059669;font-weight:600;">Extension Term Cycle A</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Funding Details -->
+        <div class="form-section">
+          <div class="form-section-head">
+            <div class="fsh-left">
+              <div class="fsh-title">Funding Details</div>
+            </div>
+            <div class="fsh-entity">ERD: PROJECT_FUNDING (PK: project_funding_id)</div>
+          </div>
+          <div class="form-section-body">
+            <div class="fg2" style="margin-bottom:1rem;">
+              <div class="fgroup">
+                <label class="flabel">Funding Source <span class="req">*</span></label>
+                <select class="fselect">
+                  <option selected>Institutional Funding</option>
+                  <option>External — LGU</option>
+                  <option>External — Government Agency</option>
+                  <option>External — NGO</option>
+                  <option>External — Private</option>
+                </select>
+                <div class="fhint">Source classified per UCN CCMS Extension Office registry (FUNDING_SOURCE)</div>
+              </div>
+              <div class="fgroup">
+                <label class="flabel">Approved Amount <span class="req">*</span></label>
+                <div class="currency-label" style="text-align:right;margin-bottom:0.2rem;">PHP Currency</div>
+                <div class="currency-wrap">
+                  <span class="c-sym">₱</span>
+                  <input class="finput" type="text" value="50,000.00">
+                </div>
+                <div class="fhint">Enter the approved amount based on authorized project records.</div>
+              </div>
+            </div>
+            <div class="fg3">
+              <div class="fgroup">
+                <label class="flabel">Funding Status <span class="req">*</span></label>
+                <select class="fselect">
+                  <option selected>Recorded</option>
+                  <option>Partially Released</option>
+                  <option>Released</option>
+                  <option>Pending</option>
+                </select>
+                <div class="fhint">Status indicates data-only entry; recorded upon initial coordinator endorsement.</div>
+              </div>
+              <div class="fgroup">
+                <label class="flabel">Date Recorded <span class="sys-tag">System recorded</span></label>
+                <div class="date-wrap">
+                  <input class="finput locked" type="text" value="September 16, 2026" readonly>
+                  <i class="fas fa-calendar di"></i>
+                </div>
+              </div>
+              <div class="fgroup">
+                <label class="flabel">Currency</label>
+                <input class="finput locked" type="text" value="PHP — Philippine Peso" readonly>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3: Disbursement Records -->
+        <div class="form-section">
+          <div class="form-section-head">
+            <div class="fsh-left">
+              <div class="fsh-title">Disbursement Records</div>
+              <div class="fsh-desc">Track partial or full fund releases — for monitoring purposes only</div>
+            </div>
+            <button class="btn-add-disb"><i class="fas fa-plus"></i> Add Disbursement</button>
+          </div>
+          <div class="form-section-body" style="padding:0;">
+            <table class="disb-table">
+              <thead>
+                <tr>
+                  <th>Disbursement Date</th>
+                  <th>Amount Released</th>
+                  <th>Reference No.</th>
+                  <th>Purpose</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Sep 16, 2026</td>
+                  <td style="font-weight:700;color:#059669;">₱25,000.00</td>
+                  <td style="font-size:0.8rem;color:#6B7280;">REF-2026-FND-001</td>
+                  <td style="font-size:0.8rem;">Initial release — training materials &amp; logistics</td>
+                  <td><span class="badge-released">Released</span></td>
+                </tr>
+                <tr>
+                  <td>Oct 15, 2026</td>
+                  <td style="font-weight:700;color:#1D4ED8;">₱15,000.00</td>
+                  <td style="font-size:0.8rem;color:#6B7280;">REF-2026-FND-002</td>
+                  <td style="font-size:0.8rem;">Phase 2 — community venue &amp; facilitator fees</td>
+                  <td><span class="badge-partial">Partial</span></td>
+                </tr>
+                <tr>
+                  <td>Dec 01, 2026</td>
+                  <td style="font-weight:700;color:#92400E;">₱10,000.00</td>
+                  <td style="font-size:0.8rem;color:#6B7280;">REF-2026-FND-003</td>
+                  <td style="font-size:0.8rem;">Final release — evaluation &amp; reporting</td>
+                  <td><span class="badge-pending">Pending</span></td>
+                </tr>
+              </tbody>
+            </table>
+            <div style="padding:0.75rem 1rem;background:#F9FAFB;border-top:1px solid #F3F4F6;display:flex;justify-content:space-between;font-size:0.78rem;color:#374151;font-weight:600;">
+              <span>Total Recorded: ₱50,000.00</span>
+              <span style="color:#059669;">Released: ₱25,000.00 &nbsp;|&nbsp; <span style="color:#1D4ED8;">Partial: ₱15,000.00</span> &nbsp;|&nbsp; <span style="color:#92400E;">Pending: ₱10,000.00</span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 4: Remarks -->
+        <div class="form-section">
+          <div class="form-section-head">
+            <div class="fsh-left">
+              <div class="fsh-title">Remarks &amp; Notes</div>
+            </div>
+          </div>
+          <div class="form-section-body">
+            <div class="fgroup">
+              <label class="flabel">Coordinator Remarks</label>
+              <textarea class="ftextarea" rows="3" placeholder="Optional notes from the Extension Coordinator regarding funding status, conditions, or clarifications...">Initial funding approved and first tranche released. Awaiting Phase 2 documentation before second tranche processing. MOA signed and on file.</textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="form-footer-bar">
+          <div class="ffbar-left">
+            CCMS Extension Office &nbsp;•&nbsp; Form UCN-CCMS-FND-03C &nbsp;•&nbsp; Coordinator-authorized record only
+          </div>
+          <div class="ffbar-actions">
+            <button class="btn-cancel" onclick="window.location.href='dashboard.html'">Cancel</button>
+            <button class="btn-save-fund" onclick="alert('Funding record saved successfully!')">Save Funding Record →</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

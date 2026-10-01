@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="New Project Proposal — CCMS G.R.A.C.E. Portal">
+  <title>New Proposal | G.R.A.C.E. Portal</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    /* Form-specific overrides */
+    .proposal-form-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+    .form-header-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .form-header-title h3 { font-size: 1.35rem; font-weight: 800; color: #111827; margin: 0; font-family: 'Poppins', sans-serif; }
+    .form-header-title .form-code { font-size: 0.72rem; color: #6B7280; margin-top: 0.2rem; }
+    .step-indicator {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-size: 0.8rem; color: #6B7280; font-weight: 600;
+    }
+    .step-dot {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: #8B1A1A; color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.78rem; font-weight: 700; flex-shrink: 0;
+    }
+
+    /* Stepper bar */
+    .proposal-stepper {
+      display: flex; align-items: center;
+      background: white; border: 1px solid #E5E7EB;
+      border-radius: 8px; padding: 0.5rem 1rem;
+      margin-bottom: 1.5rem; gap: 0;
+      overflow-x: auto;
+    }
+    .pstep {
+      display: flex; align-items: center; gap: 0.45rem;
+      padding: 0.4rem 0.85rem;
+      border-bottom: 2px solid transparent;
+      font-size: 0.78rem; font-weight: 500; color: #9CA3AF;
+      white-space: nowrap; cursor: default;
+    }
+    .pstep.active { color: #8B1A1A; border-bottom-color: #8B1A1A; font-weight: 700; }
+    .pstep.done { color: #059669; border-bottom-color: #059669; }
+    .pstep .psn {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: #E5E7EB; color: #6B7280;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.68rem; font-weight: 700;
+    }
+    .pstep.active .psn { background: #8B1A1A; color: white; }
+    .pstep.done .psn { background: #059669; color: white; }
+    .pstep-sep { color: #D1D5DB; font-size: 0.75rem; padding: 0 0.1rem; }
+
+    /* Form Sections */
+    .form-section {
+      background: white;
+      border: 1px solid #E5E7EB;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      overflow: hidden;
+    }
+    .form-section-head {
+      padding: 0.85rem 1.25rem;
+      border-bottom: 1px solid #F3F4F6;
+      display: flex; align-items: flex-start; justify-content: space-between;
+    }
+    .fsh-left { display: flex; flex-direction: column; gap: 0.15rem; }
+    .fsh-title {
+      display: flex; align-items: center; gap: 0.45rem;
+      font-size: 0.75rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.08em; color: #8B1A1A;
+    }
+    .fsh-title::before {
+      content: '';
+      width: 7px; height: 7px;
+      background: #8B1A1A; border-radius: 50%; flex-shrink: 0;
+    }
+    .fsh-desc { font-size: 0.75rem; color: #6B7280; padding-left: 1.1rem; }
+    .fsh-entity { font-size: 0.7rem; color: #9CA3AF; font-style: italic; }
+    .form-section-body { padding: 1.25rem; }
+
+    /* Form grid */
+    .fg2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .fg3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+    .fg-full { grid-column: 1 / -1; }
+
+    .fgroup { display: flex; flex-direction: column; gap: 0.35rem; }
+    .flabel {
+      font-size: 0.72rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.06em; color: #374151;
+    }
+    .flabel .req { color: #DC2626; }
+    .flabel .auto-tag {
+      font-size: 0.65rem; font-weight: 500; color: #9CA3AF;
+      background: #F3F4F6; border-radius: 4px; padding: 0.05rem 0.4rem;
+      text-transform: none; letter-spacing: 0;
+    }
+    .finput, .fselect, .ftextarea {
+      width: 100%;
+      padding: 0.6rem 0.85rem;
+      border: 1.5px solid #D1D5DB;
+      border-radius: 7px;
+      font-size: 0.86rem;
+      color: #1F2937;
+      font-family: 'Inter', sans-serif;
+      background: white;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .finput:focus, .fselect:focus, .ftextarea:focus {
+      outline: none; border-color: #8B1A1A;
+      box-shadow: 0 0 0 3px rgba(139,26,26,0.1);
+    }
+    .finput.locked { background: #F9FAFB; color: #6B7280; cursor: not-allowed; }
+    .ftextarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+    .fhint { font-size: 0.7rem; color: #9CA3AF; }
+    .fchar-count { font-size: 0.7rem; color: #9CA3AF; text-align: right; }
+    .ferror { font-size: 0.72rem; color: #DC2626; display: flex; align-items: center; gap: 0.3rem; }
+
+    /* Upload area */
+    .upload-area {
+      border: 2px dashed #D1D5DB;
+      border-radius: 8px;
+      padding: 2rem 1rem;
+      text-align: center;
+      background: #F9FAFB;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .upload-area:hover { border-color: #8B1A1A; background: rgba(139,26,26,0.02); }
+    .upload-icon { font-size: 2rem; color: #D1D5DB; margin-bottom: 0.5rem; }
+    .upload-text { font-size: 0.82rem; color: #6B7280; }
+    .upload-text a { color: #8B1A1A; font-weight: 600; }
+    .upload-hint { font-size: 0.7rem; color: #9CA3AF; margin-top: 0.3rem; }
+
+    /* Attached file row */
+    .attached-file {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      background: white; border: 1px solid #E5E7EB;
+      border-radius: 8px; margin-top: 0.75rem;
+    }
+    .file-icon { font-size: 1.5rem; color: #DC2626; flex-shrink: 0; }
+    .file-info { flex: 1; }
+    .file-name { font-size: 0.84rem; font-weight: 600; color: #1F2937; }
+    .file-meta { font-size: 0.72rem; color: #6B7280; }
+    .file-badge-up { font-size: 0.65rem; background: #ECFDF5; color: #059669; border: 1px solid #A7F3D0; border-radius: 4px; padding: 0.1rem 0.4rem; font-weight: 600; margin-left: 0.4rem; }
+    .file-badge-main { font-size: 0.65rem; background: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE; border-radius: 4px; padding: 0.1rem 0.4rem; font-weight: 600; margin-left: 0.4rem; }
+    .file-badge-verify { font-size: 0.65rem; background: #FFFBEB; color: #92400E; border: 1px solid #FDE68A; border-radius: 4px; padding: 0.1rem 0.4rem; font-weight: 600; margin-left: 0.4rem; }
+    .file-actions { display: flex; gap: 0.4rem; }
+    .file-btn {
+      font-size: 0.76rem; font-weight: 600; color: #8B1A1A;
+      background: none; border: none; cursor: pointer; padding: 0.2rem 0.4rem;
+    }
+    .file-btn.remove { color: #DC2626; }
+
+    /* Status badge inline */
+    .status-ongoing {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      background: rgba(139,26,26,0.08); color: #8B1A1A;
+      border: 1px solid rgba(139,26,26,0.2);
+      border-radius: 20px; font-size: 0.72rem; font-weight: 700;
+      padding: 0.25rem 0.7rem;
+    }
+    .status-ongoing::before {
+      content: '●'; font-size: 0.55rem;
+    }
+
+    /* Bottom action bar */
+    .form-footer-bar {
+      position: sticky; bottom: 0;
+      background: white; border-top: 1px solid #E5E7EB;
+      padding: 1rem 1.25rem;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
+    }
+    .form-footer-left { font-size: 0.75rem; color: #9CA3AF; display: flex; align-items: center; gap: 0.4rem; }
+    .form-footer-actions { display: flex; gap: 0.6rem; align-items: center; }
+    .btn-cancel {
+      padding: 0.55rem 1.1rem;
+      background: none; border: 1.5px solid #D1D5DB;
+      border-radius: 7px; font-size: 0.84rem; font-weight: 600;
+      color: #6B7280; cursor: pointer;
+    }
+    .btn-draft {
+      padding: 0.55rem 1.1rem;
+      background: none; border: 1.5px solid #D1D5DB;
+      border-radius: 7px; font-size: 0.84rem; font-weight: 600;
+      color: #374151; cursor: pointer;
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .btn-submit-prop {
+      padding: 0.55rem 1.4rem;
+      background: linear-gradient(135deg, #8B1A1A, #6B0000);
+      color: white; border: none; border-radius: 7px;
+      font-size: 0.86rem; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; gap: 0.4rem;
+      font-family: 'Poppins', sans-serif;
+    }
+    .btn-submit-prop:hover { opacity: 0.9; }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      display: flex; align-items: center; gap: 0.35rem;
+      font-size: 0.78rem; color: #9CA3AF; margin-bottom: 1rem;
+    }
+    .breadcrumb a { color: #8B1A1A; text-decoration: none; font-weight: 500; }
+    .breadcrumb .sep { color: #D1D5DB; }
+    .breadcrumb .current { color: #374151; font-weight: 600; }
+  </style>
+</head>
+<body>
+<div class="dashboard-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+
+  <div class="main-content">
+    <header class="topbar" id="topbar"></header>
+
+    <div class="dashboard-content">
+      <div class="proposal-form-wrap">
+
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+          <a href="dashboard.html">Dashboard</a>
+          <span class="sep">/</span>
+          <a href="proposals.html">Proposals</a>
+          <span class="sep">/</span>
+          <span class="current">New Proposal</span>
+        </div>
+
+        <!-- Form Header Row -->
+        <div class="form-header-row">
+          <div class="form-header-title">
+            <h3>New Project Proposal</h3>
+            <div class="form-code">Form CNSC-OP-EXT-01A — Complete the required project information before submitting the proposal for evaluation.</div>
+          </div>
+          <div class="step-indicator">
+            <div class="step-dot">1</div>
+            <span>STEP 1 OF 3 &nbsp;—&nbsp; Project Information</span>
+          </div>
+        </div>
+
+        <!-- Stepper -->
+        <div class="proposal-stepper">
+          <div class="pstep active">
+            <div class="psn">1</div>
+            Project Information
+          </div>
+          <span class="pstep-sep">›</span>
+          <div class="pstep">
+            <div class="psn">2</div>
+            Beneficiaries &amp; Partners
+          </div>
+          <span class="pstep-sep">›</span>
+          <div class="pstep">
+            <div class="psn">3</div>
+            Review &amp; Submit
+          </div>
+        </div>
+
+        <!-- Form: Project Information -->
+        <div class="form-section">
+          <div class="form-section-head">
+            <div class="fsh-left">
+              <div class="fsh-title">Project Information</div>
+              <div class="fsh-desc">Fields marked with (*) are mandatory</div>
+            </div>
+            <div class="fsh-entity">DB Entity: PROJECT</div>
+          </div>
+          <div class="form-section-body">
+            <div class="fg2" style="margin-bottom:1rem;">
+              <div class="fgroup">
+                <label class="flabel">Project Code <span class="auto-tag">Auto-generated</span></label>
+                <input class="finput locked" type="text" value="EXT-2026-001" readonly>
+                <div class="fhint">Official proposal title will reflect in the MOA document.</div>
+              </div>
+              <div class="fgroup">
+                <label class="flabel">Project Title <span class="req">*</span></label>
+                <input class="finput" type="text" id="project-title" value="Community Health Outreach: Digital Literacy &amp; Basic ICT Skills Training" placeholder="Official proposal title">
+                <div class="ferror" id="title-error" style="display:none;"><i class="fas fa-exclamation-circle"></i> Project Title is required and must reflect the official Memorandum of Agreement scope.</div>
+              </div>
+            </div>
+            <div class="fg2" style="margin-bottom:1rem;">
+              <div class="fgroup">
+                <label class="flabel">Service Type <span class="req">*</span></label>
+                <select class="fselect" id="service-type">
+                  <option selected>Community Extension</option>
+                  <option>Skills Enhancement Training</option>
+                  <option>Consultancy Services</option>
+                  <option>System Development</option>
+                  <option>Research Collaboration</option>
+                </select>
+              </div>
+              <div class="fgroup">
+                <label class="flabel">Source Type <span class="req">*</span></label>
+                <select class="fselect" id="source-type">
+                  <option selected>Institutional</option>
+                  <option>External — LGU</option>
+                  <option>External — NGO</option>
+                  <option>External — Private</option>
+                </select>
+              </div>
+            </div>
+            <div class="fgroup" style="margin-bottom:1rem;">
+              <label class="flabel">Project Description <span class="req">*</span></label>
+              <div class="fhint" style="margin-bottom:0.3rem;">Use objective language adhering to CCMS Extension Manual criteria.</div>
+              <textarea class="ftextarea" id="project-desc" maxlength="1000" rows="4" oninput="updateCharCount(this,'desc-count')">A collaborative community outreach program organized by CCMS faculty and student leaders aimed at delivering foundational ICT literacy, cyber safety education, and productivity software workshops to barangay officials and public school educators in Daet, Camarines Norte.</textarea>
+              <div style="display:flex;justify-content:flex-end;"><span class="fchar-count"><span id="desc-count">308</span> / 1000 characters</span></div>
+            </div>
+            <div class="fg2">
+              <div class="fgroup">
+                <label class="flabel">Project Start Date <span class="req">*</span></label>
+                <input class="finput" type="date" id="start-date" value="2026-09-20">
+              </div>
+              <div class="fgroup">
+                <label class="flabel">Project End Date <span class="req">*</span></label>
+                <input class="finput" type="date" id="end-date" value="2026-12-15">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form: Proposal Information -->
+        <div class="form-section">
+          <div class="form-section-head">
+            <div class="fsh-left">
+              <div class="fsh-title">Proposal Information</div>
+            </div>
+            <div class="fsh-entity">DB Record: PROPOSAL Entity</div>
+          </div>
+          <div class="form-section-body">
+            <div class="fg2">
+              <div class="fgroup">
+                <label class="flabel">Proposal Version <span class="auto-tag">Initial submission</span></label>
+                <input class="finput locked" type="text" value="1" readonly>
+              </div>
+              <div class="fgroup">
+                <label class="flabel">Submission Date <span class="auto-tag">System generated</span></label>
+                <input class="finput locked" type="text" value="September 16, 2026" readonly>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form: Supporting Documents -->
+        <div class="form-section">
+          <div class="form-section-head">
+            <div class="fsh-left">
+              <div class="fsh-title">Supporting Documents</div>
+              <div class="fsh-desc">Attach complete project syllabus, MOA/MOU drafts, or budget summaries</div>
+            </div>
+          </div>
+          <div class="form-section-body">
+            <div class="upload-area" onclick="document.getElementById('file-upload').click()">
+              <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+              <div class="upload-text">Upload supporting documents<br><small>Drag and drop files here, or <a href="#">browse files</a></small></div>
+              <div class="upload-hint">Accepted file types: PDF, DOCX, XLSX • Maximum file size: 10 MB</div>
+              <input type="file" id="file-upload" style="display:none;" multiple accept=".pdf,.docx,.xlsx">
+            </div>
+
+            <!-- Attached Files -->
+            <div id="attached-files-label" style="font-size:0.75rem;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:0.06em;margin-top:1rem;margin-bottom:0.5rem;">
+              ATTACHED FILES (1) <span style="font-size:0.68rem;color:#059669;font-weight:600;">— Ready for Verification</span>
+            </div>
+            <div class="attached-file">
+              <div class="file-icon"><i class="fas fa-file-pdf"></i></div>
+              <div class="file-info">
+                <div class="file-name">Project_Proposal_v1.pdf <span class="file-badge-up">Uploaded</span> <span class="file-badge-main">Main Doc</span></div>
+                <div class="file-meta">2.4 MB &nbsp;•&nbsp; Application/PDF &nbsp;•&nbsp; Uploaded on Sep 16, 2026, 09:14 AM</div>
+              </div>
+              <div class="file-actions">
+                <button class="file-btn">View</button>
+                <button class="file-btn remove">Remove</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Before Submission Checklist -->
+        <div class="form-notice-yellow" style="margin-bottom:1rem;">
+          <div style="display:flex;align-items:center;gap:0.5rem;font-weight:700;margin-bottom:0.5rem;font-size:0.8rem;">
+            <i class="fas fa-exclamation-triangle" style="color:#F59E0B;"></i>
+            BEFORE SUBMISSION CHECKLIST &nbsp;&nbsp; <span style="font-size:0.68rem;font-weight:500;color:#92400E;">CCMS Quality Assurance Protocol</span>
+          </div>
+          <ul style="margin:0;padding-left:1.2rem;font-size:0.8rem;color:#78350F;line-height:1.9;">
+            <li>Verify that all required fields (*) are complete, accurate, and consistent with institutional project standards.</li>
+            <li>Ensure all required supporting documents (proposals, MOA/MOU drafts, program schedules) are attached.</li>
+            <li>Review the project information carefully. Submitting initiates the official Extension Office endorsement workflow.</li>
+          </ul>
+        </div>
+
+        <div style="font-size:0.72rem;color:#9CA3AF;text-align:center;margin-bottom:1rem;">
+          <i class="fas fa-cloud"></i> All changes saved to temporary session storage.
+        </div>
+
+        <!-- Footer Actions -->
+        <div class="form-footer-bar">
+          <div class="form-footer-left">
+            <i class="fas fa-info-circle" style="color:#9CA3AF;"></i>
+            CCMS Extension Office &nbsp;•&nbsp; Form CNSC-OP-EXT-01A
+          </div>
+          <div class="form-footer-actions">
+            <button class="btn-cancel" onclick="window.location.href='proposals.html'">Cancel</button>
+            <button class="btn-draft"><i class="fas fa-save"></i> Save Draft</button>
+            <button class="btn-submit-prop" onclick="submitProposal()">Submit Proposal →</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+  function updateCharCount(el, countId) {
+    document.getElementById(countId).textContent = el.value.length;
+  }
+
+  function submitProposal() {
+    const title = document.getElementById('project-title').value.trim();
+    if (!title) {
+      document.getElementById('title-error').style.display = 'flex';
+      document.getElementById('project-title').focus();
+      return;
+    }
+    document.getElementById('title-error').style.display = 'none';
+    // Show success notification
+    alert('Proposal submitted successfully! Reference: EXT-2026-001');
+    window.location.href = 'proposals.html';
+  }
+</script>
+</body>
+</html>

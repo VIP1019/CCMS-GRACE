@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="G.R.A.C.E PORTAL — Proposals. Manage extension project proposals and version history.">
+  <title>Proposals | G.R.A.C.E PORTAL</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+<div class="dashboard-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+
+  <div class="main-content">
+    <header class="topbar" id="topbar"></header>
+
+    <div class="dashboard-content">
+      <div class="page-header">
+        <div>
+          <h2>Project Proposals</h2>
+          <p class="page-subtitle">Track all submitted proposals, version history, evaluation and approval status — <em>PROPOSAL entity (3NF)</em></p>
+        </div>
+        <div class="page-header-actions">
+          <button class="btn btn-sm btn-outline"><i class="fas fa-download"></i> Export</button>
+          <a href="project-form.html" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> New Proposal</a>
+        </div>
+      </div>
+
+      <!-- Summary Cards -->
+      <div class="summary-cards">
+        <div class="summary-card card-maroon">
+          <div class="summary-card-info"><h3>7</h3><p>Total Proposals</p><span class="summary-card-trend up"><i class="fas fa-file-alt"></i> all versions</span></div>
+          <div class="summary-card-icon"><i class="fas fa-file-alt"></i></div>
+        </div>
+        <div class="summary-card card-gold">
+          <div class="summary-card-info"><h3>2</h3><p>Pending Evaluation</p><span class="summary-card-trend"><i class="fas fa-hourglass-half"></i> under review</span></div>
+          <div class="summary-card-icon"><i class="fas fa-hourglass-half"></i></div>
+        </div>
+        <div class="summary-card card-green">
+          <div class="summary-card-info"><h3>5</h3><p>Approved</p><span class="summary-card-trend up"><i class="fas fa-check"></i> for implementation</span></div>
+          <div class="summary-card-icon"><i class="fas fa-check-circle"></i></div>
+        </div>
+        <div class="summary-card card-blue">
+          <div class="summary-card-info"><h3>2</h3><p>Revised (v2+)</p><span class="summary-card-trend"><i class="fas fa-history"></i> version tracked</span></div>
+          <div class="summary-card-icon"><i class="fas fa-history"></i></div>
+        </div>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <div class="filter-group">
+          <span class="filter-label">Status:</span>
+          <select class="form-select" id="filter-status">
+            <option>All Status</option>
+            <option>Pending</option>
+            <option>Under Evaluation</option>
+            <option>Approved</option>
+            <option>Returned</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">Approval:</span>
+          <select class="form-select" id="filter-approval">
+            <option>All</option>
+            <option>Approved</option>
+            <option>Pending</option>
+          </select>
+        </div>
+        <div class="filter-group" style="margin-left:auto;">
+          <div class="search-bar" style="position:relative;">
+            <i class="fas fa-search" style="position:absolute;left:0.6rem;top:50%;transform:translateY(-50%);color:var(--gray-400);font-size:0.8rem;"></i>
+            <input type="text" class="form-input" style="padding-left:2rem;font-size:0.85rem;" placeholder="Search proposals...">
+          </div>
+        </div>
+      </div>
+
+      <!-- Proposals Table -->
+      <div class="table-container">
+        <div class="table-header">
+          <h4><i class="fas fa-file-alt" style="color:var(--maroon);margin-right:0.5rem;"></i>All Proposals</h4>
+          <span style="font-size:0.8rem;color:var(--gray-500);">proposal_id · project_id · version_no · submission_date · evaluation_status · approval_status</span>
+        </div>
+        <table id="proposals-table">
+          <thead>
+            <tr>
+              <th>Proposal ID</th>
+              <th>Project</th>
+              <th>Version</th>
+              <th>Submission Date</th>
+              <th>Evaluation Status</th>
+              <th>Approval Status</th>
+              <th>Remarks</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="proposals-tbody">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+        <div class="table-footer">
+          <span class="table-info" id="proposals-info">Loading...</span>
+        </div>
+      </div>
+    </div><!-- /dashboard-content -->
+  </div><!-- /main-content -->
+</div><!-- /dashboard-layout -->
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const tbody = document.getElementById('proposals-tbody');
+  const info  = document.getElementById('proposals-info');
+  if (!tbody || !window.GRACE) return;
+
+  const statusBadge = (s) => {
+    const map = {
+      'Approved':          'badge-approved',
+      'Under Evaluation':  'badge-review',
+      'Pending':           'badge-pending',
+      'Returned':          'badge-danger'
+    };
+    return `<span class="badge ${map[s]||'badge-pending'}">${s}</span>`;
+  };
+
+  GRACE.proposals.forEach(p => {
+    const proj = GRACE.getProjectById(p.project_id);
+    const projLabel = proj ? `<div style="font-weight:600;font-size:0.83rem;">${p.project_id}</div><div style="font-size:0.77rem;color:var(--gray-500);">${proj.title.substring(0,45)}...</div>` : p.project_id;
+    tbody.innerHTML += `<tr>
+      <td><code style="font-size:0.78rem;background:var(--gray-100);padding:2px 6px;border-radius:4px;">${p.proposal_id}</code></td>
+      <td>${projLabel}</td>
+      <td><span class="badge badge-info" style="background:rgba(59,130,246,0.1);color:#2563eb;">v${p.version_no}</span></td>
+      <td>${p.submission_date}</td>
+      <td>${statusBadge(p.evaluation_status)}</td>
+      <td>${statusBadge(p.approval_status)}</td>
+      <td style="font-size:0.8rem;color:var(--gray-600);max-width:200px;">${p.remarks}</td>
+      <td>
+        <button class="btn btn-sm btn-outline" title="View"><i class="fas fa-eye"></i></button>
+      </td>
+    </tr>`;
+  });
+
+  info.textContent = `Showing ${GRACE.proposals.length} proposal records`;
+});
+</script>
+</body>
+</html>

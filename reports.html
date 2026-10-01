@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="G.R.A.C.E PORTAL Reports - Generate and view extension project reports">
+  <title>Reports | G.R.A.C.E PORTAL</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- MAIN -->
+    <div class="main-content">
+      <header class="topbar" id="topbar"></header>
+
+      <div class="dashboard-content">
+        <div class="page-header">
+          <div><h2>Reports &amp; Summaries</h2><p class="page-subtitle">Generate consolidated reports for monitoring and evaluation</p></div>
+        </div>
+
+        <!-- Report Generation Form -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+          <div class="card-body">
+            <h4 style="margin-bottom: 1rem;"><i class="fas fa-cog" style="color: var(--maroon); margin-right: 0.5rem;"></i>Generate Custom Report</h4>
+            <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end;">
+              <div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 180px;">
+                <label class="form-label">Report Type</label>
+                <select class="form-select">
+                  <option>Quarterly Monitoring &amp; Accomplishment Report (CNSC-OP-EXT-01F11)</option>
+                  <option>Progress Report (CNSC-OP-EXT-01F17)</option>
+                  <option>Narrative Report</option>
+                  <option>Client Satisfaction Survey Report (Annex B)</option>
+                  <option>PRA / Impact Assessment Report</option>
+                  <option>Funding Status Report</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 150px;">
+                <label class="form-label">From</label>
+                <input type="date" class="form-input" value="2026-01-01">
+              </div>
+              <div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 150px;">
+                <label class="form-label">To</label>
+                <input type="date" class="form-input" value="2026-09-06">
+              </div>
+              <div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 180px;">
+                <label class="form-label">Project (Optional)</label>
+                <select class="form-select">
+                  <option>All Projects</option>
+                  <option>EXT-2026-048 – Web Dev Training</option>
+                  <option>EXT-2026-045 – Basud Library</option>
+                  <option>EXT-2026-041 – ICT Consultancy</option>
+                </select>
+              </div>
+              <button class="btn btn-primary btn-sm" style="height: 42px;">
+                <i class="fas fa-file-alt"></i> Generate
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Report Type Reference Banner -->
+        <div class="card" style="margin-bottom:1.5rem;border-left:4px solid var(--maroon);">
+          <div class="card-body" style="padding:1rem 1.25rem;">
+            <div style="font-size:0.8rem;color:var(--gray-600);font-weight:600;margin-bottom:0.5rem;"><i class="fas fa-info-circle" style="color:var(--maroon);margin-right:0.4rem;"></i>CCMS Extension Office — Required Report Types (per Proposal)</div>
+            <div style="display:flex;flex-wrap:wrap;gap:0.5rem;font-size:0.75rem;">
+              <span class="badge badge-progress"><i class="fas fa-clipboard-list"></i> Quarterly Monitoring & Accomplishment Report (CNSC-OP-EXT-01F11)</span>
+              <span class="badge badge-review"><i class="fas fa-file-alt"></i> Progress Report (CNSC-OP-EXT-01F17)</span>
+              <span class="badge badge-approved"><i class="fas fa-book-open"></i> Narrative Report (post-activity)</span>
+              <span class="badge badge-pending"><i class="fas fa-poll"></i> Client Satisfaction Survey Report (Annex B)</span>
+              <span class="badge badge-blue" style="background:rgba(37,99,235,0.1);color:#2563eb;"><i class="fas fa-leaf"></i> PRA/Impact Assessment Report</span>
+              <span class="badge badge-pending"><i class="fas fa-coins"></i> Funding Status Report</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Report Templates -->
+        <h4 style="margin-bottom: 1rem;"><i class="fas fa-th-large" style="color: var(--gold); margin-right: 0.5rem;"></i>Report Templates</h4>
+        <div class="report-templates" style="margin-bottom: 2rem;">
+          <div class="report-card">
+            <div class="report-icon"><i class="fas fa-clipboard-list"></i></div>
+            <h4>Quarterly Monitoring &amp; Accomplishment Report</h4>
+            <div style="font-size:0.72rem;color:var(--maroon);margin-bottom:0.5rem;font-weight:600;">CNSC-OP-EXT-01F11</div>
+            <p>Consolidated quarterly report on extension project/program information, faculty involvement, activities, dates, participants, funding sources, and project status.</p>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="text-xs text-muted">Last submitted: Sep 08, 2026</span>
+              <button class="btn btn-sm btn-outline"><i class="fas fa-download"></i> PDF</button>
+            </div>
+          </div>
+          <div class="report-card">
+            <div class="report-icon" style="background: rgba(37,99,235,0.08); color: #2563EB;"><i class="fas fa-file-alt"></i></div>
+            <h4>Progress Report</h4>
+            <div style="font-size:0.72rem;color:#2563EB;margin-bottom:0.5rem;font-weight:600;">CNSC-OP-EXT-01F17</div>
+            <p>Documents accomplishments, monitoring and evaluation actions, project interventions, issues and concerns, and plans of action during implementation.</p>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="text-xs text-muted">Last submitted: Sep 16, 2026</span>
+              <button class="btn btn-sm btn-outline"><i class="fas fa-download"></i> PDF</button>
+            </div>
+          </div>
+          <div class="report-card">
+            <div class="report-icon" style="background: rgba(16,185,129,0.08); color: #059669;"><i class="fas fa-book-open"></i></div>
+            <h4>Narrative Report</h4>
+            <p>Post-activity or post-implementation narrative report covering accomplishments, key activities, outputs, and outcomes of the completed extension project.</p>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="text-xs text-muted">Last submitted: Jun 25, 2026</span>
+              <button class="btn btn-sm btn-outline"><i class="fas fa-download"></i> PDF</button>
+            </div>
+          </div>
+          <div class="report-card">
+            <div class="report-icon" style="background: rgba(99,102,241,0.08); color: #6366F1;"><i class="fas fa-poll"></i></div>
+            <h4>Client Satisfaction Survey Report</h4>
+            <div style="font-size:0.72rem;color:#6366F1;margin-bottom:0.5rem;font-weight:600;">Annex B</div>
+            <p>Summary of beneficiary feedback on relevance and usefulness, quality of implementation, benefits and impact, overall satisfaction, and willingness to recommend.</p>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="text-xs text-muted">Last submitted: Jun 22, 2026</span>
+              <button class="btn btn-sm btn-outline"><i class="fas fa-download"></i> PDF</button>
+            </div>
+          </div>
+          <div class="report-card">
+            <div class="report-icon" style="background: rgba(245,158,11,0.08); color: #D97706;"><i class="fas fa-leaf"></i></div>
+            <h4>PRA / Impact Assessment Report</h4>
+            <p>Participatory Rural Appraisal and Impact Assessment documenting project outcomes, community impact, and post-implementation evaluation results.</p>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="text-xs text-muted">Last submitted: Jul 15, 2026</span>
+              <button class="btn btn-sm btn-outline"><i class="fas fa-download"></i> PDF</button>
+            </div>
+          </div>
+          <div class="report-card">
+            <div class="report-icon" style="background: rgba(218,165,32,0.08); color: var(--gold-dark);"><i class="fas fa-coins"></i></div>
+            <h4>Funding Status Report</h4>
+            <p>Monitoring report of project funding sources, approved budget amounts, and available funding status based on authorized institutional records. For monitoring only.</p>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="text-xs text-muted">Last submitted: Sep 30, 2026</span>
+              <button class="btn btn-sm btn-outline"><i class="fas fa-download"></i> PDF</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Reports from data.js -->
+        <div class="table-container">
+          <div class="table-header">
+            <h4><i class="fas fa-history" style="color: var(--maroon); margin-right: 0.5rem;"></i>Submitted Reports</h4>
+          </div>
+          <table>
+            <thead>
+              <tr><th>Report ID</th><th>Report Type</th><th>Form Reference</th><th>Project</th><th>Reporting Period</th><th>Submitted By</th><th>Date Submitted</th><th>Status</th><th></th></tr>
+            </thead>
+            <tbody id="reports-tbody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const tbody = document.getElementById('reports-tbody');
+    if (!tbody || !window.GRACE) return;
+    const statusMap = { 'Approved': 'badge-approved', 'Submitted': 'badge-review', 'Pending': 'badge-pending', 'Returned': 'badge-danger' };
+    GRACE.reports.forEach(r => {
+      const proj = r.project_id ? GRACE.getProjectById(r.project_id) : null;
+      const projCell = proj ? `<div style="font-size:0.8rem;font-weight:600;">${r.project_id}</div><div style="font-size:0.74rem;color:var(--gray-500);">${proj.title.substring(0,35)}…</div>` : '<span style="color:var(--gray-400);">All Projects</span>';
+      const submitter = r.submitted_by ? GRACE.getPersonName(r.submitted_by) : '—';
+      const formRef = r.form_reference ? `<code style="font-size:0.74rem;background:var(--gray-100);padding:2px 5px;border-radius:3px;">${r.form_reference}</code>` : '<span style="color:var(--gray-400);">—</span>';
+      tbody.innerHTML += `<tr>
+        <td><code style="font-size:0.78rem;background:var(--gray-100);padding:2px 6px;border-radius:4px;">${r.report_id}</code></td>
+        <td style="font-size:0.82rem;font-weight:500;">${r.report_type}</td>
+        <td>${formRef}</td>
+        <td>${projCell}</td>
+        <td style="font-size:0.8rem;color:var(--gray-600);">${r.reporting_period}</td>
+        <td style="font-size:0.82rem;">${submitter}</td>
+        <td style="font-size:0.82rem;">${r.submitted_date}</td>
+        <td><span class="badge ${statusMap[r.report_status]||'badge-pending'}">${r.report_status}</span></td>
+        <td><button class="btn btn-sm btn-outline"><i class="fas fa-download"></i></button></td>
+      </tr>`;
+    });
+  });
+  </script>
+</body>
+</html>

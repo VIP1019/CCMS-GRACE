@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="G.R.A.C.E PORTAL - Project Documents & Records Management">
+  <title>Documents & Records | G.R.A.C.E PORTAL</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <div class="main-content">
+      <header class="topbar" id="topbar"></header>
+
+      <div class="dashboard-content">
+        <div class="page-header">
+          <div><h2>Project Documents &amp; Records</h2><p class="page-subtitle">Organize, store, and retrieve project documentation and supporting records</p></div>
+          <div class="page-header-actions">
+            <button class="btn btn-sm btn-primary"><i class="fas fa-upload"></i> Upload Document</button>
+          </div>
+        </div>
+
+        <!-- Upload Zone -->
+        <div class="upload-zone" id="upload-zone">
+          <div class="upload-zone-content">
+            <i class="fas fa-cloud-upload-alt" style="font-size: 2.5rem; color: var(--maroon); margin-bottom: 0.75rem;"></i>
+            <h4>Drop files here or click to upload</h4>
+            <p>Supports PDF, DOCX, XLSX, PPTX, JPG, PNG, ZIP — Max 50 MB per file</p>
+            <input type="file" id="file-upload" multiple style="display: none;">
+            <button class="btn btn-sm btn-outline" onclick="document.getElementById('file-upload').click()" style="margin-top: 0.75rem;"><i class="fas fa-folder-open"></i> Browse Files</button>
+          </div>
+        </div>
+
+        <!-- Filter -->
+        <div class="filter-bar">
+          <div class="filter-group">
+            <span class="filter-label">Project:</span>
+            <select class="form-select">
+              <option>All Projects</option>
+              <option>EXT-2026-048 – Web Dev Training</option>
+              <option>EXT-2026-045 – Basud Library</option>
+              <option>EXT-2026-041 – ICT Consultancy</option>
+              <option>EXT-2026-038 – Digital Literacy</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">Category:</span>
+            <select class="form-select">
+              <option>All Categories</option>
+              <option>Proposal</option>
+              <option>Budget</option>
+              <option>MOA/MOU</option>
+              <option>Training Materials</option>
+              <option>Attendance</option>
+              <option>Narrative Report</option>
+              <option>Survey Results</option>
+              <option>Photos</option>
+              <option>Certificates</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">Type:</span>
+            <select class="form-select">
+              <option>All Formats</option>
+              <option>PDF</option>
+              <option>DOCX</option>
+              <option>XLSX</option>
+              <option>PPTX</option>
+              <option>ZIP</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Documents Grid -->
+        <h4 style="margin-bottom: 1rem;"><i class="fas fa-folder" style="color: var(--gold); margin-right: 0.5rem;"></i>Document Library</h4>
+        <div class="documents-grid">
+          <div class="doc-card">
+            <div class="doc-icon" style="background: rgba(239,68,68,0.1); color: #DC2626;"><i class="fas fa-file-pdf"></i></div>
+            <div class="doc-info">
+              <h5>Project Proposal</h5>
+              <p>EXT-2026-048 • PDF • 2.4 MB</p>
+              <span class="text-xs text-muted">Aug 15, 2026</span>
+            </div>
+            <button class="btn btn-sm btn-outline" style="padding: 0.3rem 0.6rem;"><i class="fas fa-download"></i></button>
+          </div>
+          <div class="doc-card">
+            <div class="doc-icon" style="background: rgba(16,185,129,0.1); color: #059669;"><i class="fas fa-file-excel"></i></div>
+            <div class="doc-info">
+              <h5>Budget Breakdown</h5>
+              <p>EXT-2026-048 • XLSX • 156 KB</p>
+              <span class="text-xs text-muted">Aug 20, 2026</span>
+            </div>
+            <button class="btn btn-sm btn-outline" style="padding: 0.3rem 0.6rem;"><i class="fas fa-download"></i></button>
+          </div>
+          <div class="doc-card">
+            <div class="doc-icon" style="background: rgba(59,130,246,0.1); color: #2563EB;"><i class="fas fa-file-word"></i></div>
+            <div class="doc-info">
+              <h5>MOA / MOU</h5>
+              <p>EXT-2026-048 • DOCX • 890 KB</p>
+              <span class="text-xs text-muted">Aug 22, 2026</span>
+            </div>
+            <button class="btn btn-sm btn-outline" style="padding: 0.3rem 0.6rem;"><i class="fas fa-download"></i></button>
+          </div>
+          <div class="doc-card">
+            <div class="doc-icon" style="background: rgba(245,158,11,0.1); color: #D97706;"><i class="fas fa-file-powerpoint"></i></div>
+            <div class="doc-info">
+              <h5>Training Modules</h5>
+              <p>EXT-2026-048 • PPTX • 5.2 MB</p>
+              <span class="text-xs text-muted">Aug 26, 2026</span>
+            </div>
+            <button class="btn btn-sm btn-outline" style="padding: 0.3rem 0.6rem;"><i class="fas fa-download"></i></button>
+          </div>
+          <div class="doc-card">
+            <div class="doc-icon" style="background: rgba(239,68,68,0.1); color: #DC2626;"><i class="fas fa-file-pdf"></i></div>
+            <div class="doc-info">
+              <h5>Attendance Records — Module 1</h5>
+              <p>EXT-2026-048 • PDF • 340 KB</p>
+              <span class="text-xs text-muted">Sep 04, 2026</span>
+            </div>
+            <button class="btn btn-sm btn-outline" style="padding: 0.3rem 0.6rem;"><i class="fas fa-download"></i></button>
+          </div>
+          <div class="doc-card">
+            <div class="doc-icon" style="background: rgba(239,68,68,0.1); color: #DC2626;"><i class="fas fa-file-pdf"></i></div>
+            <div class="doc-info">
+              <h5>Attendance Records — Module 2</h5>
+              <p>EXT-2026-048 • PDF • 355 KB</p>
+              <span class="text-xs text-muted">Sep 12, 2026</span>
+            </div>
+            <button class="btn btn-sm btn-outline" style="padding: 0.3rem 0.6rem;"><i class="fas fa-download"></i></button>
+          </div>
+          <div class="doc-card">
+            <div class="doc-icon" style="background: rgba(59,130,246,0.1); color: #2563EB;"><i class="fas fa-file-word"></i></div>
+            <div class="doc-info">
+              <h5>System Requirements Document</h5>
+              <p>EXT-2026-045 • DOCX • 1.8 MB</p>
+              <span class="text-xs text-muted">Jun 15, 2026</span>
+            </div>
+            <button class="btn btn-sm btn-outline" style="padding: 0.3rem 0.6rem;"><i class="fas fa-download"></i></button>
+          </div>
+          <div class="doc-card">
+            <div class="doc-icon" style="background: rgba(239,68,68,0.1); color: #DC2626;"><i class="fas fa-file-pdf"></i></div>
+            <div class="doc-info">
+              <h5>Narrative Report</h5>
+              <p>EXT-2026-038 • PDF • 3.1 MB</p>
+              <span class="text-xs text-muted">Jun 25, 2026</span>
+            </div>
+            <button class="btn btn-sm btn-outline" style="padding: 0.3rem 0.6rem;"><i class="fas fa-download"></i></button>
+          </div>
+          <div class="doc-card">
+            <div class="doc-icon" style="background: rgba(239,68,68,0.1); color: #DC2626;"><i class="fas fa-file-pdf"></i></div>
+            <div class="doc-info">
+              <h5>Client Satisfaction Survey Results</h5>
+              <p>EXT-2026-038 • PDF • 890 KB</p>
+              <span class="text-xs text-muted">Jun 22, 2026</span>
+            </div>
+            <button class="btn btn-sm btn-outline" style="padding: 0.3rem 0.6rem;"><i class="fas fa-download"></i></button>
+          </div>
+          <div class="doc-card">
+            <div class="doc-icon" style="background: rgba(124,58,237,0.1); color: #7C3AED;"><i class="fas fa-file-archive"></i></div>
+            <div class="doc-info">
+              <h5>Photo Documentation</h5>
+              <p>EXT-2026-038 • ZIP • 45 MB</p>
+              <span class="text-xs text-muted">Jun 20, 2026</span>
+            </div>
+            <button class="btn btn-sm btn-outline" style="padding: 0.3rem 0.6rem;"><i class="fas fa-download"></i></button>
+          </div>
+          <div class="doc-card">
+            <div class="doc-icon" style="background: rgba(239,68,68,0.1); color: #DC2626;"><i class="fas fa-file-pdf"></i></div>
+            <div class="doc-info">
+              <h5>Completion Certificates</h5>
+              <p>EXT-2026-038 • PDF • 2.8 MB</p>
+              <span class="text-xs text-muted">Jun 20, 2026</span>
+            </div>
+            <button class="btn btn-sm btn-outline" style="padding: 0.3rem 0.6rem;"><i class="fas fa-download"></i></button>
+          </div>
+        </div>
+
+        <!-- Storage Info -->
+        <div class="card" style="margin-top: 1.5rem;">
+          <div class="card-body" style="padding: 1.25rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+              <span style="font-size: 0.88rem; font-weight: 600;"><i class="fas fa-hdd" style="color: var(--maroon); margin-right: 0.4rem;"></i> Storage Usage</span>
+              <span style="font-size: 0.82rem; color: var(--gray-500);">62.3 MB of 500 GB used</span>
+            </div>
+            <div class="progress-bar" style="height: 8px;">
+              <div class="progress-bar-fill" style="width: 0.01%; background: linear-gradient(90deg, var(--maroon), var(--gold));"></div>
+            </div>
+            <p style="font-size: 0.78rem; color: var(--gray-400); margin-top: 0.5rem; margin-bottom: 0;">Storage is monitored. File-size controls and archiving procedures apply per institutional policies.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="G.R.A.C.E PORTAL - Activities & Training Management">
+  <title>Activities & Training | G.R.A.C.E PORTAL</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- MAIN -->
+    <div class="main-content">
+      <header class="topbar" id="topbar"></header>
+
+      <div class="dashboard-content">
+        <div class="page-header">
+          <div><h2>Activities &amp; Training Management</h2><p class="page-subtitle">Record and monitor extension activities, training sessions, and schedules</p></div>
+          <div class="page-header-actions">
+            <button class="btn btn-sm btn-outline"><i class="fas fa-download"></i> Export</button>
+            <button class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> Add Activity</button>
+          </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="summary-cards">
+          <div class="summary-card card-maroon">
+            <div class="summary-card-info"><h3>12</h3><p>Total Activities</p><span class="summary-card-trend up"><i class="fas fa-arrow-up"></i> 4 this month</span></div>
+            <div class="summary-card-icon"><i class="fas fa-calendar-check"></i></div>
+          </div>
+          <div class="summary-card card-gold">
+            <div class="summary-card-info"><h3>5</h3><p>Completed</p><span class="summary-card-trend up"><i class="fas fa-check"></i> on schedule</span></div>
+            <div class="summary-card-icon"><i class="fas fa-check-circle"></i></div>
+          </div>
+          <div class="summary-card card-blue">
+            <div class="summary-card-info"><h3>4</h3><p>In Progress</p><span class="summary-card-trend up"><i class="fas fa-spinner"></i> active now</span></div>
+            <div class="summary-card-icon"><i class="fas fa-tasks"></i></div>
+          </div>
+          <div class="summary-card card-green">
+            <div class="summary-card-info"><h3>3</h3><p>Upcoming</p><span class="summary-card-trend"><i class="fas fa-clock"></i> scheduled</span></div>
+            <div class="summary-card-icon"><i class="fas fa-calendar-alt"></i></div>
+          </div>
+        </div>
+
+        <!-- Filter -->
+        <div class="filter-bar">
+          <div class="filter-group">
+            <span class="filter-label">Project:</span>
+            <select class="form-select">
+              <option>All Projects</option>
+              <option>EXT-2026-048 – Web Dev Training</option>
+              <option>EXT-2026-045 – Basud Library</option>
+              <option>EXT-2026-041 – ICT Consultancy</option>
+              <option>EXT-2026-038 – Digital Literacy</option>
+              <option>EXT-2026-033 – Network Assessment</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">Status:</span>
+            <select class="form-select">
+              <option>All Status</option>
+              <option>Completed</option>
+              <option>In Progress</option>
+              <option>Upcoming</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">Type:</span>
+            <select class="form-select">
+              <option>All Types</option>
+              <option>Training</option>
+              <option>Workshop</option>
+              <option>Seminar</option>
+              <option>Assessment</option>
+              <option>Consultancy</option>
+              <option>Meeting</option>
+            </select>
+          </div>
+        </div>
+            <!-- Activities Table -->
+        <div class="table-container" style="margin-bottom:2rem;">
+          <div class="table-header">
+            <h4><i class="fas fa-list" style="color: var(--maroon); margin-right: 0.5rem;"></i>ACTIVITY Table</h4>
+            <span style="font-size:0.8rem;color:var(--gray-500);">activity_id · project_id · activity_name · activity_type · schedule_start · schedule_end · venue · activity_status</span>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Activity ID</th>
+                <th>Activity Name</th>
+                <th>Project</th>
+                <th>Type</th>
+                <th>Schedule Start</th>
+                <th>Schedule End</th>
+                <th>Venue</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="activities-tbody"></tbody>
+          </table>
+          <div class="table-footer">
+            <span class="table-info" id="act-info">Loading...</span>
+          </div>
+        </div>
+
+        <!-- ACTIVITY_PARTICIPANT Junction Table -->
+        <div class="table-container">
+          <div class="table-header">
+            <h4><i class="fas fa-user-check" style="color:var(--maroon);margin-right:0.5rem;"></i>ACTIVITY_PARTICIPANT Junction Table</h4>
+            <span style="font-size:0.8rem;color:var(--gray-500);">activity_participant_id · activity_id · participant_name · participant_role · affiliation · contact_no · attendance_status</span>
+          </div>
+          <div class="filter-bar" style="padding:0.75rem 1rem;border-bottom:1px solid var(--gray-200);">
+            <div class="filter-group">
+              <span class="filter-label">Filter by Activity:</span>
+              <select class="form-select" id="filter-activity-participants" style="font-size:0.82rem;">
+                <option value="">All Activities</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <span class="filter-label">Attendance:</span>
+              <select class="form-select" id="filter-attendance" style="font-size:0.82rem;">
+                <option value="">All</option>
+                <option value="Present">Present</option>
+                <option value="Absent">Absent</option>
+              </select>
+            </div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Participant ID</th>
+                <th>Activity</th>
+                <th>Participant Name</th>
+                <th>Role</th>
+                <th>Affiliation</th>
+                <th>Contact No.</th>
+                <th>Attendance</th>
+              </tr>
+            </thead>
+            <tbody id="participants-tbody"></tbody>
+          </table>
+          <div class="table-footer">
+            <span class="table-info" id="part-info">Loading...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  if (!window.GRACE) return;
+
+  const statusBadge = (s) => {
+    const map = { 'Completed': 'badge-completed', 'Ongoing': 'badge-progress', 'Scheduled': 'badge-pending' };
+    return `<span class="badge ${map[s]||'badge-pending'}">${s}</span>`;
+  };
+
+  // ACTIVITY table
+  const tbody = document.getElementById('activities-tbody');
+  const info  = document.getElementById('act-info');
+  const actSelect = document.getElementById('filter-activity-participants');
+
+  GRACE.activities.forEach(a => {
+    const proj = GRACE.getProjectById(a.project_id);
+    const typeColors = { Training:'#7c3aed', Workshop:'#2563eb', Seminar:'#0369a1', Assessment:'#b45309', Testing:'#15803d', Development:'#be185d', Consultancy:'#d97706', Meeting:'#6b7280' };
+    const color = typeColors[a.activity_type] || 'var(--maroon)';
+    tbody.innerHTML += `<tr>
+      <td><code style="font-size:0.77rem;background:var(--gray-100);padding:2px 5px;border-radius:3px;">${a.activity_id}</code></td>
+      <td>
+        <div style="font-weight:600;font-size:0.83rem;">${a.activity_name}</div>
+        <div style="font-size:0.76rem;color:var(--gray-500);">${a.description.substring(0,60)}...</div>
+      </td>
+      <td><span style="font-size:0.8rem;font-weight:600;">${a.project_id}</span></td>
+      <td><span class="badge" style="background:${color}18;color:${color};border:1px solid ${color}30;font-size:0.73rem;">${a.activity_type}</span></td>
+      <td style="font-size:0.8rem;">${a.schedule_start}</td>
+      <td style="font-size:0.8rem;">${a.schedule_end}</td>
+      <td style="font-size:0.8rem;color:var(--gray-600);">${a.venue}</td>
+      <td>${statusBadge(a.activity_status)}</td>
+    </tr>`;
+    actSelect.innerHTML += `<option value="${a.activity_id}">${a.activity_id} — ${a.activity_name}</option>`;
+  });
+  info.textContent = `Showing ${GRACE.activities.length} activity records`;
+
+  // ACTIVITY_PARTICIPANT table
+  const renderParticipants = (filter='', atFilter='') => {
+    const ptbody = document.getElementById('participants-tbody');
+    const pinfo  = document.getElementById('part-info');
+    let list = GRACE.activityParticipants;
+    if (filter)   list = list.filter(p => p.activity_id === filter);
+    if (atFilter) list = list.filter(p => p.attendance_status === atFilter);
+    ptbody.innerHTML = '';
+    list.forEach(p => {
+      const act = GRACE.activities.find(a => a.activity_id === p.activity_id);
+      const isPresent = p.attendance_status === 'Present';
+      ptbody.innerHTML += `<tr>
+        <td><code style="font-size:0.77rem;background:var(--gray-100);padding:2px 5px;border-radius:3px;">${p.activity_participant_id}</code></td>
+        <td>
+          <div style="font-weight:600;font-size:0.8rem;">${p.activity_id}</div>
+          <div style="font-size:0.75rem;color:var(--gray-500);">${act ? act.activity_name.substring(0,40) : ''}</div>
+        </td>
+        <td style="font-weight:600;font-size:0.83rem;">${p.participant_name}</td>
+        <td><span class="badge badge-review" style="font-size:0.73rem;">${p.participant_role}</span></td>
+        <td style="font-size:0.81rem;color:var(--gray-600);">${p.affiliation}</td>
+        <td style="font-size:0.81rem;">${p.contact_no}</td>
+        <td><span class="badge ${isPresent?'badge-approved':'badge-danger'}" style="font-size:0.73rem;">
+          <i class="fas ${isPresent?'fa-check':'fa-times'}" style="margin-right:3px;"></i>${p.attendance_status}
+        </span></td>
+      </tr>`;
+    });
+    pinfo.textContent = `Showing ${list.length} participant records`;
+  };
+
+  renderParticipants();
+  document.getElementById('filter-activity-participants').addEventListener('change', e => renderParticipants(e.target.value, document.getElementById('filter-attendance').value));
+  document.getElementById('filter-attendance').addEventListener('change', e => renderParticipants(document.getElementById('filter-activity-participants').value, e.target.value));
+});
+</script>
+</body>
+</html>
