@@ -97,8 +97,8 @@ function injectSidebar() {
       <a href="#" class="sidebar-nav-item" onclick="openModal('profile-modal'); return false;"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>Dean Profile</span></a>
       <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>System Logout</span></a>
     `;
-  // ========== OVPRE SIDEBAR ADDED — IDENTICAL TO ADMIN SIDEBAR ==========
-  } else if (role === 'ovpre') {
+  // ========== VPRE SIDEBAR ==========
+  } else if (role === 'vpre') {
     navHTML = `
       ${navItem('dashboard.html',     'fa-th-large',         'Dashboard')}
       ${navItem('approvals.html',     'fa-clipboard-check',  'Approvals', '1')}
@@ -111,6 +111,24 @@ function injectSidebar() {
       <div class="sidebar-nav-label">SYSTEM</div>
       ${navItem('admin.html',         'fa-cog',              'Admin Panel')}
       ${navItem('notifications.html','fa-bell',             'Notifications', '2')}
+      <a href="#" class="sidebar-nav-item" onclick="openModal('profile-modal'); return false;"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>Officer Profile</span></a>
+      <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>System Logout</span></a>
+    `;
+  // ========== ASSISTANT EXTENSION OFFICER ==========
+  } else if (role === 'assistant') {
+    navHTML = `
+      ${navItem('dashboard.html',     'fa-th-large',        'Dashboard')}
+      <div class="sidebar-nav-label">COORDINATION</div>
+      ${navItem('proposals.html',     'fa-file-alt',        'Proposals', '1')}
+      ${navItem('approvals.html',     'fa-clipboard-check', 'Status Tracking')}
+      <div class="sidebar-nav-label">PROJECT SUPPORT</div>
+      ${navItem('projects.html',      'fa-project-diagram', 'Projects')}
+      <div class="sidebar-nav-label">DOCUMENTATION</div>
+      ${navItem('funding.html',       'fa-coins',           'Funding Info')}
+      ${navItem('documents.html',     'fa-folder-open',     'Documents')}
+      ${navItem('reports.html',       'fa-chart-bar',       'Reports')}
+      <div class="sidebar-nav-label">USER ACCOUNT</div>
+      ${navItem('notifications.html', 'fa-bell',            'Notifications', '2')}
       <a href="#" class="sidebar-nav-item" onclick="openModal('profile-modal'); return false;"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>Officer Profile</span></a>
       <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>System Logout</span></a>
     `;
