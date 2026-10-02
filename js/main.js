@@ -31,12 +31,13 @@ function injectSidebar() {
 
   // Role-based user config
   const roleMap = {
-    admin:       { name: 'Prince Jheck T. Juan',    initials: 'PJ', label: 'System Administrator',   workspace: 'ADMIN WORKSPACE',       code: 'CCMS-ADM' },
-    coordinator: { name: 'Crystelle A. Villanueva', initials: 'CV', label: 'Extension Coordinator',  workspace: 'COORDINATOR WORKSPACE', code: 'CCMS-COORD' },
-    proponent:   { name: 'Dr. Mary Grace Bolos',    initials: 'MB', label: 'Project Proponent',      workspace: 'PROPONENT WORKSPACE',   code: 'CCMS-EXT' },
-    dean:        { name: 'Mary Grace Bolos',        initials: 'MB', label: 'College Dean',           workspace: 'DEAN WORKSPACE',        code: 'CCMS-DEAN' },
-    // ========== OVPRE ROLE ADDED ==========
-    ovpre:       { name: 'OVPRE Administrator',     initials: 'OV', label: 'OVPRE Administrator',     workspace: 'OVPRE WORKSPACE',       code: 'CCMS-OVPRE' }
+    admin:       { name: 'Prince Jheck T. Juan',    initials: 'PJ', label: 'System Administrator',           workspace: 'ADMIN WORKSPACE',       code: 'CCMS-ADM' },
+    coordinator: { name: 'Crystelle A. Villanueva', initials: 'CV', label: 'Extension Coordinator',          workspace: 'COORDINATOR WORKSPACE', code: 'CCMS-COORD' },
+    proponent:   { name: 'Dr. Mary Grace Bolos',    initials: 'MB', label: 'Project Proponent',              workspace: 'PROPONENT WORKSPACE',   code: 'CCMS-EXT' },
+    dean:        { name: 'Mary Grace Bolos',        initials: 'MB', label: 'College Dean',                   workspace: 'DEAN WORKSPACE',        code: 'CCMS-DEAN' },
+    ovpre:       { name: 'OVPRE Administrator',     initials: 'OV', label: 'OVPRE Administrator',             workspace: 'OVPRE WORKSPACE',       code: 'CCMS-OVPRE' },
+    vpre:        { name: 'OVPRE Administrator',     initials: 'OV', label: 'OVPRE Administrator',             workspace: 'OVPRE WORKSPACE',       code: 'CCMS-OVPRE' },
+    assistant:   { name: 'Ana Dela Rosa',           initials: 'AD', label: 'Asst. Extension Officer',         workspace: 'ASST EXT WORKSPACE',    code: 'CCMS-AEXT' }
   };
   const user = roleMap[role] || roleMap['proponent'];
 
@@ -97,8 +98,8 @@ function injectSidebar() {
       <a href="#" class="sidebar-nav-item" onclick="openModal('profile-modal'); return false;"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>Dean Profile</span></a>
       <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>System Logout</span></a>
     `;
-  // ========== OVPRE SIDEBAR ADDED — IDENTICAL TO ADMIN SIDEBAR ==========
-  } else if (role === 'ovpre') {
+  // ========== VPRE SIDEBAR ==========
+  } else if (role === 'vpre' || role === 'ovpre') {
     navHTML = `
       ${navItem('dashboard.html',     'fa-th-large',         'Dashboard')}
       ${navItem('approvals.html',     'fa-clipboard-check',  'Approvals', '1')}
@@ -112,6 +113,24 @@ function injectSidebar() {
       ${navItem('admin.html',         'fa-cog',              'Admin Panel')}
       ${navItem('notifications.html','fa-bell',             'Notifications', '2')}
       <a href="#" class="sidebar-nav-item" onclick="openModal('profile-modal'); return false;"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>Officer Profile</span></a>
+      <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>System Logout</span></a>
+    `;
+  // ========== ASSISTANT EXTENSION OFFICER SIDEBAR ==========
+  } else if (role === 'assistant') {
+    navHTML = `
+      ${navItem('dashboard.html',          'fa-th-large',         'Dashboard')}
+      ${navItem('asst-workqueue.html',      'fa-tasks',            'My Work Queue', '3')}
+      <div class="sidebar-nav-label">OPERATIONS</div>
+      ${navItem('projects.html',            'fa-project-diagram',  'Projects')}
+      ${navItem('asst-compliance.html',     'fa-shield-alt',       'Compliance')}
+      ${navItem('documents.html',           'fa-folder-open',      'Documents')}
+      ${navItem('asst-communications.html', 'fa-comments',         'Communications')}
+      ${navItem('asst-status.html',         'fa-route',            'Status Updates')}
+      <div class="sidebar-nav-label">REPORTING</div>
+      ${navItem('reports.html',             'fa-chart-bar',        'Reports')}
+      <div class="sidebar-nav-label">USER ACCOUNT</div>
+      ${navItem('notifications.html',       'fa-bell',             'Notifications', '2')}
+      <a href="#" class="sidebar-nav-item" onclick="openModal('profile-modal'); return false;"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>My Profile</span></a>
       <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>System Logout</span></a>
     `;
   } else {

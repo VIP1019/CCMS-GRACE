@@ -425,7 +425,7 @@ const GRACE = {
   getProjectById(id)           { return this.projects.find(p => p.project_id === id); },
   getPersonById(id)            { return this.persons.find(p => p.person_id === id); },
   getPersonName(id)            { const p = this.getPersonById(id); return p ? `${p.first_name} ${p.last_name}` : 'Unknown'; },
-  getUserByRole(role)          { const map={admin:'U001',coordinator:'U002',proponent:'U003',dean:'U006',ovpre:'U008'}; return this.userAccounts.find(u=>u.user_id===map[role]); },
+  getUserByRole(role)          { const map={admin:'U001',coordinator:'U002',proponent:'U003',dean:'U006',assistant:'U007',vpre:'U008',ovpre:'U008'}; return this.userAccounts.find(u=>u.user_id===map[role]); },
   getActivitiesByProject(pid)  { return this.activities.filter(a => a.project_id === pid); },
   getDocumentsByProject(pid)   { return this.documents.filter(d => d.project_id === pid); },
   getTeamByProject(pid)        { return this.projectTeams.filter(t => t.project_id === pid); },

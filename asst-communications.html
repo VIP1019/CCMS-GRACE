@@ -1,0 +1,126 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Communications & Follow-up — Assistant Extension Officer | CCMS G.R.A.C.E. Portal">
+  <title>Communications | G.R.A.C.E. Portal</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .page-wrap { max-width:1100px; margin:0 auto; padding:1.5rem 1rem; }
+    .page-title { font-size:1.4rem; font-weight:800; font-family:'Poppins',sans-serif; color:#111827; margin:0; }
+    .page-sub   { font-size:0.82rem; color:#6B7280; margin-top:0.2rem; }
+    .section-card { background:#fff; border:1px solid #E5E7EB; border-radius:12px; overflow:hidden; margin-bottom:1.25rem; }
+    .section-head { padding:1rem 1.25rem; border-bottom:1px solid #F3F4F6; display:flex; align-items:center; justify-content:space-between; }
+    .section-title { font-size:0.85rem; font-weight:800; text-transform:uppercase; letter-spacing:0.06em; color:#374151; }
+    .section-title i { color:#8B1A1A; margin-right:0.4rem; }
+    .comm-table { width:100%; border-collapse:collapse; }
+    .comm-table th { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#6B7280; background:#F9FAFB; padding:0.75rem 1rem; text-align:left; border-bottom:1px solid #E5E7EB; }
+    .comm-table td { padding:0.85rem 1rem; border-bottom:1px solid #F3F4F6; font-size:0.82rem; color:#374151; vertical-align:middle; }
+    .comm-table tr:last-child td { border-bottom:none; }
+    .comm-table tbody tr:hover { background:#FAFAFA; }
+    .badge { display:inline-flex; align-items:center; gap:0.3rem; border-radius:12px; padding:0.2rem 0.65rem; font-size:0.68rem; font-weight:700; }
+    .badge.pending  { background:rgba(245,158,11,0.1); color:#D97706; border:1px solid rgba(245,158,11,0.25); }
+    .badge.sent     { background:rgba(37,99,235,0.1);  color:#2563EB; border:1px solid rgba(37,99,235,0.2); }
+    .badge.resolved { background:rgba(5,150,105,0.1);  color:#059669; border:1px solid rgba(5,150,105,0.2); }
+    .btn-action { display:inline-flex; align-items:center; gap:0.35rem; padding:0.28rem 0.7rem; border-radius:6px; font-size:0.75rem; font-weight:600; cursor:pointer; border:1px solid; text-decoration:none; transition:all 0.15s; margin-right:0.35rem; }
+    .btn-record { color:#2563EB; border-color:#BFDBFE; background:#EFF6FF; }
+    .btn-record:hover { background:#2563EB; color:#fff; }
+    .comm-type-chip { display:inline-block; padding:0.15rem 0.55rem; background:#F3F4F6; border-radius:6px; font-size:0.7rem; font-weight:600; color:#374151; }
+    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center; }
+    .modal-overlay.open { display:flex; }
+    .modal-box { background:#fff; border-radius:16px; width:100%; max-width:500px; box-shadow:0 20px 60px rgba(0,0,0,0.15); overflow:hidden; }
+    .modal-head { padding:1.25rem 1.5rem; border-bottom:1px solid #F3F4F6; display:flex; justify-content:space-between; align-items:center; }
+    .modal-head h3 { font-size:0.95rem; font-weight:800; color:#111827; margin:0; }
+    .modal-close { background:none; border:none; cursor:pointer; font-size:1.1rem; color:#9CA3AF; }
+    .modal-body { padding:1.5rem; display:flex; flex-direction:column; gap:0.9rem; }
+    .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.9rem; }
+    .form-group { display:flex; flex-direction:column; gap:0.35rem; }
+    .form-group label { font-size:0.75rem; font-weight:700; color:#374151; text-transform:uppercase; letter-spacing:0.04em; }
+    .form-group select, .form-group input, .form-group textarea { padding:0.55rem 0.75rem; border:1px solid #D1D5DB; border-radius:8px; font-size:0.85rem; color:#111827; width:100%; outline:none; font-family:inherit; }
+    .form-group select:focus, .form-group input:focus, .form-group textarea:focus { border-color:#8B1A1A; }
+    .modal-footer { padding:1rem 1.5rem; border-top:1px solid #F3F4F6; display:flex; justify-content:flex-end; gap:0.75rem; }
+    .btn-cancel-modal { padding:0.55rem 1.25rem; border:1px solid #E5E7EB; background:#fff; border-radius:8px; font-size:0.85rem; font-weight:600; cursor:pointer; color:#374151; }
+    .btn-save-modal { padding:0.55rem 1.5rem; background:#8B1A1A; color:#fff; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; cursor:pointer; }
+  </style>
+</head>
+<body>
+<div class="dashboard-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-content">
+    <header class="topbar" id="topbar"></header>
+    <div class="dashboard-content">
+      <div class="page-wrap">
+        <div style="margin-bottom:1.25rem;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+          <div>
+            <h1 class="page-title"><i class="fas fa-comments" style="color:#8B1A1A;margin-right:0.5rem;"></i>Communications & Follow-up</h1>
+            <p class="page-sub">Record project-related communications, correspondence, and coordination follow-ups.</p>
+          </div>
+          <button class="btn-action btn-record" style="padding:0.55rem 1.25rem;font-size:0.82rem;" onclick="openModal()"><i class="fas fa-plus"></i>Record Communication</button>
+        </div>
+        <div class="section-card">
+          <div class="section-head">
+            <div class="section-title"><i class="fas fa-envelope-open-text"></i>COMMUNICATION LOG</div>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="comm-table">
+              <thead><tr><th>Project</th><th>Type</th><th>Subject</th><th>Sender</th><th>Recipient</th><th>Date</th><th>Stage</th><th>Follow-up</th></tr></thead>
+              <tbody>
+                <tr><td><strong>EXT-2026-035</strong><br><span style="font-size:0.72rem;color:#9CA3AF;">Data Analytics Workshop</span></td><td><span class="comm-type-chip">Follow-up Notice</span></td><td>Missing Compliance Document — Action Required</td><td>Ana Dela Rosa (OVPRE)</td><td>Lei-anne Araña (Proponent)</td><td>Oct 2, 2026</td><td>Compliance</td><td><span class="badge pending">Follow-up Pending</span></td></tr>
+                <tr><td><strong>EXT-2026-048</strong><br><span style="font-size:0.72rem;color:#9CA3AF;">Web Dev Training — Daet LGU</span></td><td><span class="comm-type-chip">Status Notice</span></td><td>OVPRE Processing Acknowledgment — Status Updated</td><td>Ana Dela Rosa (OVPRE)</td><td>Crystelle Villanueva (Coordinator)</td><td>Oct 2, 2026</td><td>OVPRE Processing</td><td><span class="badge sent">Sent</span></td></tr>
+                <tr><td><strong>EXT-2026-041</strong><br><span style="font-size:0.72rem;color:#9CA3AF;">ICT Consultancy — DOST</span></td><td><span class="comm-type-chip">Document Request</span></td><td>MOA / Partnership Agreement — Please Submit</td><td>Ana Dela Rosa (OVPRE)</td><td>Roberto De Leon (Proponent)</td><td>Oct 1, 2026</td><td>Eligibility Check</td><td><span class="badge pending">Follow-up Pending</span></td></tr>
+                <tr><td><strong>EXT-2026-045</strong><br><span style="font-size:0.72rem;color:#9CA3AF;">Basud Library System</span></td><td><span class="comm-type-chip">Endorsement Notice</span></td><td>Dean Endorsement Received — Forwarded to OVPRE</td><td>Crystelle Villanueva (Coordinator)</td><td>Ana Dela Rosa (OVPRE)</td><td>Sep 30, 2026</td><td>Dean Endorsement</td><td><span class="badge resolved">Resolved</span></td></tr>
+                <tr><td><strong>EXT-2026-038</strong><br><span style="font-size:0.72rem;color:#9CA3AF;">Digital Literacy — Brgy. Lag-on</span></td><td><span class="comm-type-chip">Revision Request</span></td><td>Completion Report — Revision Required by OVPRE</td><td>Ana Dela Rosa (OVPRE)</td><td>Prince Jheck Juan (Proponent)</td><td>Sep 28, 2026</td><td>Completion Review</td><td><span class="badge pending">Follow-up Pending</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div style="padding:0.85rem 1.1rem;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;font-size:0.78rem;color:#1E40AF;display:flex;align-items:center;gap:0.65rem;">
+          <i class="fas fa-info-circle" style="font-size:1rem;"></i>
+          <span><strong>Communication Recording Scope:</strong> The Assistant Extension Officer records project-related communications and coordinates follow-ups. All communications are institutional records and must be based on authorized actions.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Record Communication Modal -->
+<div class="modal-overlay" id="comm-modal">
+  <div class="modal-box">
+    <div class="modal-head"><h3><i class="fas fa-comments" style="color:#8B1A1A;margin-right:0.5rem;"></i>Record Communication</h3><button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group"><label>Project</label><select><option>EXT-2026-035 — Data Analytics</option><option>EXT-2026-048 — Web Dev Training</option><option>EXT-2026-041 — ICT Consultancy</option><option>EXT-2026-045 — Basud Library</option></select></div>
+        <div class="form-group"><label>Communication Type</label><select><option>Follow-up Notice</option><option>Document Request</option><option>Status Notice</option><option>Endorsement Notice</option><option>Revision Request</option><option>General Coordination</option></select></div>
+      </div>
+      <div class="form-group"><label>Subject / Title</label><input type="text" placeholder="e.g. Missing document follow-up, Status update notice..."></div>
+      <div class="form-grid">
+        <div class="form-group"><label>Sender</label><input type="text" value="Ana Dela Rosa (OVPRE)"></div>
+        <div class="form-group"><label>Recipient</label><input type="text" placeholder="Person or unit name..."></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Date</label><input type="date" value="2026-10-02"></div>
+        <div class="form-group"><label>Related Stage</label><select><option>Compliance</option><option>OVPRE Processing</option><option>Eligibility Check</option><option>Technical Evaluation</option><option>Implementation</option><option>Completion Review</option></select></div>
+      </div>
+      <div class="form-group"><label>Notes / Summary</label><textarea rows="2" placeholder="Brief summary of communication or follow-up action taken..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel-modal" onclick="closeModal()">Cancel</button>
+      <button class="btn-save-modal" onclick="saveRecord()"><i class="fas fa-save" style="margin-right:0.4rem;"></i>Record Communication</button>
+    </div>
+  </div>
+</div>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+  function openModal(){ document.getElementById('comm-modal').classList.add('open'); }
+  function closeModal(){ document.getElementById('comm-modal').classList.remove('open'); }
+  function saveRecord(){
+    const btn=document.querySelector('.btn-save-modal');
+    btn.innerHTML='<i class="fas fa-check" style="margin-right:0.4rem;"></i>Recorded';
+    btn.style.background='#059669';
+    setTimeout(()=>{closeModal();btn.innerHTML='<i class="fas fa-save" style="margin-right:0.4rem;"></i>Record Communication';btn.style.background='#8B1A1A';},1500);
+  }
+</script>
+</body>
+</html>

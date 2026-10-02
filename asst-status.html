@@ -1,0 +1,205 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Status & Process Updates — Assistant Extension Officer | CCMS G.R.A.C.E. Portal">
+  <title>Status Updates | G.R.A.C.E. Portal</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .page-wrap { max-width:1100px; margin:0 auto; padding:1.5rem 1rem; }
+    .page-title { font-size:1.4rem; font-weight:800; font-family:'Poppins',sans-serif; color:#111827; margin:0; }
+    .page-sub   { font-size:0.82rem; color:#6B7280; margin-top:0.2rem; }
+    .main-grid  { display:grid; grid-template-columns:1.5fr 1fr; gap:1.25rem; }
+    .section-card { background:#fff; border:1px solid #E5E7EB; border-radius:12px; overflow:hidden; margin-bottom:1.25rem; }
+    .section-head { padding:1rem 1.25rem; border-bottom:1px solid #F3F4F6; display:flex; align-items:center; justify-content:space-between; }
+    .section-title { font-size:0.85rem; font-weight:800; text-transform:uppercase; letter-spacing:0.06em; color:#374151; }
+    .section-title i { color:#8B1A1A; margin-right:0.4rem; }
+    .status-table { width:100%; border-collapse:collapse; }
+    .status-table th { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#6B7280; background:#F9FAFB; padding:0.75rem 1rem; text-align:left; border-bottom:1px solid #E5E7EB; }
+    .status-table td { padding:0.85rem 1rem; border-bottom:1px solid #F3F4F6; font-size:0.82rem; color:#374151; vertical-align:middle; }
+    .status-table tr:last-child td { border-bottom:none; }
+    .status-table tbody tr:hover { background:#FAFAFA; cursor:pointer; }
+    .badge { display:inline-flex; align-items:center; gap:0.3rem; border-radius:12px; padding:0.2rem 0.65rem; font-size:0.68rem; font-weight:700; }
+    .badge.pending  { background:rgba(245,158,11,0.1); color:#D97706; border:1px solid rgba(245,158,11,0.25); }
+    .badge.updated  { background:rgba(37,99,235,0.1);  color:#2563EB; border:1px solid rgba(37,99,235,0.2); }
+    .badge.done     { background:rgba(5,150,105,0.1);  color:#059669; border:1px solid rgba(5,150,105,0.2); }
+    .badge.action   { background:rgba(139,26,26,0.08); color:#8B1A1A; border:1px solid rgba(139,26,26,0.2); }
+    .btn-action { display:inline-flex; align-items:center; gap:0.35rem; padding:0.28rem 0.7rem; border-radius:6px; font-size:0.75rem; font-weight:600; cursor:pointer; border:1px solid; text-decoration:none; transition:all 0.15s; }
+    .btn-record { color:#2563EB; border-color:#BFDBFE; background:#EFF6FF; }
+    .btn-record:hover { background:#2563EB; color:#fff; }
+
+    /* Pipeline Viewer */
+    .pipeline-wrap { padding:1.25rem; }
+    .pipeline-stage { display:flex; align-items:flex-start; gap:1rem; margin-bottom:0; position:relative; }
+    .pipeline-stage:not(:last-child)::before { content:''; position:absolute; left:14px; top:32px; width:2px; height:calc(100% + 0px); background:#E5E7EB; }
+    .pipe-dot { width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:800; flex-shrink:0; z-index:1; position:relative; margin-top:2px; }
+    .pipe-dot.done    { background:#059669; color:#fff; }
+    .pipe-dot.current { background:#8B1A1A; color:#fff; box-shadow:0 0 0 4px rgba(139,26,26,0.15); }
+    .pipe-dot.pending { background:#F3F4F6; color:#6B7280; border:2px solid #E5E7EB; }
+    .pipe-info { padding-bottom:1.25rem; }
+    .pipe-stage-name { font-size:0.82rem; font-weight:700; color:#111827; }
+    .pipe-stage-desc { font-size:0.72rem; color:#9CA3AF; margin-top:0.15rem; }
+    .pipe-stage-date { font-size:0.7rem; color:#059669; font-weight:600; margin-top:0.2rem; }
+    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center; }
+    .modal-overlay.open { display:flex; }
+    .modal-box { background:#fff; border-radius:16px; width:100%; max-width:480px; box-shadow:0 20px 60px rgba(0,0,0,0.15); overflow:hidden; }
+    .modal-head { padding:1.25rem 1.5rem; border-bottom:1px solid #F3F4F6; display:flex; justify-content:space-between; align-items:center; }
+    .modal-head h3 { font-size:0.95rem; font-weight:800; color:#111827; margin:0; }
+    .modal-close { background:none; border:none; cursor:pointer; font-size:1.1rem; color:#9CA3AF; }
+    .modal-body { padding:1.5rem; display:flex; flex-direction:column; gap:0.9rem; }
+    .form-group { display:flex; flex-direction:column; gap:0.35rem; }
+    .form-group label { font-size:0.75rem; font-weight:700; color:#374151; text-transform:uppercase; letter-spacing:0.04em; }
+    .form-group select, .form-group input, .form-group textarea { padding:0.55rem 0.75rem; border:1px solid #D1D5DB; border-radius:8px; font-size:0.85rem; color:#111827; width:100%; outline:none; font-family:inherit; }
+    .modal-footer { padding:1rem 1.5rem; border-top:1px solid #F3F4F6; display:flex; justify-content:flex-end; gap:0.75rem; }
+    .btn-cancel-modal { padding:0.55rem 1.25rem; border:1px solid #E5E7EB; background:#fff; border-radius:8px; font-size:0.85rem; font-weight:600; cursor:pointer; }
+    .btn-save-modal { padding:0.55rem 1.5rem; background:#8B1A1A; color:#fff; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; cursor:pointer; }
+    .record-distinction { display:flex; gap:1rem; margin-bottom:1.25rem; }
+    .distinction-box { flex:1; padding:1rem; border-radius:10px; border:1px solid; font-size:0.78rem; }
+    .distinction-box.allowed { background:#F0FDF4; border-color:#BBF7D0; color:#065F46; }
+    .distinction-box.not-allowed { background:#FEF2F2; border-color:#FECACA; color:#7F1D1D; }
+    .distinction-box h4 { font-size:0.75rem; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; margin:0 0 0.5rem; }
+    .distinction-box li { font-size:0.75rem; margin-bottom:0.2rem; }
+    @media (max-width:900px) { .main-grid { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+<div class="dashboard-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-content">
+    <header class="topbar" id="topbar"></header>
+    <div class="dashboard-content">
+      <div class="page-wrap">
+        <div style="margin-bottom:1.25rem;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+          <div>
+            <h1 class="page-title"><i class="fas fa-route" style="color:#8B1A1A;margin-right:0.5rem;"></i>Status & Process Updates</h1>
+            <p class="page-sub">Record authorized project status updates and track process stage transitions across all OVPRE projects.</p>
+          </div>
+          <button class="btn-action btn-record" style="padding:0.55rem 1.25rem;font-size:0.82rem;" onclick="openModal()"><i class="fas fa-plus"></i>Record Institutional Action</button>
+        </div>
+
+        <!-- Role Distinction -->
+        <div class="record-distinction">
+          <div class="distinction-box allowed">
+            <h4><i class="fas fa-check-circle" style="margin-right:0.4rem;"></i>What I Record</h4>
+            <ul style="margin:0;padding-left:1.25rem;">
+              <li>Authorized process/status updates</li>
+              <li>Verified institutional actions already taken</li>
+              <li>Pending requirements and follow-ups</li>
+              <li>Status history and operational records</li>
+            </ul>
+          </div>
+          <div class="distinction-box not-allowed">
+            <h4><i class="fas fa-ban" style="margin-right:0.4rem;"></i>Not My Authority</h4>
+            <ul style="margin:0;padding-left:1.25rem;">
+              <li>Approve or Reject Projects</li>
+              <li>Determine Eligibility</li>
+              <li>Make Technical Evaluation Decisions</li>
+              <li>Authorize Implementation or Fund Release</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="main-grid">
+          <!-- Left: Projects List -->
+          <div>
+            <div class="section-card">
+              <div class="section-head">
+                <div class="section-title"><i class="fas fa-list"></i>PROJECT STATUS RECORDS</div>
+              </div>
+              <div style="overflow-x:auto;">
+                <table class="status-table">
+                  <thead><tr><th>Project</th><th>Current Stage</th><th>Last Status Recorded</th><th>Last Updated</th><th>Status</th><th>Action</th></tr></thead>
+                  <tbody>
+                    <tr onclick="showPipeline('EXT-2026-048','OVPRE Processing')"><td><strong>EXT-2026-048</strong><br><span style="font-size:0.72rem;color:#9CA3AF;">Web Dev Training — Daet LGU</span></td><td>OVPRE Processing</td><td>For Institutional Review</td><td>Oct 2</td><td><span class="badge action">For Update</span></td><td><a href="#" class="btn-action btn-record" onclick="openModal();return false;"><i class="fas fa-sync-alt"></i>Update</a></td></tr>
+                    <tr onclick="showPipeline('EXT-2026-035','Compliance')"><td><strong>EXT-2026-035</strong><br><span style="font-size:0.72rem;color:#9CA3AF;">Data Analytics Workshop</span></td><td>Compliance</td><td>Awaiting Submission</td><td>Oct 1</td><td><span class="badge pending">Pending</span></td><td><a href="#" class="btn-action btn-record" onclick="openModal();return false;"><i class="fas fa-edit"></i>Record</a></td></tr>
+                    <tr onclick="showPipeline('EXT-2026-041','Eligibility Check')"><td><strong>EXT-2026-041</strong><br><span style="font-size:0.72rem;color:#9CA3AF;">ICT Consultancy — DOST</span></td><td>Eligibility Check</td><td>MOA Awaited</td><td>Sep 30</td><td><span class="badge pending">Pending</span></td><td><a href="#" class="btn-action btn-record" onclick="openModal();return false;"><i class="fas fa-edit"></i>Record</a></td></tr>
+                    <tr onclick="showPipeline('EXT-2026-045','Dean Endorsement')"><td><strong>EXT-2026-045</strong><br><span style="font-size:0.72rem;color:#9CA3AF;">Basud Library System</span></td><td>Dean Endorsement</td><td>Endorsed by Dean</td><td>Sep 30</td><td><span class="badge updated">Recorded</span></td><td><a href="#" class="btn-action btn-record" onclick="openModal();return false;"><i class="fas fa-plus"></i>Add</a></td></tr>
+                    <tr onclick="showPipeline('EXT-2026-038','Implementation')"><td><strong>EXT-2026-038</strong><br><span style="font-size:0.72rem;color:#9CA3AF;">Digital Literacy — Brgy. Lag-on</span></td><td>Implementation</td><td>Commenced Oct 2</td><td>Oct 2</td><td><span class="badge done">Up to Date</span></td><td><a href="#" class="btn-action btn-record" onclick="openModal();return false;"><i class="fas fa-edit"></i>Add</a></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Pipeline Viewer -->
+          <div>
+            <div class="section-card">
+              <div class="section-head">
+                <div class="section-title"><i class="fas fa-route"></i>PROCESS PIPELINE</div>
+              </div>
+              <div class="pipeline-wrap" id="pipeline-viewer">
+                <div style="text-align:center;padding:2rem;color:#9CA3AF;">
+                  <i class="fas fa-mouse-pointer" style="font-size:2rem;margin-bottom:0.75rem;display:block;"></i>
+                  <span style="font-size:0.82rem;">Click a project row to view its process pipeline</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Record Status Modal -->
+<div class="modal-overlay" id="status-modal">
+  <div class="modal-box">
+    <div class="modal-head"><h3><i class="fas fa-route" style="color:#8B1A1A;margin-right:0.5rem;"></i>Record Institutional Action</h3><button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body">
+      <div class="form-group"><label>Project</label><select><option>EXT-2026-048 — Web Dev Training</option><option>EXT-2026-035 — Data Analytics</option><option>EXT-2026-041 — ICT Consultancy</option></select></div>
+      <div class="form-group"><label>Process Stage</label><select><option>Proposal Preparation</option><option>Completeness Check</option><option>Dean/Director Endorsement</option><option>OVPRE Endorsement</option><option>Eligibility Check</option><option>Compliance</option><option>Technical Evaluation</option><option>Institutional Processing</option><option>Implementation</option><option>Completion Review</option><option>Post-Implementation</option></select></div>
+      <div class="form-group"><label>Status to Record</label><select><option>For Review</option><option>Acknowledged</option><option>Processing</option><option>Pending Requirements</option><option>Returned for Revision</option><option>Completed Stage</option></select></div>
+      <div class="form-group"><label>Date of Institutional Action</label><input type="date" value="2026-10-02"></div>
+      <div class="form-group"><label>Remarks / Notes</label><textarea rows="2" placeholder="Record the exact institutional action or information verified..."></textarea></div>
+      <div style="padding:0.65rem 0.85rem;background:#FEF3C7;border-radius:8px;font-size:0.75rem;color:#92400E;border:1px solid #FDE68A;">
+        <i class="fas fa-exclamation-triangle" style="margin-right:0.4rem;"></i>
+        <strong>Recording Note:</strong> This records the institutional action that has already occurred. You are NOT making the institutional decision.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel-modal" onclick="closeModal()">Cancel</button>
+      <button class="btn-save-modal" onclick="saveRecord()"><i class="fas fa-save" style="margin-right:0.4rem;"></i>Record Action</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+  function openModal(){ document.getElementById('status-modal').classList.add('open'); }
+  function closeModal(){ document.getElementById('status-modal').classList.remove('open'); }
+  function saveRecord(){
+    const btn=document.querySelector('.btn-save-modal');
+    btn.innerHTML='<i class="fas fa-check" style="margin-right:0.4rem;"></i>Recorded';
+    btn.style.background='#059669';
+    setTimeout(()=>{closeModal();btn.innerHTML='<i class="fas fa-save" style="margin-right:0.4rem;"></i>Record Action';btn.style.background='#8B1A1A';},1500);
+  }
+
+  function showPipeline(id, currentStage) {
+    const stages = [
+      { name:'Proposal Preparation',         desc:'Proponent submits initial proposal' },
+      { name:'Completeness Check',            desc:'Coordinator verifies proposal completeness' },
+      { name:'Dean/Director Endorsement',     desc:'Dean reviews and endorses the proposal' },
+      { name:'OVPRE Endorsement',             desc:'OVPRE acknowledges and processes the proposal' },
+      { name:'Eligibility Check',             desc:'Compliance and eligibility verification' },
+      { name:'Technical Evaluation',          desc:'Expert evaluation of technical components' },
+      { name:'Institutional Processing',      desc:'Final institutional clearances' },
+      { name:'Implementation',                desc:'Project activities in progress' },
+      { name:'Completion Review',             desc:'Final report and monitoring' },
+      { name:'Post-Implementation',           desc:'Impact evaluation and archiving' }
+    ];
+
+    const currentIdx = stages.findIndex(s => s.name === currentStage);
+    const viewer = document.getElementById('pipeline-viewer');
+    viewer.innerHTML = stages.map((s, i) => {
+      const dotClass = i < currentIdx ? 'done' : i === currentIdx ? 'current' : 'pending';
+      const dotIcon = i < currentIdx ? '<i class="fas fa-check"></i>' : (i + 1);
+      const dateText = i < currentIdx ? '<div class="pipe-stage-date"><i class="fas fa-check-circle"></i> Completed</div>' : i === currentIdx ? '<div class="pipe-stage-date" style="color:#8B1A1A;"><i class="fas fa-circle-notch fa-spin"></i> Current Stage</div>' : '';
+      return '<div class="pipeline-stage"><div class="pipe-dot ' + dotClass + '">' + dotIcon + '</div><div class="pipe-info"><div class="pipe-stage-name">' + s.name + '</div><div class="pipe-stage-desc">' + s.desc + '</div>' + dateText + '</div></div>';
+    }).join('');
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Compliance Monitoring — Assistant Extension Officer | CCMS G.R.A.C.E. Portal">
+  <title>Compliance Monitoring | G.R.A.C.E. Portal</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .page-wrap { max-width:1100px; margin:0 auto; padding:1.5rem 1rem; }
+    .page-title { font-size:1.4rem; font-weight:800; font-family:'Poppins',sans-serif; color:#111827; margin:0; }
+    .page-sub   { font-size:0.82rem; color:#6B7280; margin-top:0.2rem; }
+    .comp-stat-row { display:grid; grid-template-columns:repeat(5,1fr); gap:0.85rem; margin:1.25rem 0; }
+    .comp-stat { background:#fff; border:1px solid #E5E7EB; border-radius:10px; padding:0.9rem 1rem; text-align:center; }
+    .comp-stat-val { font-size:1.5rem; font-weight:800; font-family:'Poppins',sans-serif; }
+    .comp-stat-label { font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; color:#6B7280; margin-top:0.2rem; }
+    .c-red { color:#8B1A1A; } .c-amber { color:#D97706; } .c-blue { color:#2563EB; } .c-green { color:#059669; } .c-gray { color:#6B7280; }
+    .section-card { background:#fff; border:1px solid #E5E7EB; border-radius:12px; overflow:hidden; margin-bottom:1.25rem; }
+    .section-head { padding:1rem 1.25rem; border-bottom:1px solid #F3F4F6; display:flex; align-items:center; justify-content:space-between; }
+    .section-title { font-size:0.85rem; font-weight:800; text-transform:uppercase; letter-spacing:0.06em; color:#374151; }
+    .section-title i { color:#8B1A1A; margin-right:0.4rem; }
+    .comp-table { width:100%; border-collapse:collapse; }
+    .comp-table th { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#6B7280; background:#F9FAFB; padding:0.75rem 1rem; text-align:left; border-bottom:1px solid #E5E7EB; }
+    .comp-table td { padding:0.85rem 1rem; border-bottom:1px solid #F3F4F6; font-size:0.82rem; color:#374151; vertical-align:middle; }
+    .comp-table tr:last-child td { border-bottom:none; }
+    .comp-table tbody tr:hover { background:#FAFAFA; }
+    .badge { display:inline-flex; align-items:center; gap:0.3rem; border-radius:12px; padding:0.2rem 0.65rem; font-size:0.68rem; font-weight:700; }
+    .badge.pending   { background:rgba(245,158,11,0.1); color:#D97706; border:1px solid rgba(245,158,11,0.25); }
+    .badge.submitted { background:rgba(37,99,235,0.1);  color:#2563EB; border:1px solid rgba(37,99,235,0.2); }
+    .badge.compliant { background:rgba(5,150,105,0.1);  color:#059669; border:1px solid rgba(5,150,105,0.2); }
+    .badge.missing   { background:rgba(139,26,26,0.08); color:#8B1A1A; border:1px solid rgba(139,26,26,0.2); }
+    .badge.revision  { background:rgba(139,92,246,0.1); color:#7C3AED; border:1px solid rgba(139,92,246,0.2); }
+    .btn-action { display:inline-flex; align-items:center; gap:0.35rem; padding:0.28rem 0.7rem; border-radius:6px; font-size:0.75rem; font-weight:600; cursor:pointer; border:1px solid; text-decoration:none; transition:all 0.15s; margin-right:0.35rem; }
+    .btn-record { color:#2563EB; border-color:#BFDBFE; background:#EFF6FF; }
+    .btn-record:hover { background:#2563EB; color:#fff; }
+    .btn-upload { color:#059669; border-color:#A7F3D0; background:#F0FDF4; }
+    .btn-upload:hover { background:#059669; color:#fff; }
+    .btn-view { color:#6B7280; border-color:#E5E7EB; background:#F9FAFB; }
+    .btn-view:hover { background:#374151; color:#fff; border-color:#374151; }
+    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center; }
+    .modal-overlay.open { display:flex; }
+    .modal-box { background:#fff; border-radius:16px; width:100%; max-width:480px; box-shadow:0 20px 60px rgba(0,0,0,0.15); overflow:hidden; }
+    .modal-head { padding:1.25rem 1.5rem; border-bottom:1px solid #F3F4F6; display:flex; justify-content:space-between; align-items:center; }
+    .modal-head h3 { font-size:0.95rem; font-weight:800; color:#111827; margin:0; }
+    .modal-close { background:none; border:none; cursor:pointer; font-size:1.1rem; color:#9CA3AF; }
+    .modal-body { padding:1.5rem; display:flex; flex-direction:column; gap:1rem; }
+    .form-group { display:flex; flex-direction:column; gap:0.35rem; }
+    .form-group label { font-size:0.75rem; font-weight:700; color:#374151; text-transform:uppercase; letter-spacing:0.04em; }
+    .form-group select, .form-group input, .form-group textarea { padding:0.55rem 0.75rem; border:1px solid #D1D5DB; border-radius:8px; font-size:0.85rem; color:#111827; width:100%; outline:none; font-family:inherit; }
+    .form-group select:focus, .form-group input:focus, .form-group textarea:focus { border-color:#8B1A1A; box-shadow:0 0 0 3px rgba(139,26,26,0.08); }
+    .modal-footer { padding:1rem 1.5rem; border-top:1px solid #F3F4F6; display:flex; justify-content:flex-end; gap:0.75rem; }
+    .btn-cancel-modal { padding:0.55rem 1.25rem; border:1px solid #E5E7EB; background:#fff; border-radius:8px; font-size:0.85rem; font-weight:600; cursor:pointer; color:#374151; }
+    .btn-save-modal { padding:0.55rem 1.5rem; background:#8B1A1A; color:#fff; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; cursor:pointer; }
+    .btn-save-modal:hover { background:#6B1414; }
+    @media (max-width:900px) { .comp-stat-row { grid-template-columns:repeat(3,1fr); } }
+  </style>
+</head>
+<body>
+<div class="dashboard-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-content">
+    <header class="topbar" id="topbar"></header>
+    <div class="dashboard-content">
+      <div class="page-wrap">
+        <div style="margin-bottom:1.25rem;">
+          <h1 class="page-title"><i class="fas fa-shield-alt" style="color:#8B1A1A;margin-right:0.5rem;"></i>Compliance Monitoring</h1>
+          <p class="page-sub">Record and monitor compliance requirements, submissions, and follow-up actions for each project stage.</p>
+        </div>
+        <div class="comp-stat-row">
+          <div class="comp-stat"><div class="comp-stat-val c-red">3</div><div class="comp-stat-label">Pending</div></div>
+          <div class="comp-stat"><div class="comp-stat-val c-amber">2</div><div class="comp-stat-label">Missing</div></div>
+          <div class="comp-stat"><div class="comp-stat-val c-blue">4</div><div class="comp-stat-label">Submitted</div></div>
+          <div class="comp-stat"><div class="comp-stat-val c-green">6</div><div class="comp-stat-label">Compliant</div></div>
+          <div class="comp-stat"><div class="comp-stat-val c-gray">1</div><div class="comp-stat-label">For Revision</div></div>
+        </div>
+        <div class="section-card">
+          <div class="section-head">
+            <div class="section-title"><i class="fas fa-list-check"></i>COMPLIANCE REQUIREMENTS TRACKER</div>
+            <button class="btn-action btn-record" onclick="openModal()"><i class="fas fa-plus"></i>Record Submission</button>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="comp-table">
+              <thead><tr><th>Project</th><th>Requirement</th><th>Stage</th><th>Status</th><th>Submitted</th><th>Due</th><th>Remarks</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td><strong>EXT-2026-035</strong><br><span style="font-size:0.72rem;color:#9CA3AF;">Data Analytics Workshop</span></td><td>Supporting Document</td><td>Compliance</td><td><span class="badge missing">Missing</span></td><td>—</td><td style="color:#DC2626;font-weight:700;">Oct 5</td><td>Notified proponent Oct 1</td><td><a href="#" class="btn-action btn-record" onclick="openModal();return false;"><i class="fas fa-edit"></i>Record</a><a href="documents.html" class="btn-action btn-upload"><i class="fas fa-upload"></i>Upload</a></td></tr>
+                <tr><td><strong>EXT-2026-048</strong><br><span style="font-size:0.72rem;color:#9CA3AF;">Web Dev Training — Daet LGU</span></td><td>Proposal Revision</td><td>OVPRE Processing</td><td><span class="badge submitted">Submitted</span></td><td>Oct 2</td><td>Oct 7</td><td>Under OVPRE review</td><td><a href="#" class="btn-action btn-view" onclick="return false;"><i class="fas fa-eye"></i>View</a></td></tr>
+                <tr><td><strong>EXT-2026-041</strong><br><span style="font-size:0.72rem;color:#9CA3AF;">ICT Consultancy — DOST</span></td><td>MOA / Partnership Agreement</td><td>Eligibility Check</td><td><span class="badge pending">Pending</span></td><td>—</td><td style="color:#D97706;font-weight:600;">Oct 6</td><td>Awaiting signed copy</td><td><a href="#" class="btn-action btn-record" onclick="openModal();return false;"><i class="fas fa-edit"></i>Record</a><a href="documents.html" class="btn-action btn-upload"><i class="fas fa-upload"></i>Upload</a></td></tr>
+                <tr><td><strong>EXT-2026-045</strong><br><span style="font-size:0.72rem;color:#9CA3AF;">Basud Library Mgmt System</span></td><td>Eligibility Requirements</td><td>Eligibility Check</td><td><span class="badge compliant">Compliant</span></td><td>Oct 1</td><td>Oct 4</td><td>Verified by coordinator</td><td><a href="#" class="btn-action btn-view" onclick="return false;"><i class="fas fa-eye"></i>View</a></td></tr>
+                <tr><td><strong>EXT-2026-038</strong><br><span style="font-size:0.72rem;color:#9CA3AF;">Digital Literacy — Brgy. Lag-on</span></td><td>Final Completion Report</td><td>Completion Review</td><td><span class="badge submitted">Submitted</span></td><td>Oct 2</td><td>Oct 10</td><td>Awaiting OVPRE acknowledgment</td><td><a href="#" class="btn-action btn-view" onclick="return false;"><i class="fas fa-eye"></i>View</a><a href="#" class="btn-action btn-record" onclick="openModal();return false;"><i class="fas fa-edit"></i>Update</a></td></tr>
+                <tr><td><strong>EXT-2026-001</strong><br><span style="font-size:0.72rem;color:#9CA3AF;">Community Health Outreach</span></td><td>Implementation Report</td><td>Implementation</td><td><span class="badge revision">For Revision</span></td><td>Sep 28</td><td>Oct 12</td><td>Revision requested by OVPRE</td><td><a href="#" class="btn-action btn-record" onclick="openModal();return false;"><i class="fas fa-edit"></i>Follow up</a></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div style="padding:0.85rem 1.1rem;background:#FEF3C7;border:1px solid #FDE68A;border-radius:10px;font-size:0.78rem;color:#92400E;display:flex;align-items:center;gap:0.65rem;">
+          <i class="fas fa-info-circle" style="font-size:1rem;"></i>
+          <span><strong>Recording Scope:</strong> The Assistant Extension Officer records compliance submissions and updates. Final institutional eligibility decisions are made by the VPRE or authorized evaluating body only.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Record Submission Modal -->
+<div class="modal-overlay" id="comp-modal">
+  <div class="modal-box">
+    <div class="modal-head"><h3><i class="fas fa-edit" style="color:#8B1A1A;margin-right:0.5rem;"></i>Record Compliance Update</h3><button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body">
+      <div class="form-group"><label>Project</label><select><option>EXT-2026-035 — Data Analytics Workshop</option><option>EXT-2026-048 — Web Dev Training</option><option>EXT-2026-041 — ICT Consultancy DOST</option></select></div>
+      <div class="form-group"><label>Requirement</label><input type="text" placeholder="e.g. Supporting Document, MOA, Final Report..."></div>
+      <div class="form-group"><label>Update Status</label><select><option>Submitted</option><option>Pending</option><option>For Review</option><option>Compliant</option><option>Needs Revision</option><option>Missing</option></select></div>
+      <div class="form-group"><label>Date Recorded</label><input type="date" value="2026-10-02"></div>
+      <div class="form-group"><label>Remarks / Notes</label><textarea rows="2" placeholder="Record any follow-up notes, communications, or context..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel-modal" onclick="closeModal()">Cancel</button>
+      <button class="btn-save-modal" onclick="saveRecord()"><i class="fas fa-save" style="margin-right:0.4rem;"></i>Save Record</button>
+    </div>
+  </div>
+</div>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+  function openModal(){ document.getElementById('comp-modal').classList.add('open'); }
+  function closeModal(){ document.getElementById('comp-modal').classList.remove('open'); }
+  function saveRecord(){
+    const btn=document.querySelector('.btn-save-modal');
+    btn.innerHTML='<i class="fas fa-check" style="margin-right:0.4rem;"></i>Recorded';
+    btn.style.background='#059669';
+    setTimeout(()=>{closeModal();btn.innerHTML='<i class="fas fa-save" style="margin-right:0.4rem;"></i>Save Record';btn.style.background='#8B1A1A';},1500);
+  }
+</script>
+</body>
+</html>
