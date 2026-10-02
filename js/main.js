@@ -97,8 +97,8 @@ function injectSidebar() {
       <a href="#" class="sidebar-nav-item" onclick="openModal('profile-modal'); return false;"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>Dean Profile</span></a>
       <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>System Logout</span></a>
     `;
-  // ========== VPRE SIDEBAR ==========
-  } else if (role === 'vpre') {
+  // ========== OVPRE SIDEBAR ADDED — IDENTICAL TO ADMIN SIDEBAR ==========
+  } else if (role === 'ovpre') {
     navHTML = `
       ${navItem('dashboard.html',     'fa-th-large',         'Dashboard')}
       ${navItem('approvals.html',     'fa-clipboard-check',  'Approvals', '1')}
@@ -111,24 +111,6 @@ function injectSidebar() {
       <div class="sidebar-nav-label">SYSTEM</div>
       ${navItem('admin.html',         'fa-cog',              'Admin Panel')}
       ${navItem('notifications.html','fa-bell',             'Notifications', '2')}
-      <a href="#" class="sidebar-nav-item" onclick="openModal('profile-modal'); return false;"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>Officer Profile</span></a>
-      <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>System Logout</span></a>
-    `;
-  // ========== ASSISTANT EXTENSION OFFICER ==========
-  } else if (role === 'assistant') {
-    navHTML = `
-      ${navItem('dashboard.html',     'fa-th-large',        'Dashboard')}
-      <div class="sidebar-nav-label">COORDINATION</div>
-      ${navItem('proposals.html',     'fa-file-alt',        'Proposals', '1')}
-      ${navItem('approvals.html',     'fa-clipboard-check', 'Status Tracking')}
-      <div class="sidebar-nav-label">PROJECT SUPPORT</div>
-      ${navItem('projects.html',      'fa-project-diagram', 'Projects')}
-      <div class="sidebar-nav-label">DOCUMENTATION</div>
-      ${navItem('funding.html',       'fa-coins',           'Funding Info')}
-      ${navItem('documents.html',     'fa-folder-open',     'Documents')}
-      ${navItem('reports.html',       'fa-chart-bar',       'Reports')}
-      <div class="sidebar-nav-label">USER ACCOUNT</div>
-      ${navItem('notifications.html', 'fa-bell',            'Notifications', '2')}
       <a href="#" class="sidebar-nav-item" onclick="openModal('profile-modal'); return false;"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>Officer Profile</span></a>
       <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>System Logout</span></a>
     `;
@@ -180,9 +162,7 @@ function injectSidebar() {
         <button class="sidebar-toggle" id="sidebar-toggle" style="background:none;border:none;cursor:pointer;margin-right:0.75rem;color:inherit;">
           <i class="fas fa-bars" style="font-size:1rem;color:#6B7280;"></i>
         </button>
-        <div class="topbar-logo-mark" style="background: transparent; color: inherit; padding: 0;">
-          <img src="img/ccms-logo.png" alt="CCMS Logo" style="width: 36px; height: 36px; border-radius: 50%;">
-        </div>
+        <div class="topbar-logo-mark">GP</div>
         <div class="topbar-brand-text">
           <span class="topbar-brand-name">CCMS G.R.A.C.E. PORTAL</span>
           <span class="topbar-brand-tagline">Gateway for Responsive Academic Community Extension • University of Camarines Norte</span>

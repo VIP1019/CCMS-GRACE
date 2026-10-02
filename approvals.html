@@ -1002,7 +1002,7 @@ document.addEventListener('DOMContentLoaded', () => {
         Array.from(modalStageSelect.options).forEach(opt => {
           opt.disabled = (opt.value !== 'Dean/Director Endorsement');
         });
-      } else if (currentRole === 'vpre') {
+      } else if (currentRole === 'ovpre') {
         modalStageSelect.value = 'OVPRE Endorsement';
         Array.from(modalStageSelect.options).forEach(opt => {
           opt.disabled = (opt.value !== 'OVPRE Endorsement');
@@ -1012,11 +1012,8 @@ document.addEventListener('DOMContentLoaded', () => {
         Array.from(modalStageSelect.options).forEach(opt => {
           opt.disabled = (opt.value !== 'Completeness Check');
         });
-      } else if (currentRole === 'assistant' || currentRole === 'coordinator') {
-        // Coordinator & Assistant can record/update status for any stage
-        Array.from(modalStageSelect.options).forEach(opt => opt.disabled = false);
       } else {
-        // Admin
+        // Coordinator / Admin can select any stage
         Array.from(modalStageSelect.options).forEach(opt => opt.disabled = false);
       }
       
@@ -1085,7 +1082,7 @@ document.addEventListener('DOMContentLoaded', () => {
    * 6. OVPRE can approve or return the project.
    */
 
-  if (currentRole === 'vpre' || currentRole === 'assistant') {
+  if (currentRole === 'ovpre') {
 
     /* ============================================================
        OVPRE DOM REFERENCES
@@ -1098,12 +1095,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const ovpreApproveBtn = document.getElementById('ovpre-approve-btn');
     const ovpreDenyBtn = document.getElementById('ovpre-deny-btn');
     const ovpreConfirmReturnBtn = document.getElementById('ovpre-confirm-return-btn');
-
-    if (currentRole === 'assistant') {
-      if (ovpreApproveBtn) ovpreApproveBtn.innerHTML = '<i class="fas fa-check-circle"></i> Record Approval';
-      if (ovpreDenyBtn) ovpreDenyBtn.innerHTML = '<i class="fas fa-times-circle"></i> Record Return';
-      if (ovpreConfirmReturnBtn) ovpreConfirmReturnBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Confirm Recording';
-    }
 
     const ovpreDenialArea = document.getElementById('ovpre-denial-area');
     const ovpreDenialRemarks = document.getElementById('ovpre-denial-remarks');
@@ -2367,7 +2358,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'change',
         () => {
 
-          if (currentRole === 'vpre' || currentRole === 'assistant') {
+          if (currentRole === 'ovpre') {
             ovpreFilterProjectList();
           }
         }
@@ -2384,7 +2375,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'change',
         () => {
 
-          if (currentRole === 'vpre' || currentRole === 'assistant') {
+          if (currentRole === 'ovpre') {
             ovpreFilterProjectList();
           }
         }
@@ -3069,7 +3060,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (
       stageFilter &&
-      (currentRole === 'vpre' || currentRole === 'assistant')
+      currentRole === 'ovpre'
     ) {
 
       stageFilter.style.display =

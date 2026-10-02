@@ -479,5 +479,97 @@
 
 <script src="js/data.js"></script>
 <script src="js/main.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const currentRole = localStorage.getItem('graceRole') || 'admin';
+    if (currentRole === 'assistant') {
+      const dashboardWrap = document.querySelector('.dashboard-wrap');
+      if (dashboardWrap) {
+        dashboardWrap.innerHTML = `
+          <div style="margin-bottom: 1.25rem;">
+            <h2 style="font-size: 1.4rem; font-weight: 800; font-family: 'Poppins', sans-serif; color: #111827; margin: 0;">Assistant Extension Officer Dashboard</h2>
+            <p style="font-size: 0.82rem; color: #6B7280; margin-top: 0.2rem;">My Work Queue — Operational processing and record maintenance.</p>
+          </div>
+
+          <div class="ds-cards-grid">
+            <div class="ds-card c-maroon">
+              <div class="dsc-title">Pending Compliance</div>
+              <div class="dsc-val">3</div>
+              <div class="dsc-trend down"><span>Requirements needing attention</span></div>
+            </div>
+            <div class="ds-card c-gold">
+              <div class="dsc-title">Documents for Action</div>
+              <div class="dsc-val">5</div>
+              <div class="dsc-trend down"><span>Awaiting upload/review</span></div>
+            </div>
+            <div class="ds-card c-blue">
+              <div class="dsc-title">Projects to Update</div>
+              <div class="dsc-val">2</div>
+              <div class="dsc-trend up"><span>Verified new info</span></div>
+            </div>
+            <div class="ds-card c-green">
+              <div class="dsc-title">Follow-ups Due</div>
+              <div class="dsc-val">4</div>
+              <div class="dsc-trend up"><span>Pending coordination</span></div>
+            </div>
+          </div>
+
+          <div class="ds-main-grid" style="grid-template-columns: 1fr;">
+            <div class="ds-section">
+              <div class="ds-sec-head">
+                <div class="ds-sec-title"><i class="fas fa-tasks" style="color:var(--maroon);"></i> My Work Queue: Projects Requiring Attention</div>
+              </div>
+              <div style="overflow-x: auto;">
+                <table class="ds-table">
+                  <thead>
+                    <tr>
+                      <th>Project</th>
+                      <th>Current Stage</th>
+                      <th>Required Action</th>
+                      <th>Due Date</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <strong>EXT-2026-035</strong>
+                        <span class="ds-pcode">Data Analytics Workshop</span>
+                      </td>
+                      <td>Compliance</td>
+                      <td><a href="approvals.html" style="color:#2563EB; font-weight:600; text-decoration:none;"><i class="fas fa-edit"></i> Record submission</a></td>
+                      <td><span style="color:#D97706; font-weight:600;">Oct. 5</span></td>
+                      <td><span class="ds-status s-review">Pending</span></td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <strong>EXT-2026-048</strong>
+                        <span class="ds-pcode">Web Dev Training for LGU</span>
+                      </td>
+                      <td>OVPRE Processing</td>
+                      <td><a href="approvals.html" style="color:#2563EB; font-weight:600; text-decoration:none;"><i class="fas fa-sync-alt"></i> Update status</a></td>
+                      <td><span style="color:#D97706; font-weight:600;">Oct. 5</span></td>
+                      <td><span class="ds-status s-review">For Action</span></td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <strong>EXT-2026-041</strong>
+                        <span class="ds-pcode">ICT Consultancy DOST</span>
+                      </td>
+                      <td>Document Processing</td>
+                      <td><a href="documents.html" style="color:#2563EB; font-weight:600; text-decoration:none;"><i class="fas fa-file-upload"></i> Upload revised file</a></td>
+                      <td><span style="color:#4B5563; font-weight:600;">Oct. 6</span></td>
+                      <td><span class="ds-status s-review">Pending</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+    }
+  });
+</script>
 </body>
 </html>
