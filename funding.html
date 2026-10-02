@@ -248,6 +248,11 @@
                 <div class="fhint">Enter the approved amount based on authorized project records.</div>
               </div>
             </div>
+            <div class="fgroup" style="margin-bottom:1rem;">
+              <label class="flabel">Main Purpose of Funds <span class="req">*</span></label>
+              <textarea class="ftextarea" id="main-purpose-input" rows="2" placeholder="Describe the primary institutional objective or authorized purpose for this funding allocation..."></textarea>
+              <div class="fhint">VPRE/Coordinator authorized. This description is visible to Proponents and project members.</div>
+            </div>
             <div class="fg3">
               <div class="fgroup">
                 <label class="flabel">Funding Status <span class="req">*</span></label>
@@ -343,7 +348,7 @@
         <!-- Footer -->
         <div class="form-footer-bar">
           <div class="ffbar-left">
-            CCMS Extension Office &nbsp;•&nbsp; Form UCN-CCMS-FND-03C &nbsp;•&nbsp; Coordinator-authorized record only
+            CCMS Extension Office &nbsp;•&nbsp; Form UCN-CCMS-FND-03C &nbsp;•&nbsp; Coordinator / VPRE authorized record
           </div>
           <div class="ffbar-actions">
             <button class="btn-cancel" onclick="window.location.href='dashboard.html'">Cancel</button>
@@ -357,5 +362,50 @@
 </div>
 <script src="js/data.js"></script>
 <script src="js/main.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Logic to persist and share the "Main Purpose of Funds" across roles
+    const purposeInput = document.getElementById('main-purpose-input');
+    const currentRole = localStorage.getItem('graceRole') || 'admin';
+    const saveBtn = document.querySelector('.btn-save-fund');
+
+    // Load saved purpose from localStorage or set a default
+    const savedPurpose = localStorage.getItem('grace_funding_purpose');
+    if (savedPurpose) {
+      purposeInput.value = savedPurpose;
+    } else {
+      purposeInput.value = "To fully cover the venue rental, participant kits, and facilitator honorariums for the community extension initiative.";
+    }
+
+    // Role-based editing restrictions
+    // Only VPRE, Coordinator, and Admin can edit. Proponent, Dean, Assistant are read-only.
+    if (currentRole === 'proponent' || currentRole === 'dean' || currentRole === 'assistant') {
+      purposeInput.setAttribute('readonly', 'true');
+      purposeInput.style.backgroundColor = '#F9FAFB';
+      purposeInput.style.cursor = 'not-allowed';
+      if (saveBtn) {
+        saveBtn.style.display = 'none'; // Hide save button for read-only roles
+      }
+    }
+
+    // Save functionality
+    if (saveBtn) {
+      saveBtn.onclick = (e) => {
+        e.preventDefault();
+        localStorage.setItem('grace_funding_purpose', purposeInput.value);
+        
+        // Show success state on button
+        const originalText = saveBtn.innerHTML;
+        saveBtn.innerHTML = '<i class="fas fa-check"></i> Saved Successfully';
+        saveBtn.style.background = '#059669';
+        
+        setTimeout(() => {
+          saveBtn.innerHTML = originalText;
+          saveBtn.style.background = 'var(--maroon)';
+        }, 2000);
+      };
+    }
+  });
+</script>
 </body>
 </html>
