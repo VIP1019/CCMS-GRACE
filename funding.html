@@ -348,7 +348,7 @@
         <!-- Footer -->
         <div class="form-footer-bar">
           <div class="ffbar-left">
-            CCMS Extension Office &nbsp;•&nbsp; Form UCN-CCMS-FND-03C &nbsp;•&nbsp; Coordinator / VPRE authorized record
+            CCMS Extension Office &nbsp;•&nbsp; Form UCN-CCMS-FND-03C &nbsp;•&nbsp; OVPRE / Assistant Extension Officer authorized record
           </div>
           <div class="ffbar-actions">
             <button class="btn-cancel" onclick="window.location.href='dashboard.html'">Cancel</button>
@@ -378,14 +378,25 @@
     }
 
     // Role-based editing restrictions
-    // Only VPRE, Coordinator, and Admin can edit. Proponent, Dean, Assistant are read-only.
-    if (currentRole === 'proponent' || currentRole === 'dean' || currentRole === 'assistant') {
+    // ONLY VPRE, Assistant, and Admin can edit. Coordinator, Proponent, and Dean are read-only.
+    if (currentRole === 'proponent' || currentRole === 'dean' || currentRole === 'coordinator') {
+      // Lock the specific purpose input
       purposeInput.setAttribute('readonly', 'true');
       purposeInput.style.backgroundColor = '#F9FAFB';
       purposeInput.style.cursor = 'not-allowed';
-      if (saveBtn) {
-        saveBtn.style.display = 'none'; // Hide save button for read-only roles
-      }
+      
+      // Lock all other form fields on the page
+      const allInputs = document.querySelectorAll('.finput, .ftextarea, .fselect');
+      allInputs.forEach(input => {
+        input.setAttribute('disabled', 'true');
+        input.style.backgroundColor = '#F9FAFB';
+        input.style.cursor = 'not-allowed';
+      });
+
+      // Hide the add disbursement button and save button
+      const addDisbBtn = document.querySelector('.btn-add-disb');
+      if (addDisbBtn) addDisbBtn.style.display = 'none';
+      if (saveBtn) saveBtn.style.display = 'none';
     }
 
     // Save functionality
