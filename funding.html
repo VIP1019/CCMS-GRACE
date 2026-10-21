@@ -70,7 +70,7 @@
 
     /* Form sections */
     .form-section { background: white; border: 1px solid #E5E7EB; border-radius: 10px; margin-bottom: 1rem; overflow: hidden; }
-    .form-section-head { padding: 0.85rem 1.25rem; border-bottom: 1px solid #F3F4F6; display: flex; align-items: flex-start; justify-content: space-between; }
+    .form-section-head { padding: 0.85rem 1.25rem; border-bottom: 1px solid #F3F4F6; display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; }
     .fsh-left { display: flex; flex-direction: column; gap: 0.15rem; }
     .fsh-title { display: flex; align-items: center; gap: 0.45rem; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #8B1A1A; }
     .fsh-title::before { content:''; width:7px; height:7px; background:#8B1A1A; border-radius:50%; flex-shrink:0; }
@@ -80,6 +80,8 @@
 
     .fg2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
     .fg3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+    @media (max-width: 768px) { .fg2, .fg3 { grid-template-columns: 1fr; } }
+
     .fgroup { display: flex; flex-direction: column; gap: 0.35rem; }
     .flabel { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #374151; }
     .flabel .req { color: #DC2626; }
@@ -124,7 +126,38 @@
     .ffbar-left { font-size: 0.72rem; color: #9CA3AF; }
     .ffbar-actions { display: flex; gap: 0.6rem; }
     .btn-cancel { padding: 0.55rem 1.1rem; background: none; border: 1.5px solid #D1D5DB; border-radius: 7px; font-size: 0.84rem; font-weight: 600; color: #6B7280; cursor: pointer; }
-    .btn-save-fund { padding: 0.55rem 1.4rem; background: linear-gradient(135deg, #8B1A1A, #6B0000); color: white; border: none; border-radius: 7px; font-size: 0.86rem; font-weight: 700; cursor: pointer; font-family: 'Poppins', sans-serif; }
+    .btn-save-fund { padding: 0.55rem 1.4rem; background: linear-gradient(135deg, #8B1A1A, #6B0000); color: white; border: none; border-radius: 7px; font-size: 0.86rem; font-weight: 700; cursor: pointer; font-family: 'Poppins', sans-serif; transition: all 0.2s ease; }
+    .btn-save-fund:hover { opacity: 0.94; transform: translateY(-1px); }
+
+    /* Modal styles */
+    .fund-modal-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+      z-index: 9999; align-items: flex-start; justify-content: center;
+      padding: 2rem 1rem; overflow-y: auto;
+    }
+    .fund-modal-overlay.open { display: flex; }
+    .fund-modal-box {
+      background: #fff; border-radius: 14px; width: 100%; max-width: 680px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.25); overflow: hidden; margin: auto;
+      animation: fundModalIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes fundModalIn {
+      from { opacity: 0; transform: translateY(-12px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .fund-modal-head {
+      background: linear-gradient(135deg, #5a0e0e 0%, #8B1A1A 60%, #a01d1d 100%);
+      padding: 1.1rem 1.4rem; color: #fff; display: flex; align-items: center; justify-content: space-between;
+    }
+    .fund-modal-head h4 { margin: 0; font-size: 1.05rem; font-weight: 800; display: flex; align-items: center; gap: 0.5rem; }
+    .fund-modal-head button { background: none; border: none; color: #fff; font-size: 1.3rem; cursor: pointer; opacity: 0.85; line-height: 1; }
+    .fund-modal-head button:hover { opacity: 1; }
+    .fund-modal-body { padding: 1.35rem; font-size: 0.85rem; max-height: calc(85vh - 120px); overflow-y: auto; }
+    .fund-toast {
+      position: fixed; bottom: 1.5rem; right: 1.5rem; background: #059669; color: #fff;
+      padding: 0.75rem 1.25rem; border-radius: 8px; font-size: 0.85rem; font-weight: 700;
+      display: none; z-index: 10000; box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+    }
   </style>
 </head>
 <body>
@@ -133,7 +166,11 @@
   <div class="main-content">
     <header class="topbar" id="topbar"></header>
     <div class="dashboard-content">
-      <div class="fund-form-wrap">
+
+      <!-- ══════════════════════════════════════════════════════
+           VIEW 1: COORDINATOR / DEAN MANAGEMENT VIEW
+           ══════════════════════════════════════════════════════ -->
+      <div class="fund-form-wrap" id="view-manage">
 
         <!-- Breadcrumb -->
         <div class="breadcrumb">
@@ -165,9 +202,9 @@
         <div class="fund-success-bar">
           <div style="display:flex;align-items:center;gap:0.5rem;">
             <i class="fas fa-check-circle" style="color:#059669;"></i>
-            Funding record updated successfully for project <strong>EXT-2026-001.</strong>
+            <span>Funding record loaded for project <strong id="coord-notice-proj-code">EXT-2026-001.</strong></span>
           </div>
-          <div class="sync-time">Sync timestamp: Sep 16, 2026 • 10:45 AM</div>
+          <div class="sync-time" id="coord-sync-time">Sync timestamp: Sep 16, 2026 • 10:45 AM</div>
         </div>
 
         <!-- Monitoring Notice -->
@@ -181,7 +218,7 @@
           </div>
         </div>
 
-        <!-- Section 1: Project Information -->
+        <!-- Section 1: Associated Project -->
         <div class="form-section">
           <div class="form-section-head">
             <div class="fsh-left">
@@ -193,25 +230,23 @@
             <div class="fg2" style="margin-bottom:1rem;">
               <div class="fgroup">
                 <label class="flabel">Select Project <span class="req">*</span></label>
-                <select class="fselect">
-                  <option selected>Community Health Outreach — EXT-2026-001</option>
-                  <option>Basud Library System — EXT-2026-045</option>
-                  <option>ICT Skills Training — EXT-2026-048</option>
+                <select class="fselect" id="manage-fund-project-select" onchange="handleCoordinatorProjectChange(this.value)">
+                  <!-- Populated dynamically via JS -->
                 </select>
               </div>
               <div class="fg2" style="gap:0.75rem;">
                 <div class="fgroup">
                   <label class="flabel">Project Status</label>
-                  <div style="padding:0.5rem 0;"><span class="proj-status-ongoing">ONGOING</span></div>
+                  <div style="padding:0.5rem 0;"><span class="proj-status-ongoing" id="coord-proj-status">ONGOING</span></div>
                 </div>
                 <div class="fgroup">
                   <label class="flabel">Project Leader</label>
-                  <div style="font-size:0.84rem;color:#374151;padding:0.5rem 0;font-weight:600;">Dr. Mary Grace Bolos <span style="font-size:0.72rem;color:#9CA3AF;font-weight:400;">(Proponent)</span></div>
+                  <div style="font-size:0.84rem;color:#374151;padding:0.5rem 0;font-weight:600;" id="coord-proj-leader">Prince Jheck T. Juan <span style="font-size:0.72rem;color:#9CA3AF;font-weight:400;">(Proponent)</span></div>
                 </div>
               </div>
             </div>
-            <div style="padding:0.65rem 0.9rem;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:7px;font-size:0.78rem;color:#065F46;display:flex;justify-content:space-between;align-items:center;">
-              <span><i class="fas fa-calendar-check" style="color:#059669;margin-right:0.4rem;"></i>Approved Project Schedule Duration: <strong>September 20, 2026 – December 15, 2026</strong></span>
+            <div style="padding:0.65rem 0.9rem;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:7px;font-size:0.78rem;color:#065F46;display:flex;justify-content:space-between;align-items:center;" id="coord-proj-duration-bar">
+              <span><i class="fas fa-calendar-check" style="color:#059669;margin-right:0.4rem;"></i>Approved Project Schedule: <strong id="coord-proj-dates">September 20, 2026 – December 15, 2026</strong></span>
               <span style="font-size:0.7rem;color:#059669;font-weight:600;">Extension Term Cycle A</span>
             </div>
           </div>
@@ -221,29 +256,28 @@
         <div class="form-section">
           <div class="form-section-head">
             <div class="fsh-left">
-              <div class="fsh-title">Funding Details</div>
+              <div class="fsh-title">Funding Allocation Details</div>
             </div>
-            <div class="fsh-entity">ERD: PROJECT_FUNDING (PK: project_funding_id)</div>
+            <div class="fsh-entity">PROJECT_FUNDING Entity</div>
           </div>
           <div class="form-section-body">
             <div class="fg2" style="margin-bottom:1rem;">
               <div class="fgroup">
                 <label class="flabel">Funding Source <span class="req">*</span></label>
-                <select class="fselect">
-                  <option selected>Institutional Funding</option>
-                  <option>External — LGU</option>
-                  <option>External — Government Agency</option>
-                  <option>External — NGO</option>
-                  <option>External — Private</option>
+                <select class="fselect" id="coord-fund-source-select">
+                  <option selected>CCMS Institutional Fund (FS001) — Annual UCN-CCMS Budget</option>
+                  <option>Daet LGU Co-Funding Allocation (FS002) — External LGU Grant</option>
+                  <option>UCN Extension Office Fund (FS003) — Centralized Fund</option>
+                  <option>Vinzons Municipal Budget (FS004) — External LGU Grant</option>
+                  <option>Provincial Government Grant (FS005) — CamNorte Grant</option>
                 </select>
-                <div class="fhint">Source classified per UCN CCMS Extension Office registry (FUNDING_SOURCE)</div>
               </div>
               <div class="fgroup">
                 <label class="flabel">Approved Amount <span class="req">*</span></label>
                 <div class="currency-label" style="text-align:right;margin-bottom:0.2rem;">PHP Currency</div>
                 <div class="currency-wrap">
                   <span class="c-sym">₱</span>
-                  <input class="finput" type="text" value="50,000.00">
+                  <input class="finput" type="text" id="coord-approved-amount-input" value="50,000.00">
                 </div>
                 <div class="fhint">Enter the approved amount based on authorized project records.</div>
               </div>
@@ -251,18 +285,18 @@
             <div class="fgroup" style="margin-bottom:1rem;">
               <label class="flabel">Main Purpose of Funds <span class="req">*</span></label>
               <textarea class="ftextarea" id="main-purpose-input" rows="2" placeholder="Describe the primary institutional objective or authorized purpose for this funding allocation..."></textarea>
-              <div class="fhint">VPRE/Coordinator authorized. This description is visible to Proponents and project members.</div>
+              <div class="fhint">Extension Coordinator authorized. This description is visible to Proponents and project members.</div>
             </div>
             <div class="fg3">
               <div class="fgroup">
                 <label class="flabel">Funding Status <span class="req">*</span></label>
-                <select class="fselect">
-                  <option selected>Recorded</option>
-                  <option>Partially Released</option>
+                <select class="fselect" id="coord-funding-status-select">
+                  <option>Recorded</option>
+                  <option selected>Partially Released</option>
                   <option>Released</option>
                   <option>Pending</option>
                 </select>
-                <div class="fhint">Status indicates data-only entry; recorded upon initial coordinator endorsement.</div>
+                <div class="fhint">Status indicates data-only entry; recorded upon coordinator endorsement.</div>
               </div>
               <div class="fgroup">
                 <label class="flabel">Date Recorded <span class="sys-tag">System recorded</span></label>
@@ -286,7 +320,7 @@
               <div class="fsh-title">Disbursement Records</div>
               <div class="fsh-desc">Track partial or full fund releases — for monitoring purposes only</div>
             </div>
-            <button class="btn-add-disb"><i class="fas fa-plus"></i> Add Disbursement</button>
+            <button class="btn-add-disb" onclick="alert('New disbursement entry form opened for coordinator recording.'); return false;"><i class="fas fa-plus"></i> Add Disbursement</button>
           </div>
           <div class="form-section-body" style="padding:0;">
             <table class="disb-table">
@@ -299,7 +333,7 @@
                   <th>Status</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="coord-disb-tbody">
                 <tr>
                   <td>Sep 16, 2026</td>
                   <td style="font-weight:700;color:#059669;">₱25,000.00</td>
@@ -323,7 +357,7 @@
                 </tr>
               </tbody>
             </table>
-            <div style="padding:0.75rem 1rem;background:#F9FAFB;border-top:1px solid #F3F4F6;display:flex;justify-content:space-between;font-size:0.78rem;color:#374151;font-weight:600;">
+            <div style="padding:0.75rem 1rem;background:#F9FAFB;border-top:1px solid #F3F4F6;display:flex;justify-content:space-between;font-size:0.78rem;color:#374151;font-weight:600;" id="coord-disb-summary-bar">
               <span>Total Recorded: ₱50,000.00</span>
               <span style="color:#059669;">Released: ₱25,000.00 &nbsp;|&nbsp; <span style="color:#1D4ED8;">Partial: ₱15,000.00</span> &nbsp;|&nbsp; <span style="color:#92400E;">Pending: ₱10,000.00</span></span>
             </div>
@@ -348,75 +382,699 @@
         <!-- Footer -->
         <div class="form-footer-bar">
           <div class="ffbar-left">
-            CCMS Extension Office &nbsp;•&nbsp; Form UCN-CCMS-FND-03C &nbsp;•&nbsp; OVPRE / Assistant Extension Officer authorized record
+            CCMS Extension Office &nbsp;•&nbsp; Form UCN-CCMS-FND-03C &nbsp;•&nbsp; Extension Coordinator authorized record
           </div>
           <div class="ffbar-actions">
             <button class="btn-cancel" onclick="window.location.href='dashboard.html'">Cancel</button>
-            <button class="btn-save-fund" onclick="alert('Funding record saved successfully!')">Save Funding Record →</button>
+            <button class="btn-save-fund" id="btn-save-fund-coord">Save Funding Record →</button>
           </div>
         </div>
 
-      </div>
+      </div> <!-- /view-manage -->
+
+      <!-- ══════════════════════════════════════════════════════
+           VIEW 2: PROJECT PROPONENT FUNDING DASHBOARD & REQUEST
+           ══════════════════════════════════════════════════════ -->
+      <div class="fund-form-wrap" id="view-request" style="display:none;">
+        <div class="breadcrumb">
+          <a href="dashboard.html">Dashboard</a>
+          <span class="sep">/</span>
+          <a href="projects.html">Projects</a>
+          <span class="sep">/</span>
+          <span class="current">Funding Request &amp; Dashboard</span>
+        </div>
+
+        <div class="fund-header-row">
+          <div class="fund-title-block">
+            <h3>Funding Dashboard</h3>
+            <div class="form-desc">View your available project funds and submit a funding request to the Extension Coordinator per project.</div>
+          </div>
+          <div class="fund-entity-tag">
+            <button class="btn-save-fund" id="btn-open-request-modal" onclick="openFundingRequestModal()">
+              <i class="fas fa-hand-holding-usd"></i> Request Project Funds
+            </button>
+          </div>
+        </div>
+
+        <!-- 🌟 PROJECT SELECTOR BAR: Proponent chooses which project to view and request funds for -->
+        <div style="background:white; border:1.5px solid #E5E7EB; border-radius:10px; padding:0.9rem 1.25rem; margin-bottom:1.25rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+          <div style="display:flex; align-items:center; gap:0.65rem; flex-wrap:wrap;">
+            <label for="proponent-project-select" style="font-size:0.76rem; font-weight:800; text-transform:uppercase; color:#374151; letter-spacing:0.04em; display:flex; align-items:center; gap:0.4rem;">
+              <i class="fas fa-project-diagram" style="color:#8B1A1A;"></i> Select Project:
+            </label>
+            <select id="proponent-project-select" class="fselect" style="min-width:320px; font-weight:700; padding:0.5rem 0.85rem;" onchange="handleProponentProjectChange(this.value)">
+              <!-- Populated dynamically via JS -->
+            </select>
+          </div>
+          <div id="proponent-project-meta-pill" style="font-size:0.75rem; color:#4B5563; font-weight:600; background:#F9FAFB; padding:0.35rem 0.75rem; border-radius:6px; border:1px solid #E5E7EB; display:flex; align-items:center; gap:0.4rem;">
+            <i class="fas fa-user-tie" style="color:#8B1A1A;"></i> Leader: Prince Jheck T. Juan
+          </div>
+        </div>
+
+        <!-- Dashboard Metric Cards (Dynamic per project) -->
+        <div class="fg3" style="margin-bottom: 1.5rem;">
+          <div style="background:white; border:1px solid #E5E7EB; border-radius:10px; padding:1.25rem; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+            <div style="font-size:0.74rem; font-weight:700; color:#6B7280; text-transform:uppercase; margin-bottom:0.5rem; letter-spacing:0.04em;">
+              Total Approved Funding
+            </div>
+            <div style="font-size:1.55rem; font-weight:800; color:#111827;" id="prop-total-approved">₱50,000.00</div>
+            <div style="font-size:0.72rem; color:#6B7280; margin-top:0.3rem;"><i class="fas fa-check-double" style="color:#059669;"></i> authorized budget</div>
+          </div>
+          <div style="background:#ECFDF5; border:1px solid #A7F3D0; border-radius:10px; padding:1.25rem;">
+            <div style="font-size:0.74rem; font-weight:700; color:#065F46; text-transform:uppercase; margin-bottom:0.5rem; letter-spacing:0.04em;">
+              Total Released
+            </div>
+            <div style="font-size:1.55rem; font-weight:800; color:#059669;" id="prop-total-released">₱25,000.00</div>
+            <div style="font-size:0.72rem; color:#047857; margin-top:0.3rem;"><i class="fas fa-arrow-down" style="color:#059669;"></i> disbursed to date</div>
+          </div>
+          <div style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:10px; padding:1.25rem;">
+            <div style="font-size:0.74rem; font-weight:700; color:#92400E; text-transform:uppercase; margin-bottom:0.5rem; letter-spacing:0.04em;">
+              Total Pending Release
+            </div>
+            <div style="font-size:1.55rem; font-weight:800; color:#D97706;" id="prop-total-pending">₱25,000.00</div>
+            <div style="font-size:0.72rem; color:#B45309; margin-top:0.3rem;"><i class="fas fa-clock" style="color:#D97706;"></i> available for request</div>
+          </div>
+        </div>
+
+        <!-- Funding Source Info (Dynamic per project) -->
+        <div class="form-section">
+          <div class="form-section-head">
+            <div class="fsh-left">
+              <div class="fsh-title">Project Funding Info</div>
+              <div class="fsh-desc" id="prop-project-title-desc">Community Health Outreach — EXT-2026-001</div>
+            </div>
+            <button class="btn btn-sm btn-outline" style="font-size:0.75rem;" onclick="openFundingRequestModal()">
+              <i class="fas fa-plus"></i> Request Additional Funds
+            </button>
+          </div>
+          <div class="form-section-body">
+            <div class="fg2">
+              <div class="fgroup">
+                <label class="flabel">Funding Source</label>
+                <div style="font-size:0.86rem; color:#111827; font-weight:600; padding-top:0.3rem;" id="prop-funding-source">
+                  Institutional Funding (UCN CCMS Allocation)
+                </div>
+              </div>
+              <div class="fgroup">
+                <label class="flabel">Current Status</label>
+                <div style="padding-top:0.3rem;">
+                  <span class="badge-partial" id="prop-funding-status-badge">Partially Released</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tranches / Disbursements Table (Dynamic per project) -->
+        <div class="form-section">
+          <div class="form-section-head">
+            <div class="fsh-left">
+              <div class="fsh-title">Funding Tranches &amp; Disbursement History</div>
+              <div class="fsh-desc">Track all released and pending funding tranches for this project</div>
+            </div>
+          </div>
+          <div class="form-section-body" style="padding:0;">
+            <table class="disb-table">
+              <thead>
+                <tr>
+                  <th>Disbursement Date / Request</th>
+                  <th>Amount</th>
+                  <th>Reference No.</th>
+                  <th>Purpose &amp; Deliverables</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="prop-tranches-tbody">
+                <!-- Dynamically rendered -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div> <!-- /view-request -->
     </div>
   </div>
 </div>
+
+<!-- ══════════════════════════════════════════════════════
+     MODAL: SUBMIT PROJECT FUNDING REQUEST (Proponent selects Project)
+     ══════════════════════════════════════════════════════ -->
+<div id="modal-funding-request" class="fund-modal-overlay">
+  <div class="fund-modal-box">
+    <div class="fund-modal-head">
+      <h4><i class="fas fa-hand-holding-usd"></i> Submit Project Funding Request</h4>
+      <button type="button" onclick="closeFundingRequestModal()">&times;</button>
+    </div>
+    <form id="form-submit-funding-request" onsubmit="handleSaveFundingRequest(event)">
+      <div class="fund-modal-body">
+
+        <!-- 1. SELECT WHICH PROJECT TO REQUEST FUNDS FOR -->
+        <div style="margin-bottom:1rem; background:#F9FAFB; padding:0.9rem; border-radius:8px; border:1.5px solid #E5E7EB;">
+          <label style="display:block; font-size:0.75rem; font-weight:800; text-transform:uppercase; color:#8B1A1A; margin-bottom:0.35rem; letter-spacing:0.04em;">
+            <i class="fas fa-project-diagram" style="margin-right:0.3rem;"></i> Select Project to Request Funds For <span style="color:#DC2626;">*</span>
+          </label>
+          <select id="req-fund-project" class="fselect" style="font-weight:700; width:100%; padding:0.6rem 0.8rem; border-color:#8B1A1A;" required onchange="handleModalProjectSelectionChange(this.value)">
+            <!-- Populated dynamically -->
+          </select>
+          <div id="req-fund-project-summary-bar" style="font-size:0.75rem; color:#4B5563; margin-top:0.45rem; display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem;">
+            <span>Approved: <strong id="req-modal-approved">₱50,000.00</strong></span>
+            <span>Released: <strong id="req-modal-released" style="color:#059669;">₱25,000.00</strong></span>
+            <span>Remaining: <strong id="req-modal-remaining" style="color:#D97706;">₱25,000.00</strong></span>
+          </div>
+        </div>
+
+        <!-- 2. AMOUNT & DISBURSEMENT TRANCHE -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.85rem; margin-bottom:1rem;">
+          <div>
+            <label style="display:block; font-size:0.72rem; font-weight:700; text-transform:uppercase; color:#374151; margin-bottom:0.3rem;">
+              Amount Requested (PHP ₱) <span style="color:#DC2626;">*</span>
+            </label>
+            <div class="currency-wrap">
+              <span class="c-sym">₱</span>
+              <input type="number" id="req-fund-amount" class="finput" min="500" step="100" placeholder="15000" style="padding-left:1.75rem; font-weight:700;" required>
+            </div>
+            <div style="font-size:0.68rem; color:#6B7280; margin-top:0.25rem;">Specify total cash amount required for this release.</div>
+          </div>
+          <div>
+            <label style="display:block; font-size:0.72rem; font-weight:700; text-transform:uppercase; color:#374151; margin-bottom:0.3rem;">
+              Disbursement Tranche / Phase <span style="color:#DC2626;">*</span>
+            </label>
+            <select id="req-fund-tranche" class="fselect" required>
+              <option value="Tranche 1: Initial Advance (50%) — Materials &amp; Logistics">Tranche 1: Initial Advance (50%)</option>
+              <option value="Tranche 2: Mid-Implementation Release (30%) — Training Delivery" selected>Tranche 2: Mid-Implementation (30%)</option>
+              <option value="Tranche 3: Final Release (20%) — Evaluation &amp; Documentation">Tranche 3: Final Release (20%)</option>
+              <option value="Supplemental / Contingency Allocation">Supplemental / Contingency</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 3. PURPOSE CATEGORY & TARGET ACTIVITY -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.85rem; margin-bottom:1rem;">
+          <div>
+            <label style="display:block; font-size:0.72rem; font-weight:700; text-transform:uppercase; color:#374151; margin-bottom:0.3rem;">
+              Expense Purpose Category <span style="color:#DC2626;">*</span>
+            </label>
+            <select id="req-fund-category" class="fselect" required>
+              <option value="Training Materials, Handouts &amp; Laboratory Supplies">Training Materials &amp; Supplies</option>
+              <option value="Venue Rental &amp; Community Facility Logistics">Venue Rental &amp; Logistics</option>
+              <option value="Participant Meals, Refreshments &amp; Welcome Kits">Participant Meals &amp; Refreshments</option>
+              <option value="Facilitator / Trainer Honorarium &amp; Tokens">Trainer Honorarium &amp; Tokens</option>
+              <option value="Travel, Transportation &amp; Field Coordination">Travel &amp; Transportation</option>
+              <option value="Documentation, Printing &amp; Evaluation Supplies">Documentation &amp; Evaluation</option>
+              <option value="Specialized Technical Hardware &amp; Software">Hardware / Software Delivery</option>
+            </select>
+          </div>
+          <div>
+            <label style="display:block; font-size:0.72rem; font-weight:700; text-transform:uppercase; color:#374151; margin-bottom:0.3rem;">
+              Target Activity (Optional)
+            </label>
+            <select id="req-fund-activity" class="fselect">
+              <option value="">General Project Delivery</option>
+              <!-- Populated dynamically based on project -->
+            </select>
+          </div>
+        </div>
+
+        <!-- 4. DATE NEEDED & JUSTIFICATION -->
+        <div style="margin-bottom:1rem;">
+          <label style="display:block; font-size:0.72rem; font-weight:700; text-transform:uppercase; color:#374151; margin-bottom:0.3rem;">
+            Date Needed By <span style="color:#DC2626;">*</span>
+          </label>
+          <input type="date" id="req-fund-date" class="finput" required>
+        </div>
+
+        <div style="margin-bottom:1rem;">
+          <label style="display:block; font-size:0.72rem; font-weight:700; text-transform:uppercase; color:#374151; margin-bottom:0.3rem;">
+            Detailed Justification &amp; Itemized Expense Breakdown <span style="color:#DC2626;">*</span>
+          </label>
+          <textarea id="req-fund-breakdown" class="ftextarea" rows="3" placeholder="Itemize the expected expenses (e.g., 30 participant handouts @ ₱150 = ₱4,500; venue sound system rental = ₱3,500; training snacks @ ₱70 x 30 = ₱2,100; lab consumable kits = ₱4,900)..." required></textarea>
+        </div>
+
+        <div style="padding:0.7rem 0.9rem; background:#F0FDF4; border:1px solid #BBF7D0; border-radius:7px; font-size:0.76rem; color:#065F46; line-height:1.45;">
+          <i class="fas fa-info-circle" style="margin-right:0.35rem; color:#059669;"></i>
+          Upon submission, this funding request is routed to <strong>Dr. Mary Grace Bolos (Extension Coordinator)</strong> for administrative review and logged to the Project Status timeline.
+        </div>
+
+      </div>
+      <div style="padding:0.85rem 1.4rem; background:#F9FAFB; border-top:1px solid #E5E7EB; display:flex; justify-content:flex-end; gap:0.5rem;">
+        <button type="button" onclick="closeFundingRequestModal()" class="btn btn-sm btn-outline">Cancel</button>
+        <button type="submit" class="btn btn-sm btn-primary" style="background:linear-gradient(135deg, #8B1A1A, #6B0000); color:#fff; border:none; padding:0.55rem 1.25rem; font-weight:700;">
+          <i class="fas fa-paper-plane" style="margin-right:0.3rem;"></i> Submit Request to Coordinator
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="fund-toast" id="fund-toast"></div>
+
 <script src="js/data.js"></script>
 <script src="js/main.js"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    // Logic to persist and share the "Main Purpose of Funds" across roles
-    const purposeInput = document.getElementById('main-purpose-input');
-    const currentRole = localStorage.getItem('graceRole') || 'admin';
-    const saveBtn = document.querySelector('.btn-save-fund');
+(function () {
+  const SU_KEY = 'grace_status_updates_v4';
+  const REQ_KEY = 'grace_funding_requests_v1';
+  const currentRole = localStorage.getItem('graceRole') || 'proponent';
+  const isProponent = currentRole === 'proponent';
+  const isCoordinator = currentRole === 'coordinator';
+  const isDean = currentRole === 'dean';
 
-    // Load saved purpose from localStorage or set a default
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  // Default seed funding requests/tranches per project
+  const DEFAULT_PROJECT_FUNDING = {
+    'EXT-2026-001': {
+      source: 'Institutional Funding (UCN CCMS Allocation)',
+      status: 'Partially Released',
+      approved: 50000,
+      tranches: [
+        { date: 'Sep 16, 2026', amount: 25000, ref: 'REF-2026-FND-001', purpose: 'Initial release — training materials & logistics', status: 'Released' },
+        { date: 'Oct 15, 2026', amount: 15000, ref: 'TBD', purpose: 'Phase 2 — community venue & facilitator fees', status: 'Pending' },
+        { date: 'Dec 01, 2026', amount: 10000, ref: 'TBD', purpose: 'Final release — evaluation & reporting', status: 'Pending' }
+      ]
+    },
+    'EXT-2026-048': {
+      source: 'CCMS Institutional Fund & Daet LGU Co-Funding',
+      status: 'Partially Released',
+      approved: 45000,
+      tranches: [
+        { date: 'Aug 28, 2026', amount: 27000, ref: 'REF-2026-FND-048A', purpose: 'Tranche 1: HTML & CSS lab manuals and computer lab logistics', status: 'Released' },
+        { date: 'Sep 15, 2026', amount: 15000, ref: 'REF-2026-FND-048B', purpose: 'LGU Co-Funding: Daet municipal training kits and venue support', status: 'Released' },
+        { date: 'Oct 15, 2026', amount: 3000, ref: 'TBD', purpose: 'Final release: Project evaluation and certification distribution', status: 'Pending' }
+      ]
+    },
+    'EXT-2026-038': {
+      source: 'CCMS Institutional Fund & Barangay Support',
+      status: 'Released',
+      approved: 50000,
+      tranches: [
+        { date: 'Apr 10, 2026', amount: 25000, ref: 'REF-2026-FND-038A', purpose: 'Initial module rollout: Basic computer operations and materials', status: 'Released' },
+        { date: 'May 15, 2026', amount: 25000, ref: 'REF-2026-FND-038B', purpose: 'Phase 2: Internet safety and eGov portal access training', status: 'Released' }
+      ]
+    },
+    'EXT-2026-035': {
+      source: 'CCMS Institutional Fund',
+      status: 'Pending',
+      approved: 30000,
+      tranches: [
+        { date: 'Expected: Nov 2026', amount: 30000, ref: 'TBD', purpose: 'Full workshop allocation: Data analytics datasets, handouts, and cloud software', status: 'Pending' }
+      ]
+    },
+    'EXT-2026-045': {
+      source: 'CCMS Institutional Fund',
+      status: 'Released',
+      approved: 60000,
+      tranches: [
+        { date: 'Jun 01, 2026', amount: 60000, ref: 'REF-2026-FND-045A', purpose: 'Complete software development and server deployment budget', status: 'Released' }
+      ]
+    },
+    'EXT-2026-041': {
+      source: 'UCN Extension Office Fund',
+      status: 'Released',
+      approved: 35000,
+      tranches: [
+        { date: 'Jul 15, 2026', amount: 35000, ref: 'REF-2026-FND-041A', purpose: 'ICT consultancy and assessment logistical honorarium', status: 'Released' }
+      ]
+    },
+    'EXT-2026-033': {
+      source: 'Vinzons Municipal Budget',
+      status: 'Partially Released',
+      approved: 25000,
+      tranches: [
+        { date: 'Aug 01, 2026', amount: 15000, ref: 'REF-2026-FND-033A', purpose: 'On-site network audit and topology assessment', status: 'Released' },
+        { date: 'Oct 31, 2026', amount: 10000, ref: 'TBD', purpose: 'Security report submission and upgrade recommendations', status: 'Pending' }
+      ]
+    }
+  };
+
+  function loadCustomRequests() {
+    try {
+      const list = JSON.parse(localStorage.getItem(REQ_KEY));
+      if (Array.isArray(list)) return list;
+    } catch (e) {}
+    return [];
+  }
+
+  function saveCustomRequests(list) {
+    try {
+      localStorage.setItem(REQ_KEY, JSON.stringify(list));
+    } catch (e) {}
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('fund-toast');
+    if (!t) return;
+    t.textContent = msg;
+    t.style.display = 'block';
+    setTimeout(() => { t.style.display = 'none'; }, 3200);
+  }
+
+  // Get project title helper
+  function getProject(pid) {
+    if (window.GRACE && GRACE.projects) {
+      const p = GRACE.projects.find(x => x.project_id === pid);
+      if (p) return p;
+    }
+    return { project_id: pid, title: pid, created_by: 'PER001', service_type: 'Extension Service' };
+  }
+
+  // 1. POPULATE PROJECT DROPDOWNS
+  function populateProjectDropdowns() {
+    const allProjects = (window.GRACE && GRACE.projects) ? GRACE.projects : [];
+    const propSel = document.getElementById('proponent-project-select');
+    const modalSel = document.getElementById('req-fund-project');
+    const coordSel = document.getElementById('manage-fund-project-select');
+
+    const optionsHtml = allProjects.map(p => {
+      return `<option value="${esc(p.project_id)}">${esc(p.project_id)} — ${esc(p.title)}</option>`;
+    }).join('');
+
+    if (propSel) propSel.innerHTML = optionsHtml;
+    if (modalSel) modalSel.innerHTML = optionsHtml;
+    if (coordSel) coordSel.innerHTML = optionsHtml;
+  }
+
+  // 2. RENDER PROPONENT DASHBOARD FOR SELECTED PROJECT
+  window.handleProponentProjectChange = function (projectId) {
+    renderProponentFundingDashboard(projectId);
+  };
+
+  function renderProponentFundingDashboard(projectId) {
+    const proj = getProject(projectId);
+    const data = DEFAULT_PROJECT_FUNDING[projectId] || {
+      source: 'CCMS Institutional Fund',
+      status: 'Recorded',
+      approved: 30000,
+      tranches: [{ date: 'TBD', amount: 30000, ref: 'TBD', purpose: 'Standard extension activity allocation', status: 'Pending' }]
+    };
+
+    // Combine with custom user-submitted requests for this project
+    const customList = loadCustomRequests().filter(r => r.project_id === projectId);
+    const combinedTranches = [
+      ...customList.map(r => ({
+        date: r.date_needed,
+        amount: Number(r.amount),
+        ref: r.request_id,
+        purpose: `${r.tranche} — ${r.purpose}`,
+        status: r.status || 'Pending'
+      })),
+      ...data.tranches
+    ];
+
+    // Compute sums
+    const approvedAmt = data.approved;
+    let releasedAmt = 0;
+    let pendingAmt = 0;
+
+    combinedTranches.forEach(t => {
+      if (t.status === 'Released') {
+        releasedAmt += Number(t.amount);
+      } else {
+        pendingAmt += Number(t.amount);
+      }
+    });
+
+    if (pendingAmt > approvedAmt - releasedAmt && approvedAmt > releasedAmt) {
+      pendingAmt = approvedAmt - releasedAmt;
+    }
+
+    // Update Top Metric Cards
+    document.getElementById('prop-total-approved').textContent = `₱${approvedAmt.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+    document.getElementById('prop-total-released').textContent = `₱${releasedAmt.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+    document.getElementById('prop-total-pending').textContent = `₱${pendingAmt.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+
+    // Update Meta Pill and Project Funding Info
+    const metaPill = document.getElementById('proponent-project-meta-pill');
+    if (metaPill) {
+      metaPill.innerHTML = `<i class="fas fa-tag" style="color:#8B1A1A;"></i> ${esc(proj.service_type || 'Extension Service')} &nbsp;•&nbsp; <i class="fas fa-user-tie"></i> Leader: Prince Jheck T. Juan`;
+    }
+
+    const titleDesc = document.getElementById('prop-project-title-desc');
+    if (titleDesc) {
+      titleDesc.innerHTML = `<strong>${esc(proj.title)}</strong> &nbsp;—&nbsp; <code style="color:#8B1A1A;font-weight:700;">${esc(proj.project_id)}</code>`;
+    }
+
+    const sourceEl = document.getElementById('prop-funding-source');
+    if (sourceEl) {
+      sourceEl.textContent = data.source;
+    }
+
+    const badgeEl = document.getElementById('prop-funding-status-badge');
+    if (badgeEl) {
+      badgeEl.textContent = data.status;
+      badgeEl.className = data.status === 'Released' ? 'badge-released' : (data.status === 'Pending' ? 'badge-pending' : 'badge-partial');
+    }
+
+    // Update Tranches Table
+    const tbody = document.getElementById('prop-tranches-tbody');
+    if (tbody) {
+      if (!combinedTranches.length) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:2rem;color:#9CA3AF;">No funding tranches recorded for this project yet.</td></tr>`;
+      } else {
+        tbody.innerHTML = combinedTranches.map(t => {
+          let badgeClass = 'badge-pending';
+          if (t.status === 'Released') badgeClass = 'badge-released';
+          if (t.status === 'Partial' || t.status === 'Partially Released') badgeClass = 'badge-partial';
+
+          const isNewRequest = t.ref && t.ref.startsWith('REQ-');
+
+          return `
+            <tr>
+              <td>
+                <div style="font-weight:600;font-size:0.82rem;color:#111827;">${esc(t.date)}</div>
+                ${isNewRequest ? '<span style="font-size:0.68rem;background:#FEF3C7;color:#92400E;padding:1px 5px;border-radius:3px;font-weight:700;">Submitted Request</span>' : ''}
+              </td>
+              <td style="font-weight:700;color:${t.status==='Released'?'#059669':'#D97706'};">
+                ₱${Number(t.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              </td>
+              <td><code style="font-size:0.78rem;background:var(--gray-100);padding:2px 6px;border-radius:4px;color:#4B5563;">${esc(t.ref)}</code></td>
+              <td style="font-size:0.8rem;color:#374151;">${esc(t.purpose)}</td>
+              <td><span class="${badgeClass}">${esc(t.status)}</span></td>
+            </tr>
+          `;
+        }).join('');
+      }
+    }
+  }
+
+  // 3. COORDINATOR VIEW PROJECT CHANGE
+  window.handleCoordinatorProjectChange = function (projectId) {
+    const proj = getProject(projectId);
+    const data = DEFAULT_PROJECT_FUNDING[projectId] || {
+      source: 'CCMS Institutional Fund (FS001) — Annual UCN-CCMS Budget',
+      status: 'Partially Released',
+      approved: 30000,
+      tranches: []
+    };
+
+    const statusEl = document.getElementById('coord-proj-status');
+    if (statusEl) statusEl.textContent = (proj.project_status || 'Ongoing').toUpperCase();
+
+    const datesEl = document.getElementById('coord-proj-dates');
+    if (datesEl) datesEl.textContent = `${proj.start_date || '2026-08-28'} – ${proj.end_date || '2026-10-15'}`;
+
+    const approvedInput = document.getElementById('coord-approved-amount-input');
+    if (approvedInput) approvedInput.value = Number(data.approved).toLocaleString('en-US', { minimumFractionDigits: 2 });
+
+    const codeNotice = document.getElementById('coord-notice-proj-code');
+    if (codeNotice) codeNotice.textContent = `${projectId}.`;
+  };
+
+  // 4. MODAL: OPEN & CLOSE FUNDING REQUEST MODAL
+  window.openFundingRequestModal = function () {
+    const modal = document.getElementById('modal-funding-request');
+    const propSel = document.getElementById('proponent-project-select');
+    const modalSel = document.getElementById('req-fund-project');
+
+    // Pre-select current project from dashboard
+    const activePid = (propSel && propSel.value) ? propSel.value : 'EXT-2026-001';
+    if (modalSel) {
+      modalSel.value = activePid;
+      updateModalProjectContext(activePid);
+    }
+
+    // Set default date to next week
+    const defaultDate = new Date();
+    defaultDate.setDate(defaultDate.getDate() + 7);
+    document.getElementById('req-fund-date').value = defaultDate.toISOString().slice(0, 10);
+    document.getElementById('req-fund-amount').value = '15000';
+
+    modal.classList.add('open');
+  };
+
+  window.closeFundingRequestModal = function () {
+    document.getElementById('modal-funding-request').classList.remove('open');
+  };
+
+  window.handleModalProjectSelectionChange = function (projectId) {
+    updateModalProjectContext(projectId);
+  };
+
+  function updateModalProjectContext(projectId) {
+    const data = DEFAULT_PROJECT_FUNDING[projectId] || { approved: 30000, tranches: [] };
+    const approved = data.approved;
+    let released = 0;
+    data.tranches.forEach(t => { if (t.status === 'Released') released += Number(t.amount); });
+    const remaining = Math.max(0, approved - released);
+
+    document.getElementById('req-modal-approved').textContent = `₱${approved.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+    document.getElementById('req-modal-released').textContent = `₱${released.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+    document.getElementById('req-modal-remaining').textContent = `₱${remaining.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+
+    // Populate activity dropdown for this project
+    const actSelect = document.getElementById('req-fund-activity');
+    if (actSelect && window.GRACE && GRACE.activities) {
+      const projActs = GRACE.activities.filter(a => a.project_id === projectId);
+      actSelect.innerHTML = '<option value="">General Project Delivery</option>' +
+        projActs.map(a => `<option value="${esc(a.activity_id)}">${esc(a.activity_id)} — ${esc(a.activity_name)}</option>`).join('');
+    }
+  }
+
+  // 5. SUBMIT FUNDING REQUEST (With explicit project assignment)
+  window.handleSaveFundingRequest = function (e) {
+    e.preventDefault();
+    const pid = document.getElementById('req-fund-project').value;
+    const amount = Number(document.getElementById('req-fund-amount').value);
+    const tranche = document.getElementById('req-fund-tranche').value;
+    const category = document.getElementById('req-fund-category').value;
+    const activityId = document.getElementById('req-fund-activity').value;
+    const dateNeeded = document.getElementById('req-fund-date').value;
+    const breakdown = document.getElementById('req-fund-breakdown').value.trim();
+
+    if (!pid) return alert('Please select a project to request funds for.');
+    if (!amount || amount <= 0) return alert('Please enter a valid amount.');
+    if (!breakdown) return alert('Please provide an itemized justification breakdown.');
+
+    const proj = getProject(pid);
+    const reqId = 'REQ-FND-' + String(Math.floor(100 + Math.random() * 900));
+
+    // Save request
+    const newRequest = {
+      request_id: reqId,
+      project_id: pid,
+      project_title: proj.title,
+      amount: amount,
+      tranche: tranche,
+      category: category,
+      activity_id: activityId,
+      date_needed: dateNeeded,
+      purpose: `${category}: ${breakdown}`,
+      status: 'Pending',
+      requested_by: 'Prince Jheck T. Juan',
+      submitted_at: new Date().toISOString()
+    };
+
+    const requests = loadCustomRequests();
+    requests.unshift(newRequest);
+    saveCustomRequests(requests);
+
+    // Notify Extension Coordinator on Project Status timeline
+    try {
+      const suList = JSON.parse(localStorage.getItem(SU_KEY)) || [];
+      suList.unshift({
+        id: Date.now(),
+        project_id: pid,
+        stage: 'Funding & Budget Processing',
+        status: 'In Progress',
+        next_action: 'Coordinator: review and process funding disbursement request',
+        message: `Project Proponent Prince Jheck T. Juan submitted a funding request of ₱${amount.toLocaleString('en-US', { minimumFractionDigits: 2 })} for project ${pid} (${tranche}). Category: ${category}. Purpose: "${breakdown.substring(0, 80)}..."`,
+        posted_by: 'Prince Jheck T. Juan',
+        by: 'Prince Jheck T. Juan',
+        role_label: 'Project Proponent',
+        at: new Date().toISOString(),
+        date: new Date().toISOString().slice(0, 10),
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      });
+      localStorage.setItem(SU_KEY, JSON.stringify(suList));
+    } catch (err) {}
+
+    closeFundingRequestModal();
+    document.getElementById('form-submit-funding-request').reset();
+
+    // Re-render dashboard with new request
+    const propSel = document.getElementById('proponent-project-select');
+    if (propSel) propSel.value = pid;
+    renderProponentFundingDashboard(pid);
+
+    // Update button text state
+    const reqBtn = document.getElementById('btn-open-request-modal');
+    if (reqBtn) {
+      reqBtn.innerHTML = `<i class="fas fa-check-circle"></i> Request Submitted to Coordinator`;
+      reqBtn.style.background = '#059669';
+      setTimeout(() => {
+        reqBtn.innerHTML = `<i class="fas fa-hand-holding-usd"></i> Request Project Funds`;
+        reqBtn.style.background = 'linear-gradient(135deg, #8B1A1A, #6B0000)';
+      }, 3500);
+    }
+
+    showToast(`Funding request of ₱${amount.toLocaleString()} for project ${pid} submitted successfully to Coordinator!`);
+  };
+
+  // 6. INITIALIZATION ON DOM LOAD
+  document.addEventListener('DOMContentLoaded', () => {
+    populateProjectDropdowns();
+
+    const purposeInput = document.getElementById('main-purpose-input');
+    const saveBtn = document.getElementById('btn-save-fund-coord');
+
     const savedPurpose = localStorage.getItem('grace_funding_purpose');
-    if (savedPurpose) {
+    if (savedPurpose && purposeInput) {
       purposeInput.value = savedPurpose;
-    } else {
+    } else if (purposeInput) {
       purposeInput.value = "To fully cover the venue rental, participant kits, and facilitator honorariums for the community extension initiative.";
     }
 
-    // Role-based editing restrictions
-    // ONLY VPRE, Assistant, and Admin can edit. Coordinator, Proponent, and Dean are read-only.
-    if (currentRole === 'proponent' || currentRole === 'dean' || currentRole === 'coordinator') {
-      // Lock the specific purpose input
-      purposeInput.setAttribute('readonly', 'true');
-      purposeInput.style.backgroundColor = '#F9FAFB';
-      purposeInput.style.cursor = 'not-allowed';
-      
-      // Lock all other form fields on the page
-      const allInputs = document.querySelectorAll('.finput, .ftextarea, .fselect');
-      allInputs.forEach(input => {
-        input.setAttribute('disabled', 'true');
-        input.style.backgroundColor = '#F9FAFB';
-        input.style.cursor = 'not-allowed';
-      });
+    // Role-based view switching
+    const viewManage = document.getElementById('view-manage');
+    const viewRequest = document.getElementById('view-request');
 
-      // Hide the add disbursement button and save button
-      const addDisbBtn = document.querySelector('.btn-add-disb');
-      if (addDisbBtn) addDisbBtn.style.display = 'none';
-      if (saveBtn) saveBtn.style.display = 'none';
+    if (isProponent) {
+      if (viewManage) viewManage.style.display = 'none';
+      if (viewRequest) viewRequest.style.display = 'block';
+
+      // Check URL for preselected project, else default to EXT-2026-001
+      const urlParams = new URLSearchParams(window.location.search);
+      const targetProj = urlParams.get('project') || 'EXT-2026-001';
+
+      const propSel = document.getElementById('proponent-project-select');
+      if (propSel) propSel.value = targetProj;
+      renderProponentFundingDashboard(targetProj);
+
+    } else {
+      if (viewManage) viewManage.style.display = 'block';
+      if (viewRequest) viewRequest.style.display = 'none';
+
+      handleCoordinatorProjectChange('EXT-2026-001');
+
+      if (isDean && purposeInput) {
+        purposeInput.setAttribute('readonly', 'true');
+        purposeInput.style.backgroundColor = '#F9FAFB';
+        const allInputs = document.querySelectorAll('#view-manage .finput, #view-manage .ftextarea, #view-manage .fselect');
+        allInputs.forEach(input => {
+          input.setAttribute('disabled', 'true');
+          input.style.backgroundColor = '#F9FAFB';
+        });
+        const addDisbBtn = document.querySelector('.btn-add-disb');
+        if (addDisbBtn) addDisbBtn.style.display = 'none';
+        if (saveBtn) saveBtn.style.display = 'none';
+      }
     }
 
-    // Save functionality
-    if (saveBtn) {
+    if (saveBtn && purposeInput) {
       saveBtn.onclick = (e) => {
         e.preventDefault();
         localStorage.setItem('grace_funding_purpose', purposeInput.value);
-        
-        // Show success state on button
         const originalText = saveBtn.innerHTML;
         saveBtn.innerHTML = '<i class="fas fa-check"></i> Saved Successfully';
         saveBtn.style.background = '#059669';
-        
         setTimeout(() => {
           saveBtn.innerHTML = originalText;
-          saveBtn.style.background = 'var(--maroon)';
+          saveBtn.style.background = 'linear-gradient(135deg, #8B1A1A, #6B0000)';
         }, 2000);
       };
     }
   });
+})();
 </script>
 </body>
 </html>

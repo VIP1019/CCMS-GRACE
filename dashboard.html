@@ -3,179 +3,310 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Dashboard Overview — CCMS G.R.A.C.E. Portal">
+  <meta name="description" content="Role-Based Executive & Operational Dashboard — CCMS G.R.A.C.E. Portal">
   <title>Dashboard | G.R.A.C.E. Portal</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/dashboard.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
     /* Dashboard specific overrides */
-    .dashboard-wrap { max-width: 1100px; margin: 0 auto; }
+    .dashboard-wrap { max-width: 1160px; margin: 0 auto; }
+
+    /* Role Switcher Floating Bar */
+    .role-switcher-banner {
+      background: white; border: 1px solid #E5E7EB; border-radius: 12px;
+      padding: 0.85rem 1.25rem; margin-bottom: 1.25rem;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.03); flex-wrap: wrap;
+    }
+    .rsb-left { display: flex; align-items: center; gap: 0.75rem; }
+    .rsb-tag {
+      font-size: 0.72rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.06em; color: #6B7280; display: flex; align-items: center; gap: 0.4rem;
+    }
+    .rsb-tag i { color: #8B1A1A; }
+    .rsb-indicator {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: #FDF2F2; color: #8B1A1A; border: 1px solid #FCDEDE;
+      padding: 0.25rem 0.65rem; border-radius: 20px; font-size: 0.75rem; font-weight: 700;
+    }
+    .rsb-indicator i { font-size: 0.7rem; }
     
-    /* Summary Cards Row 1 */
+    .rsb-tabs { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+    .rsb-btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.45rem 0.85rem; border-radius: 8px; font-size: 0.78rem; font-weight: 700;
+      border: 1px solid #E5E7EB; background: #F9FAFB; color: #4B5563;
+      cursor: pointer; transition: all 0.2s ease;
+    }
+    .rsb-btn:hover { background: #F3F4F6; color: #111827; border-color: #D1D5DB; }
+    .rsb-btn.active {
+      background: #8B1A1A; color: white; border-color: #8B1A1A;
+      box-shadow: 0 2px 6px rgba(139,26,26,0.25);
+    }
+    .rsb-btn.active i { color: #F59E0B; }
+    .rsb-btn small { font-size: 0.68rem; font-weight: 500; opacity: 0.85; margin-left: 0.2rem; }
+
+    /* Welcome Header */
+    .ds-page-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem;
+    }
+    .ds-header-titles h2 {
+      font-size: 1.45rem; font-weight: 800; font-family: 'Poppins', sans-serif;
+      color: #111827; margin: 0; display: flex; align-items: center; gap: 0.5rem;
+    }
+    .ds-header-titles p {
+      font-size: 0.82rem; color: #6B7280; margin: 0.25rem 0 0 0;
+    }
+    .ds-header-meta {
+      display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;
+    }
+    .ds-badge-term {
+      font-size: 0.72rem; font-weight: 700; color: #4B5563; background: white;
+      border: 1px solid #E5E7EB; padding: 0.35rem 0.75rem; border-radius: 6px;
+    }
+
+    /* Primary Cards Row */
     .ds-cards-grid {
       display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1rem;
     }
     .ds-card {
       background: white; border: 1px solid #E5E7EB; border-radius: 12px;
       padding: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem;
-      position: relative; overflow: hidden;
+      position: relative; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s;
+      text-decoration: none; color: inherit;
     }
+    .ds-card:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.05); }
     .ds-card::after {
       content: ''; position: absolute; right: -15px; bottom: -15px;
-      font-family: 'Font Awesome 5 Free'; font-weight: 900; font-size: 5rem;
-      color: rgba(0,0,0,0.02); line-height: 1; pointer-events: none;
+      font-family: 'Font Awesome 5 Free'; font-weight: 900; font-size: 4.8rem;
+      line-height: 1; pointer-events: none; opacity: 0.05;
     }
-    .ds-card.c-maroon::after { content: '\f542'; color: rgba(139,26,26,0.04); }
-    .ds-card.c-gold::after { content: '\f0ae'; color: rgba(218,165,32,0.05); }
-    .ds-card.c-blue::after { content: '\f15c'; color: rgba(59,130,246,0.04); }
-    .ds-card.c-green::after { content: '\f058'; color: rgba(16,185,129,0.04); }
+    .ds-card.c-maroon::after { content: '\f542'; color: #8B1A1A; }
+    .ds-card.c-gold::after { content: '\f0ae'; color: #DAA520; }
+    .ds-card.c-blue::after { content: '\f15c'; color: #3B82F6; }
+    .ds-card.c-green::after { content: '\f058'; color: #10B981; }
 
-    .dsc-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #6B7280; }
-    .dsc-val { font-size: 1.8rem; font-weight: 800; font-family: 'Poppins', sans-serif; color: #111827; line-height: 1.2; }
-    .dsc-trend { font-size: 0.72rem; font-weight: 600; display: flex; align-items: center; gap: 0.3rem; }
+    .dsc-title { font-size: 0.74rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #6B7280; }
+    .dsc-val { font-size: 1.85rem; font-weight: 800; font-family: 'Poppins', sans-serif; color: #111827; line-height: 1.2; }
+    .dsc-trend { font-size: 0.72rem; font-weight: 600; display: flex; align-items: center; gap: 0.35rem; }
     .dsc-trend.up { color: #059669; }
-    .dsc-trend.down { color: #DC2626; }
+    .dsc-trend.down { color: #D97706; }
+    .dsc-trend.neutral { color: #6B7280; }
 
-    /* Summary Cards Row 2 (Secondary Metrics) */
+    /* Secondary Metrics Row */
     .ds-metrics-grid {
       display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem;
     }
     .dsm-card {
       background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 8px;
-      padding: 1rem; display: flex; align-items: center; gap: 1rem;
+      padding: 0.95rem 1rem; display: flex; align-items: center; gap: 0.9rem;
     }
     .dsm-icon {
-      width: 42px; height: 42px; border-radius: 8px;
+      width: 42px; height: 42px; border-radius: 8px; flex-shrink: 0;
       display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
     }
     .dsm-icon.i-purple { background: rgba(124,58,237,0.1); color: #7C3AED; }
     .dsm-icon.i-orange { background: rgba(249,115,22,0.1); color: #F97316; }
     .dsm-icon.i-teal { background: rgba(20,184,166,0.1); color: #14B8A6; }
     .dsm-icon.i-rose { background: rgba(225,29,72,0.1); color: #E11D48; }
+    .dsm-icon.i-gold { background: rgba(218,165,32,0.15); color: #B45309; }
+    .dsm-icon.i-maroon { background: rgba(139,26,26,0.1); color: #8B1A1A; }
     
-    .dsm-info { display: flex; flex-direction: column; gap: 0.15rem; }
-    .dsm-val { font-size: 1.1rem; font-weight: 800; color: #1F2937; line-height: 1.1; }
-    .dsm-label { font-size: 0.7rem; color: #6B7280; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .dsm-info { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
+    .dsm-val { font-size: 1.15rem; font-weight: 800; color: #1F2937; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .dsm-label { font-size: 0.68rem; color: #6B7280; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
 
     /* Main Grid Layout */
     .ds-main-grid {
       display: grid; grid-template-columns: 2fr 1fr; gap: 1.25rem; margin-bottom: 1.5rem;
     }
 
-    /* Section styling */
+    /* Section card */
     .ds-section {
-      background: white; border: 1px solid #E5E7EB; border-radius: 12px; overflow: hidden;
+      background: white; border: 1px solid #E5E7EB; border-radius: 12px;
+      overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02);
     }
     .ds-sec-head {
       padding: 1rem 1.25rem; border-bottom: 1px solid #F3F4F6;
       display: flex; align-items: center; justify-content: space-between;
+      gap: 0.5rem; flex-wrap: wrap;
     }
     .ds-sec-title {
       font-size: 0.85rem; font-weight: 800; text-transform: uppercase;
-      letter-spacing: 0.06em; color: #374151; display: flex; align-items: center; gap: 0.5rem;
+      letter-spacing: 0.05em; color: #374151; display: flex; align-items: center; gap: 0.5rem;
     }
     .ds-sec-title i { color: #8B1A1A; }
-    .ds-sec-action { font-size: 0.75rem; font-weight: 600; color: #8B1A1A; text-decoration: none; }
+    .ds-sec-action { font-size: 0.75rem; font-weight: 700; color: #8B1A1A; text-decoration: none; }
     .ds-sec-action:hover { text-decoration: underline; }
     
     /* Table styling for Dashboard */
+    .ds-table-wrap { overflow-x: auto; }
     .ds-table { width: 100%; border-collapse: collapse; }
     .ds-table th {
       font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
-      color: #6B7280; background: #F9FAFB; padding: 0.75rem 1.25rem; text-align: left;
-      border-bottom: 1px solid #E5E7EB;
+      color: #6B7280; background: #F9FAFB; padding: 0.75rem 1.1rem; text-align: left;
+      border-bottom: 1px solid #E5E7EB; white-space: nowrap;
     }
-    .ds-table td { padding: 0.85rem 1.25rem; border-bottom: 1px solid #F3F4F6; font-size: 0.82rem; color: #374151; }
+    .ds-table td {
+      padding: 0.85rem 1.1rem; border-bottom: 1px solid #F3F4F6;
+      font-size: 0.82rem; color: #374151; vertical-align: middle;
+    }
     .ds-table tr:last-child td { border-bottom: none; }
+    .ds-table tr:hover td { background: #FAFAFA; }
     
-    .ds-pcode { font-size: 0.7rem; color: #6B7280; display: block; margin-top: 0.15rem; }
+    .ds-pcode { font-size: 0.7rem; color: #6B7280; display: block; margin-top: 0.15rem; font-weight: 500; }
     .ds-status {
       display: inline-flex; align-items: center; gap: 0.35rem;
       border-radius: 12px; padding: 0.2rem 0.6rem; font-size: 0.68rem; font-weight: 700;
+      white-space: nowrap;
     }
-    .ds-status.s-ongoing { background: rgba(59,130,246,0.1); color: #2563EB; border: 1px solid rgba(59,130,246,0.2); }
-    .ds-status.s-review { background: rgba(245,158,11,0.1); color: #D97706; border: 1px solid rgba(245,158,11,0.2); }
-    .ds-status.s-approved { background: rgba(16,185,129,0.1); color: #059669; border: 1px solid rgba(16,185,129,0.2); }
+    .ds-status.s-ongoing { background: rgba(59,130,246,0.1); color: #2563EB; border: 1px solid rgba(59,130,246,0.25); }
+    .ds-status.s-review { background: rgba(245,158,11,0.1); color: #D97706; border: 1px solid rgba(245,158,11,0.25); }
+    .ds-status.s-approved { background: rgba(16,185,129,0.1); color: #059669; border: 1px solid rgba(16,185,129,0.25); }
+    .ds-status.s-endorsed { background: #EDE9FE; color: #6D28D9; border: 1px solid #DDD6FE; }
+    .ds-status.s-pending { background: #F3F4F6; color: #4B5563; border: 1px solid #E5E7EB; }
     
     .ds-progress-bar { width: 100%; height: 6px; background: #E5E7EB; border-radius: 3px; overflow: hidden; margin-bottom: 0.25rem; }
     .ds-progress-fill { height: 100%; background: #8B1A1A; border-radius: 3px; }
     .ds-progress-text { font-size: 0.68rem; color: #6B7280; font-weight: 600; }
 
+    /* Action Buttons in Tables */
+    .btn-act {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      padding: 0.3rem 0.65rem; border-radius: 6px; font-size: 0.72rem; font-weight: 700;
+      cursor: pointer; text-decoration: none; border: 1px solid transparent; transition: all 0.15s;
+    }
+    .btn-act-primary { background: #8B1A1A; color: white; }
+    .btn-act-primary:hover { background: #701414; }
+    .btn-act-success { background: #059669; color: white; }
+    .btn-act-success:hover { background: #047857; }
+    .btn-act-outline { background: white; border-color: #D1D5DB; color: #374151; }
+    .btn-act-outline:hover { background: #F3F4F6; border-color: #9CA3AF; }
+    .btn-act-sm { padding: 0.2rem 0.5rem; font-size: 0.68rem; }
+
     /* Quick Actions Grid */
     .qa-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; padding: 1.25rem;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; padding: 1.1rem;
     }
     .qa-btn {
-      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem;
-      padding: 1rem 0.5rem; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 8px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.45rem;
+      padding: 0.9rem 0.5rem; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 8px;
       color: #374151; text-decoration: none; transition: all 0.2s;
     }
-    .qa-btn:hover { background: white; border-color: #8B1A1A; color: #8B1A1A; transform: translateY(-2px); box-shadow: 0 4px 6px rgba(139,26,26,0.06); }
+    .qa-btn:hover {
+      background: white; border-color: #8B1A1A; color: #8B1A1A;
+      transform: translateY(-2px); box-shadow: 0 4px 8px rgba(139,26,26,0.06);
+    }
     .qa-btn i { font-size: 1.3rem; color: #8B1A1A; }
-    .qa-btn span { font-size: 0.72rem; font-weight: 600; text-align: center; }
+    .qa-btn span { font-size: 0.73rem; font-weight: 700; text-align: center; }
+
+    /* Guidance Notice Box */
+    .guidance-box {
+      padding: 1.1rem 1.25rem; display: flex; flex-direction: column; gap: 0.75rem;
+    }
+    .guidance-item {
+      display: flex; gap: 0.75rem; padding: 0.75rem; border-radius: 8px;
+      border: 1px solid #E5E7EB; background: #F9FAFB;
+    }
+    .guidance-item.g-info { border-color: #BFDBFE; background: #EFF6FF; }
+    .guidance-item.g-success { border-color: #A7F3D0; background: #ECFDF5; }
+    .guidance-item.g-warning { border-color: #FDE68A; background: #FFFBEB; }
+    .g-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 0.1rem; }
+    .g-info .g-icon { color: #2563EB; }
+    .g-success .g-icon { color: #059669; }
+    .g-warning .g-icon { color: #D97706; }
+    .g-content { display: flex; flex-direction: column; gap: 0.15rem; }
+    .g-sender { font-size: 0.72rem; font-weight: 800; color: #111827; }
+    .g-msg { font-size: 0.74rem; color: #4B5563; line-height: 1.35; }
 
     /* Upcoming Deadlines */
     .dl-list { display: flex; flex-direction: column; }
     .dl-item {
-      display: flex; align-items: center; gap: 1rem; padding: 1rem 1.25rem;
+      display: flex; align-items: center; gap: 1rem; padding: 0.9rem 1.25rem;
       border-bottom: 1px solid #F3F4F6;
     }
     .dl-item:last-child { border-bottom: none; }
     .dl-date {
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      width: 48px; height: 48px; background: #FFFBEB; border: 1px solid #FDE68A;
+      width: 44px; height: 44px; background: #FFFBEB; border: 1px solid #FDE68A;
       border-radius: 8px; color: #B45309; flex-shrink: 0;
     }
-    .dl-date .d { font-size: 1.1rem; font-weight: 800; line-height: 1; }
-    .dl-date .m { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; margin-top: 0.1rem; }
-    .dl-info { flex: 1; }
-    .dl-title { font-size: 0.8rem; font-weight: 700; color: #1F2937; margin-bottom: 0.15rem; }
-    .dl-proj { font-size: 0.7rem; color: #6B7280; }
+    .dl-date .d { font-size: 1.05rem; font-weight: 800; line-height: 1; }
+    .dl-date .m { font-size: 0.58rem; font-weight: 700; text-transform: uppercase; margin-top: 0.1rem; }
+    .dl-info { flex: 1; min-width: 0; }
+    .dl-title { font-size: 0.78rem; font-weight: 700; color: #1F2937; margin-bottom: 0.15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .dl-proj { font-size: 0.68rem; color: #6B7280; }
 
     /* Secondary Grid (Bottom row) */
-    .ds-sub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+    .ds-sub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.5rem; }
 
-    /* Approval Pipeline */
-    .pipe-wrap { padding: 2rem 1.25rem; }
-    .pipe-stages { display: flex; align-items: center; justify-content: space-between; position: relative; }
-    .pipe-stages::before {
-      content: ''; position: absolute; left: 10%; right: 10%; top: 32px;
-      height: 2px; background: #E5E7EB; z-index: 0;
+    /* 8-Stage Institutional Pipeline */
+    .pipe-wrap-8 { padding: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem; }
+    .pipe-stage-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.5rem 0.75rem; border-radius: 6px; background: #F9FAFB; border: 1px solid #F3F4F6;
     }
-    .pipe-stage { display: flex; flex-direction: column; align-items: center; gap: 0.6rem; position: relative; z-index: 1; }
-    .pipe-circle {
-      width: 64px; height: 64px; border-radius: 50%; background: white;
-      border: 3px solid white; display: flex; align-items: center; justify-content: center;
-      font-size: 1.25rem; font-weight: 800; font-family: var(--font-heading); box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    .psr-left { display: flex; align-items: center; gap: 0.6rem; }
+    .psr-num {
+      width: 22px; height: 22px; border-radius: 50%; background: #E5E7EB;
+      font-size: 0.68rem; font-weight: 800; color: #4B5563;
+      display: flex; align-items: center; justify-content: center;
     }
-    .pipe-stage:nth-child(1) .pipe-circle { color: #F59E0B; border-color: #FDE68A; }
-    .pipe-stage:nth-child(2) .pipe-circle { color: #3B82F6; border-color: #BFDBFE; }
-    .pipe-stage:nth-child(3) .pipe-circle { color: #8B1A1A; border-color: rgba(139,26,26,0.3); }
-    .pipe-stage:nth-child(4) .pipe-circle { color: #10B981; border-color: #A7F3D0; }
-    .pipe-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #4B5563; }
+    .psr-num.active { background: #8B1A1A; color: white; }
+    .psr-name { font-size: 0.75rem; font-weight: 700; color: #374151; }
+    .psr-count {
+      font-size: 0.72rem; font-weight: 800; padding: 0.15rem 0.5rem;
+      border-radius: 12px; background: #E5E7EB; color: #374151;
+    }
+    .psr-count.hl { background: #FDF2F2; color: #8B1A1A; border: 1px solid #FCDEDE; }
     
     /* Funding Overview */
     .fund-list { padding: 1.25rem; }
     .fund-row {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0.75rem 0; border-bottom: 1px solid #F3F4F6;
+      padding: 0.65rem 0; border-bottom: 1px solid #F3F4F6;
     }
-    .fund-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .fund-row:last-child { border-bottom: none; }
     .fr-left { display: flex; align-items: center; gap: 0.6rem; }
     .fr-dot { width: 10px; height: 10px; border-radius: 50%; }
     .fr-dot.c1 { background: #8B1A1A; }
     .fr-dot.c2 { background: #DAA520; }
-    .fr-dot.c3 { background: #F59E0B; }
+    .fr-dot.c3 { background: #10B981; }
+    .fr-dot.c4 { background: #6B7280; }
     .fr-label { font-size: 0.8rem; font-weight: 600; color: #374151; }
-    .fr-val { font-size: 0.95rem; font-weight: 700; color: #111827; font-family: 'Inter', sans-serif; }
+    .fr-val { font-size: 0.92rem; font-weight: 700; color: #111827; }
     
     .fund-total-row {
       display: flex; align-items: center; justify-content: space-between;
-      padding-top: 1rem; margin-top: 0.5rem; border-top: 1px dashed #D1D5DB;
+      padding-top: 0.85rem; margin-top: 0.5rem; border-top: 1px dashed #D1D5DB;
     }
-    .ft-label { font-size: 0.82rem; font-weight: 800; color: #1F2937; text-transform: uppercase; }
-    .ft-val { font-size: 1.2rem; font-weight: 800; color: #8B1A1A; font-family: 'Poppins', sans-serif; }
+    .ft-label { font-size: 0.8rem; font-weight: 800; color: #1F2937; text-transform: uppercase; }
+    .ft-val { font-size: 1.15rem; font-weight: 800; color: #8B1A1A; font-family: 'Poppins', sans-serif; }
+
+    /* Faculty Engagement Table */
+    .eng-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.75rem 1.25rem; border-bottom: 1px solid #F3F4F6;
+    }
+    .eng-row:last-child { border-bottom: none; }
+    .eng-dept { font-size: 0.78rem; font-weight: 700; color: #1F2937; margin-bottom: 0.15rem; }
+    .eng-sub { font-size: 0.68rem; color: #6B7280; }
+    .eng-badge { font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.55rem; border-radius: 12px; }
+    .eng-badge.high { background: #ECFDF5; color: #059669; border: 1px solid #A7F3D0; }
+
+    /* Floating Toast Notification */
+    #ds-toast {
+      position: fixed; top: 1.5rem; right: 1.5rem; z-index: 9999;
+      background: #111827; color: white; padding: 0.85rem 1.25rem;
+      border-radius: 8px; font-size: 0.82rem; font-weight: 600;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2); display: flex; align-items: center;
+      gap: 0.75rem; transform: translateY(-30px); opacity: 0; pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    #ds-toast.show { transform: translateY(0); opacity: 1; pointer-events: auto; }
+    #ds-toast i { color: #10B981; font-size: 1.1rem; }
 
     /* Responsiveness */
     @media (max-width: 1024px) {
@@ -185,8 +316,9 @@
     }
     @media (max-width: 640px) {
       .ds-cards-grid, .ds-metrics-grid { grid-template-columns: 1fr; }
-      .pipe-stages::before { display: none; }
-      .pipe-stages { flex-direction: column; gap: 1rem; }
+      .role-switcher-banner { flex-direction: column; align-items: flex-start; }
+      .rsb-tabs { width: 100%; }
+      .rsb-btn { flex: 1; justify-content: center; }
     }
   </style>
 </head>
@@ -203,273 +335,73 @@
     <div class="dashboard-content">
       <div class="dashboard-wrap">
         
-        <!-- Welcome & Breadcrumb handled implicitly via topbar styling, but adding title here -->
-        <div style="margin-bottom: 1.25rem;">
-          <h2 style="font-size: 1.4rem; font-weight: 800; font-family: 'Poppins', sans-serif; color: #111827; margin: 0;">Dashboard Overview</h2>
-          <p style="font-size: 0.82rem; color: #6B7280; margin-top: 0.2rem;">Welcome back! Here is your extension project and operational summary.</p>
-        </div>
-
-        <!-- Primary Cards -->
-        <div class="ds-cards-grid">
-          <div class="ds-card c-maroon">
-            <div class="dsc-title">Total Projects</div>
-            <div class="dsc-val">48</div>
-            <div class="dsc-trend up"><i class="fas fa-arrow-up"></i> <span>12% from last year</span></div>
+        <!-- Role Switcher Floating Bar (Instant Preview for Testing All 3 Users) -->
+        <div class="role-switcher-banner" id="role-switcher-banner">
+          <div class="rsb-left">
+            <span class="rsb-tag"><i class="fas fa-user-shield"></i> Portal User View:</span>
+            <span class="rsb-indicator" id="role-active-indicator">
+              <i class="fas fa-check-circle"></i>
+              <span id="role-indicator-text">Project Proponent (Prince Jheck T. Juan)</span>
+            </span>
           </div>
-          <div class="ds-card c-gold">
-            <div class="dsc-title">Active Projects</div>
-            <div class="dsc-val">18</div>
-            <div class="dsc-trend up"><i class="fas fa-arrow-up"></i> <span>5 new this month</span></div>
-          </div>
-          <div class="ds-card c-blue">
-            <div class="dsc-title">Proposals Pending</div>
-            <div class="dsc-val">7</div>
-            <div class="dsc-trend down"><i class="fas fa-arrow-down"></i> <span>Awaiting review</span></div>
-          </div>
-          <div class="ds-card c-green">
-            <div class="dsc-title">Proposals Approved</div>
-            <div class="dsc-val">23</div>
-            <div class="dsc-trend up"><i class="fas fa-arrow-up"></i> <span>8 verified this year</span></div>
+          <div class="rsb-tabs">
+            <button class="rsb-btn" id="btn-role-proponent" onclick="switchPortalRole('proponent')">
+              <i class="fas fa-chalkboard-teacher"></i>
+              <span>Proponent</span>
+              <small>Prince Jheck</small>
+            </button>
+            <button class="rsb-btn" id="btn-role-coordinator" onclick="switchPortalRole('coordinator')">
+              <i class="fas fa-clipboard-check"></i>
+              <span>Coordinator</span>
+              <small>Dr. Mary Grace</small>
+            </button>
+            <button class="rsb-btn" id="btn-role-dean" onclick="switchPortalRole('dean')">
+              <i class="fas fa-user-graduate"></i>
+              <span>College Dean</span>
+              <small>Dr. Daniel</small>
+            </button>
           </div>
         </div>
 
-        <!-- Secondary Metrics -->
-        <div class="ds-metrics-grid">
-          <div class="dsm-card">
-            <div class="dsm-icon i-purple"><i class="fas fa-calendar-check"></i></div>
-            <div class="dsm-info">
-              <div class="dsm-val">12</div>
-              <div class="dsm-label">Activities</div>
-            </div>
-          </div>
-          <div class="dsm-card">
-            <div class="dsm-icon i-orange"><i class="fas fa-handshake"></i></div>
-            <div class="dsm-info">
-              <div class="dsm-val">35</div>
-              <div class="dsm-label">Partners</div>
-            </div>
-          </div>
-          <div class="dsm-card">
-            <div class="dsm-icon i-teal"><i class="fas fa-users"></i></div>
-            <div class="dsm-info">
-              <div class="dsm-val">450+</div>
-              <div class="dsm-label">Beneficiaries</div>
-            </div>
-          </div>
-          <div class="dsm-card">
-            <div class="dsm-icon i-rose"><i class="fas fa-star"></i></div>
-            <div class="dsm-info">
-              <div class="dsm-val">4.8</div>
-              <div class="dsm-label">Satisfaction</div>
-            </div>
-          </div>
+        <!-- Dynamic Welcome Header -->
+        <div class="ds-page-header" id="ds-welcome-header">
+          <!-- Populated by renderDashboardByRole -->
         </div>
 
-        <!-- Main Dashboard Grid -->
+        <!-- Primary KPI Cards Row -->
+        <div class="ds-cards-grid" id="ds-primary-cards">
+          <!-- Populated by renderDashboardByRole -->
+        </div>
+
+        <!-- Secondary Metrics Row -->
+        <div class="ds-metrics-grid" id="ds-secondary-metrics">
+          <!-- Populated by renderDashboardByRole -->
+        </div>
+
+        <!-- Main Dashboard Grid (Left: Table / Queue; Right: Guidance & Quick Actions) -->
         <div class="ds-main-grid">
-          <!-- Left Col: Recent Projects Table -->
-          <div class="ds-section">
-            <div class="ds-sec-head">
-              <div class="ds-sec-title"><i class="fas fa-folder-open"></i> Recent Projects Overview</div>
-              <a href="projects.html" class="ds-sec-action">View All Projects</a>
-            </div>
-            <table class="ds-table">
-              <thead>
-                <tr>
-                  <th>Project Name &amp; Code</th>
-                  <th>Classification</th>
-                  <th>Status</th>
-                  <th>Implementation</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    <strong>Community Health Outreach</strong>
-                    <span class="ds-pcode">EXT-2026-001</span>
-                  </td>
-                  <td>Community Service</td>
-                  <td><span class="ds-status s-ongoing">Ongoing</span></td>
-                  <td>
-                    <div class="ds-progress-bar"><div class="ds-progress-fill" style="width: 65%;"></div></div>
-                    <div class="ds-progress-text">65% Completed</div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <strong>Basud Municipal Library System</strong>
-                    <span class="ds-pcode">EXT-2026-045</span>
-                  </td>
-                  <td>System Development</td>
-                  <td><span class="ds-status s-review">In Review</span></td>
-                  <td>
-                    <div class="ds-progress-bar"><div class="ds-progress-fill" style="width: 85%;"></div></div>
-                    <div class="ds-progress-text">85% Completed</div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <strong>ICT Consultancy - DOST Partner</strong>
-                    <span class="ds-pcode">EXT-2026-041</span>
-                  </td>
-                  <td>Consultancy</td>
-                  <td><span class="ds-status s-approved">Approved</span></td>
-                  <td>
-                    <div class="ds-progress-bar"><div class="ds-progress-fill" style="width: 30%;"></div></div>
-                    <div class="ds-progress-text">30% Completed</div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <strong>Digital Literacy in Brgy. Lag-on</strong>
-                    <span class="ds-pcode">EXT-2026-038</span>
-                  </td>
-                  <td>Skills Training</td>
-                  <td><span class="ds-status s-approved" style="background:rgba(16,185,129,0.1);color:#059669;border-color:rgba(16,185,129,0.2);">Completed</span></td>
-                  <td>
-                    <div class="ds-progress-bar"><div class="ds-progress-fill" style="width: 100%;background:#059669;"></div></div>
-                    <div class="ds-progress-text">100% Completed</div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <strong>Data Analytics Workshop</strong>
-                    <span class="ds-pcode">EXT-2026-035</span>
-                  </td>
-                  <td>Skills Training</td>
-                  <td><span class="ds-status" style="background:#F3F4F6;color:#4B5563;border:1px solid #E5E7EB;">Pending</span></td>
-                  <td>
-                    <div class="ds-progress-bar"><div class="ds-progress-fill" style="width: 10%;"></div></div>
-                    <div class="ds-progress-text">10% Completed</div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <!-- Left Col -->
+          <div class="ds-section" id="ds-main-left">
+            <!-- Populated by renderDashboardByRole -->
           </div>
 
-          <!-- Right Col: Quick Actions & Deadlines -->
-          <div style="display: flex; flex-direction: column; gap: 1.25rem;">
-            
-            <div class="ds-section">
-              <div class="ds-sec-head">
-                <div class="ds-sec-title"><i class="fas fa-bolt" style="color:#F59E0B;"></i> Quick Actions</div>
-              </div>
-              <div class="qa-grid">
-                <a href="project-form.html" class="qa-btn">
-                  <i class="fas fa-plus-circle"></i>
-                  <span>New Proposal</span>
-                </a>
-                <a href="activities.html" class="qa-btn">
-                  <i class="fas fa-calendar-alt"></i>
-                  <span>Log Activity</span>
-                </a>
-                <a href="documents.html" class="qa-btn">
-                  <i class="fas fa-file-upload"></i>
-                  <span>Upload Doc</span>
-                </a>
-                <a href="reports.html" class="qa-btn">
-                  <i class="fas fa-chart-pie"></i>
-                  <span>Reports</span>
-                </a>
-              </div>
-            </div>
-
-            <div class="ds-section" style="flex: 1;">
-              <div class="ds-sec-head">
-                <div class="ds-sec-title"><i class="fas fa-clock" style="color:#D97706;"></i> Upcoming Deadlines</div>
-              </div>
-              <div class="dl-list">
-                <div class="dl-item">
-                  <div class="dl-date"><span class="d">25</span><span class="m">Sep</span></div>
-                  <div class="dl-info">
-                    <div class="dl-title">Module 3 Training Delivery</div>
-                    <div class="dl-proj">EXT-2026-001 • Comm. Health</div>
-                  </div>
-                </div>
-                <div class="dl-item">
-                  <div class="dl-date" style="background:#EFF6FF;color:#1D4ED8;border-color:#BFDBFE;"><span class="d">30</span><span class="m">Sep</span></div>
-                  <div class="dl-info">
-                    <div class="dl-title">System Testing Phase</div>
-                    <div class="dl-proj">EXT-2026-045 • Library System</div>
-                  </div>
-                </div>
-                <div class="dl-item">
-                  <div class="dl-date" style="background:#F3F4F6;color:#4B5563;border-color:#E5E7EB;"><span class="d">15</span><span class="m">Oct</span></div>
-                  <div class="dl-info">
-                    <div class="dl-title">Final Project Report</div>
-                    <div class="dl-proj">EXT-2026-048 • Web Dev Training</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
+          <!-- Right Col -->
+          <div style="display: flex; flex-direction: column; gap: 1.25rem;" id="ds-main-right">
+            <!-- Populated by renderDashboardByRole -->
           </div>
         </div>
 
-        <!-- Bottom Grid: Pipeline & Funding -->
+        <!-- Bottom Grid (Sub Grid) -->
         <div class="ds-sub-grid">
-          
-          <div class="ds-section">
-            <div class="ds-sec-head">
-              <div class="ds-sec-title"><i class="fas fa-route"></i> Approval Pipeline</div>
-              <div class="ds-sec-action" style="font-weight:400;color:#6B7280;text-decoration:none;">This Semester</div>
-            </div>
-            <div class="pipe-wrap">
-              <div class="pipe-stages">
-                <div class="pipe-stage">
-                  <div class="pipe-circle">3</div>
-                  <div class="pipe-label">Eligibility</div>
-                </div>
-                <div class="pipe-stage">
-                  <div class="pipe-circle">2</div>
-                  <div class="pipe-label">Tech Eval</div>
-                </div>
-                <div class="pipe-stage">
-                  <div class="pipe-circle">1</div>
-                  <div class="pipe-label">Defense</div>
-                </div>
-                <div class="pipe-stage">
-                  <div class="pipe-circle">1</div>
-                  <div class="pipe-label">Approved</div>
-                </div>
-              </div>
-            </div>
+          <!-- Bottom Left -->
+          <div class="ds-section" id="ds-bottom-left">
+            <!-- Populated by renderDashboardByRole -->
           </div>
 
-          <div class="ds-section">
-            <div class="ds-sec-head">
-              <div class="ds-sec-title"><i class="fas fa-wallet" style="color:#DAA520;"></i> Funding Overview</div>
-              <a href="funding.html" class="ds-sec-action">Manage Funds</a>
-            </div>
-            <div class="fund-list">
-              <div class="fund-row">
-                <div class="fr-left">
-                  <div class="fr-dot c1"></div>
-                  <div class="fr-label">Institutional Funding</div>
-                </div>
-                <div class="fr-val">₱285,000.00</div>
-              </div>
-              <div class="fund-row">
-                <div class="fr-left">
-                  <div class="fr-dot c2"></div>
-                  <div class="fr-label">External / Partner</div>
-                </div>
-                <div class="fr-val">₱120,000.00</div>
-              </div>
-              <div class="fund-row">
-                <div class="fr-left">
-                  <div class="fr-dot c3"></div>
-                  <div class="fr-label">Pending Verification</div>
-                </div>
-                <div class="fr-val" style="color:#6B7280;">₱55,000.00</div>
-              </div>
-              <div class="fund-total-row">
-                <div class="ft-label">Total Allocated</div>
-                <div class="ft-val">₱460,000.00</div>
-              </div>
-            </div>
+          <!-- Bottom Right -->
+          <div class="ds-section" id="ds-bottom-right">
+            <!-- Populated by renderDashboardByRole -->
           </div>
-
         </div>
 
       </div>
@@ -477,99 +409,1018 @@
   </div>
 </div>
 
+<!-- Floating Toast Notification -->
+<div id="ds-toast">
+  <i class="fas fa-check-circle"></i>
+  <span id="ds-toast-msg">Action completed successfully</span>
+</div>
+
 <script src="js/data.js"></script>
 <script src="js/main.js"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const currentRole = localStorage.getItem('graceRole') || 'admin';
-    if (currentRole === 'assistant') {
-      const dashboardWrap = document.querySelector('.dashboard-wrap');
-      if (dashboardWrap) {
-        dashboardWrap.innerHTML = `
-          <div style="margin-bottom: 1.25rem;">
-            <h2 style="font-size: 1.4rem; font-weight: 800; font-family: 'Poppins', sans-serif; color: #111827; margin: 0;">Assistant Extension Officer Dashboard</h2>
-            <p style="font-size: 0.82rem; color: #6B7280; margin-top: 0.2rem;">My Work Queue — Operational processing and record maintenance.</p>
-          </div>
+/* ============================================================
+   ROLE-BASED DASHBOARD LOGIC (Proponent, Coordinator, Dean)
+   Tailored directly to what each user specifically needs to see.
+   ============================================================ */
 
-          <div class="ds-cards-grid">
-            <div class="ds-card c-maroon">
-              <div class="dsc-title">Pending Compliance</div>
-              <div class="dsc-val">3</div>
-              <div class="dsc-trend down"><span>Requirements needing attention</span></div>
-            </div>
-            <div class="ds-card c-gold">
-              <div class="dsc-title">Documents for Action</div>
-              <div class="dsc-val">5</div>
-              <div class="dsc-trend down"><span>Awaiting upload/review</span></div>
-            </div>
-            <div class="ds-card c-blue">
-              <div class="dsc-title">Projects to Update</div>
-              <div class="dsc-val">2</div>
-              <div class="dsc-trend up"><span>Verified new info</span></div>
-            </div>
-            <div class="ds-card c-green">
-              <div class="dsc-title">Follow-ups Due</div>
-              <div class="dsc-val">4</div>
-              <div class="dsc-trend up"><span>Pending coordination</span></div>
-            </div>
-          </div>
+function showToast(msg, icon = 'fa-check-circle') {
+  const toast = document.getElementById('ds-toast');
+  const toastMsg = document.getElementById('ds-toast-msg');
+  if (!toast || !toastMsg) return;
+  toast.querySelector('i').className = `fas ${icon}`;
+  toastMsg.innerHTML = msg;
+  toast.classList.add('show');
+  setTimeout(() => { toast.classList.remove('show'); }, 3800);
+}
 
-          <div class="ds-main-grid" style="grid-template-columns: 1fr;">
-            <div class="ds-section">
-              <div class="ds-sec-head">
-                <div class="ds-sec-title"><i class="fas fa-tasks" style="color:var(--maroon);"></i> My Work Queue: Projects Requiring Attention</div>
-              </div>
-              <div style="overflow-x: auto;">
-                <table class="ds-table">
-                  <thead>
-                    <tr>
-                      <th>Project</th>
-                      <th>Current Stage</th>
-                      <th>Required Action</th>
-                      <th>Due Date</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>
-                        <strong>EXT-2026-035</strong>
-                        <span class="ds-pcode">Data Analytics Workshop</span>
-                      </td>
-                      <td>Compliance</td>
-                      <td><a href="approvals.html" style="color:#2563EB; font-weight:600; text-decoration:none;"><i class="fas fa-edit"></i> Record submission</a></td>
-                      <td><span style="color:#D97706; font-weight:600;">Oct. 5</span></td>
-                      <td><span class="ds-status s-review">Pending</span></td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <strong>EXT-2026-048</strong>
-                        <span class="ds-pcode">Web Dev Training for LGU</span>
-                      </td>
-                      <td>OVPRE Processing</td>
-                      <td><a href="approvals.html" style="color:#2563EB; font-weight:600; text-decoration:none;"><i class="fas fa-sync-alt"></i> Update status</a></td>
-                      <td><span style="color:#D97706; font-weight:600;">Oct. 5</span></td>
-                      <td><span class="ds-status s-review">For Action</span></td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <strong>EXT-2026-041</strong>
-                        <span class="ds-pcode">ICT Consultancy DOST</span>
-                      </td>
-                      <td>Document Processing</td>
-                      <td><a href="documents.html" style="color:#2563EB; font-weight:600; text-decoration:none;"><i class="fas fa-file-upload"></i> Upload revised file</a></td>
-                      <td><span style="color:#4B5563; font-weight:600;">Oct. 6</span></td>
-                      <td><span class="ds-status s-review">Pending</span></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+function switchPortalRole(newRole) {
+  localStorage.setItem('graceRole', newRole);
+  
+  // Re-run standard main.js initializers if available
+  if (typeof injectSidebar === 'function') injectSidebar();
+  if (typeof injectTopbar === 'function') injectTopbar();
+  
+  renderDashboardByRole(newRole);
+  
+  const roleNames = {
+    proponent: 'Project Proponent (Prince Jheck T. Juan)',
+    coordinator: 'Extension Coordinator (Dr. Mary Grace Bolos)',
+    dean: 'College Dean (Dr. Daniel Maligat)'
+  };
+  showToast(`Switched view to <strong>${roleNames[newRole]}</strong>`, 'fa-user-check');
+}
+
+// Global renderer called on page load or role switch
+window.renderDashboardByRole = function(role) {
+  const currentRole = role || localStorage.getItem('graceRole') || 'proponent';
+
+  // 1. Update Role Switcher Buttons & Indicator
+  const btnProp = document.getElementById('btn-role-proponent');
+  const btnCoord = document.getElementById('btn-role-coordinator');
+  const btnDean = document.getElementById('btn-role-dean');
+  const indicatorText = document.getElementById('role-indicator-text');
+
+  if (btnProp) btnProp.classList.toggle('active', currentRole === 'proponent');
+  if (btnCoord) btnCoord.classList.toggle('active', currentRole === 'coordinator');
+  if (btnDean) btnDean.classList.toggle('active', currentRole === 'dean');
+
+  if (indicatorText) {
+    if (currentRole === 'proponent') indicatorText.textContent = 'Project Proponent (Prince Jheck T. Juan)';
+    else if (currentRole === 'coordinator') indicatorText.textContent = 'Extension Coordinator (Dr. Mary Grace Bolos)';
+    else if (currentRole === 'dean') indicatorText.textContent = 'College Dean (Dr. Daniel Maligat)';
+  }
+
+  // Containers
+  const headerWrap = document.getElementById('ds-welcome-header');
+  const primaryWrap = document.getElementById('ds-primary-cards');
+  const secondaryWrap = document.getElementById('ds-secondary-metrics');
+  const mainLeft = document.getElementById('ds-main-left');
+  const mainRight = document.getElementById('ds-main-right');
+  const bottomLeft = document.getElementById('ds-bottom-left');
+  const bottomRight = document.getElementById('ds-bottom-right');
+
+  // Load custom stored proposals/projects if any
+  let customProposals = [];
+  let customProjects = [];
+  try {
+    customProposals = JSON.parse(localStorage.getItem('grace_custom_proposals')) || [];
+    customProjects = JSON.parse(localStorage.getItem('grace_custom_projects')) || [];
+  } catch(e) {}
+
+  // Check interactive endorsements state in localStorage
+  let endorsedProposals = [];
+  let verifiedProposals = [];
+  try {
+    endorsedProposals = JSON.parse(localStorage.getItem('grace_dean_endorsed')) || [];
+    verifiedProposals = JSON.parse(localStorage.getItem('grace_coord_verified')) || [];
+  } catch(e) {}
+
+  /* ==========================================================
+     A. ROLE: PROJECT PROPONENT (Prince Jheck T. Juan)
+     Focus: Personal proposals, assigned projects & implementation,
+            upcoming activity schedule, required actions, budget.
+            STRICTLY NO Beneficiaries & NO Partners.
+     ========================================================== */
+  if (currentRole === 'proponent') {
+    // Header
+    headerWrap.innerHTML = `
+      <div class="ds-header-titles">
+        <h2><i class="fas fa-chalkboard-teacher" style="color:#8B1A1A;"></i> Project Proponent Dashboard</h2>
+        <p>Welcome back, <strong>Prince Jheck T. Juan</strong>! Track your submitted proposals, upload activity narratives, and monitor implementation milestones.</p>
+      </div>
+      <div class="ds-header-meta">
+        <span class="ds-badge-term"><i class="fas fa-calendar-alt" style="color:#8B1A1A;margin-right:0.35rem;"></i>AY 2026–2027 • 1st Semester</span>
+        <a href="faculty-requests.html" class="btn btn-sm btn-outline" style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.45rem 0.9rem;font-weight:700;border-color:#8B1A1A;color:#8B1A1A;background:#FFFDFD;">
+          <i class="fas fa-chalkboard-teacher"></i> Request Faculty
+        </a>
+        <a href="project-form.html" class="btn btn-sm btn-primary" style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.45rem 0.9rem;font-weight:700;">
+          <i class="fas fa-plus-circle"></i> Create Proposal
+        </a>
+      </div>
+    `;
+
+    // 4 Primary Cards
+    primaryWrap.innerHTML = `
+      <a href="proposals.html" class="ds-card c-maroon">
+        <div class="dsc-title">My Proposals</div>
+        <div class="dsc-val">${4 + customProposals.length}</div>
+        <div class="dsc-trend up"><i class="fas fa-file-signature"></i> <span>1 new draft ready</span></div>
+      </a>
+      <a href="projects.html" class="ds-card c-gold">
+        <div class="dsc-title">My Active Projects</div>
+        <div class="dsc-val">${2 + customProjects.length}</div>
+        <div class="dsc-trend up"><i class="fas fa-tasks"></i> <span>Implementation ongoing</span></div>
+      </a>
+      <a href="activities.html" class="ds-card c-blue">
+        <div class="dsc-title">My Activities</div>
+        <div class="dsc-val">12</div>
+        <div class="dsc-trend up"><i class="fas fa-calendar-check"></i> <span>Across your 2 projects</span></div>
+      </a>
+      <a href="documents.html" class="ds-card c-green">
+        <div class="dsc-title">Actions Required</div>
+        <div class="dsc-val">1</div>
+        <div class="dsc-trend down"><i class="fas fa-exclamation-circle"></i> <span>Progress report due</span></div>
+      </a>
+    `;
+
+    // 4 Secondary Metrics (ZERO Beneficiaries & ZERO Partners)
+    secondaryWrap.innerHTML = `
+      <div class="dsm-card">
+        <div class="dsm-icon i-purple"><i class="fas fa-coins"></i></div>
+        <div class="dsm-info">
+          <div class="dsm-val">₱155,000</div>
+          <div class="dsm-label">My Allocated Budget</div>
+        </div>
+      </div>
+      <div class="dsm-card">
+        <div class="dsm-icon i-teal"><i class="fas fa-file-alt"></i></div>
+        <div class="dsm-info">
+          <div class="dsm-val">8 Files</div>
+          <div class="dsm-label">Submitted Documents</div>
+        </div>
+      </div>
+      <div class="dsm-card">
+        <div class="dsm-icon i-rose"><i class="fas fa-star"></i></div>
+        <div class="dsm-info">
+          <div class="dsm-val">4.85 / 5.0</div>
+          <div class="dsm-label">Proponent Rating</div>
+        </div>
+      </div>
+      <div class="dsm-card">
+        <div class="dsm-icon i-orange"><i class="fas fa-hourglass-half"></i></div>
+        <div class="dsm-info">
+          <div class="dsm-val">Sep 25, 2026</div>
+          <div class="dsm-label">Next Milestone Due</div>
+        </div>
+      </div>
+    `;
+
+    // Main Left: My Extension Projects Table
+    let customRowsHTML = '';
+    customProjects.forEach(cp => {
+      customRowsHTML += `
+        <tr>
+          <td>
+            <strong>${cp.title || 'Custom Extension Project'}</strong>
+            <span class="ds-pcode">${cp.project_id || 'EXT-NEW'}</span>
+          </td>
+          <td>${cp.service_type || 'Extension Service'}</td>
+          <td><span class="ds-status s-approved">Active</span></td>
+          <td>
+            <div class="ds-progress-bar"><div class="ds-progress-fill" style="width: 25%;"></div></div>
+            <div class="ds-progress-text">25% Initiated</div>
+          </td>
+          <td>
+            <div style="display:flex;gap:0.35rem;">
+              <a href="activities.html" class="btn-act btn-act-outline btn-act-sm" title="Log Project Activity"><i class="fas fa-calendar-plus"></i></a>
+              <a href="documents.html" class="btn-act btn-act-outline btn-act-sm" title="Upload Narrative"><i class="fas fa-upload"></i></a>
+            </div>
+          </td>
+        </tr>
+      `;
+    });
+
+    mainLeft.innerHTML = `
+      <div class="ds-sec-head">
+        <div class="ds-sec-title"><i class="fas fa-project-diagram"></i> My Extension Projects &amp; Implementation Progress</div>
+        <a href="projects.html" class="ds-sec-action">View All My Projects</a>
+      </div>
+      <div class="ds-table-wrap">
+        <table class="ds-table">
+          <thead>
+            <tr>
+              <th>Project Name &amp; Code</th>
+              <th>Classification</th>
+              <th>Status</th>
+              <th>Implementation</th>
+              <th>Quick Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <strong>Web Development Training for Daet LGU Employees</strong>
+                <span class="ds-pcode">EXT-2026-048 • Skills Training</span>
+              </td>
+              <td>Skills Enhancement</td>
+              <td><span class="ds-status s-ongoing">Ongoing (NTP)</span></td>
+              <td>
+                <div class="ds-progress-bar"><div class="ds-progress-fill" style="width: 85%;"></div></div>
+                <div class="ds-progress-text">85% Completed (Session 3)</div>
+              </td>
+              <td>
+                <div style="display:flex;gap:0.35rem;">
+                  <a href="activities.html" class="btn-act btn-act-outline btn-act-sm" title="View & Log Activities"><i class="fas fa-calendar-check"></i> Activities</a>
+                  <a href="funding.html?project=EXT-2026-048" class="btn-act btn-act-outline btn-act-sm" title="Request Funds"><i class="fas fa-coins"></i> Fund</a>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Community Health Outreach: Digital Literacy</strong>
+                <span class="ds-pcode">EXT-2026-001 • Health Worker ICT</span>
+              </td>
+              <td>Community Service</td>
+              <td><span class="ds-status s-ongoing">Ongoing</span></td>
+              <td>
+                <div class="ds-progress-bar"><div class="ds-progress-fill" style="width: 65%;"></div></div>
+                <div class="ds-progress-text">65% Completed</div>
+              </td>
+              <td>
+                <div style="display:flex;gap:0.35rem;">
+                  <a href="activities.html" class="btn-act btn-act-outline btn-act-sm" title="View & Log Activities"><i class="fas fa-calendar-check"></i> Activities</a>
+                  <a href="documents.html" class="btn-act btn-act-outline btn-act-sm" title="Upload Midterm Narrative"><i class="fas fa-upload"></i> Report</a>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Digital Literacy in Brgy. Lag-on</strong>
+                <span class="ds-pcode">EXT-2026-038 • Completed Cycle</span>
+              </td>
+              <td>Skills Training</td>
+              <td><span class="ds-status s-approved">Completed</span></td>
+              <td>
+                <div class="ds-progress-bar"><div class="ds-progress-fill" style="width: 100%; background:#059669;"></div></div>
+                <div class="ds-progress-text">100% Fully Documented</div>
+              </td>
+              <td>
+                <a href="completion.html" class="btn-act btn-act-outline btn-act-sm" title="View Completion Report"><i class="fas fa-check-double"></i> View</a>
+              </td>
+            </tr>
+            ${customRowsHTML}
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    // Main Right: Coordinator Notices & Proponent Actions
+    mainRight.innerHTML = `
+      <!-- Coordinator Notices Box -->
+      <div class="ds-section">
+        <div class="ds-sec-head">
+          <div class="ds-sec-title"><i class="fas fa-bell" style="color:#D97706;"></i> Coordinator Guidance &amp; Notices</div>
+          <span style="font-size:0.7rem;color:#6B7280;">Official Advice</span>
+        </div>
+        <div class="guidance-box">
+          <div class="guidance-item g-info">
+            <i class="fas fa-info-circle g-icon"></i>
+            <div class="g-content">
+              <span class="g-sender">From Dr. Mary Grace Bolos (Extension Coordinator):</span>
+              <span class="g-msg">Please upload attendance sheets &amp; photo documentation for <strong>EXT-2026-048 Session 3</strong> before the end of the month.</span>
             </div>
           </div>
-        `;
-      }
-    }
-  });
+          <div class="guidance-item g-success">
+            <i class="fas fa-check-circle g-icon"></i>
+            <div class="g-content">
+              <span class="g-sender">From Dr. Mary Grace Bolos (Extension Coordinator):</span>
+              <span class="g-msg">College Dean Dr. Daniel Maligat has formally endorsed your project proposal <strong>EXT-2026-001</strong>.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions for Proponent -->
+      <div class="ds-section" style="flex:1;">
+        <div class="ds-sec-head">
+          <div class="ds-sec-title"><i class="fas fa-bolt" style="color:#F59E0B;"></i> Proponent Quick Actions</div>
+        </div>
+        <div class="qa-grid">
+          <a href="project-form.html" class="qa-btn">
+            <i class="fas fa-plus-circle"></i>
+            <span>Create Proposal</span>
+          </a>
+          <a href="activities.html" class="qa-btn">
+            <i class="fas fa-calendar-check"></i>
+            <span>Log Activity</span>
+          </a>
+          <a href="documents.html" class="qa-btn">
+            <i class="fas fa-file-upload"></i>
+            <span>Submit Report</span>
+          </a>
+          <a href="funding.html" class="qa-btn">
+            <i class="fas fa-coins"></i>
+            <span>Request Funds</span>
+          </a>
+          <a href="completion.html" class="qa-btn">
+            <i class="fas fa-flag-checkered"></i>
+            <span>Completion Docs</span>
+          </a>
+          <a href="status-updates.html" class="qa-btn">
+            <i class="fas fa-route"></i>
+            <span>Project Status</span>
+          </a>
+        </div>
+      </div>
+    `;
+
+    // Bottom Left: Upcoming Activity Deadlines for Prince Jheck
+    bottomLeft.innerHTML = `
+      <div class="ds-sec-head">
+        <div class="ds-sec-title"><i class="fas fa-clock" style="color:#D97706;"></i> My Upcoming Activity Deadlines</div>
+        <a href="activities.html" class="ds-sec-action">View Activity Schedule</a>
+      </div>
+      <div class="dl-list">
+        <div class="dl-item">
+          <div class="dl-date"><span class="d">25</span><span class="m">Sep</span></div>
+          <div class="dl-info">
+            <div class="dl-title">Module 3 Training Delivery (CSS &amp; JS)</div>
+            <div class="dl-proj">EXT-2026-048 • Daet LGU Web Development</div>
+          </div>
+          <a href="activities.html" class="btn-act btn-act-outline btn-act-sm">Log Attendance</a>
+        </div>
+        <div class="dl-item">
+          <div class="dl-date" style="background:#EFF6FF;color:#1D4ED8;border-color:#BFDBFE;"><span class="d">30</span><span class="m">Sep</span></div>
+          <div class="dl-info">
+            <div class="dl-title">Submit Q3 Midterm Progress &amp; Narrative</div>
+            <div class="dl-proj">EXT-2026-001 • Community Health Outreach</div>
+          </div>
+          <a href="documents.html" class="btn-act btn-act-primary btn-act-sm">Upload File</a>
+        </div>
+        <div class="dl-item">
+          <div class="dl-date" style="background:#ECFDF5;color:#059669;border-color:#A7F3D0;"><span class="d">15</span><span class="m">Oct</span></div>
+          <div class="dl-info">
+            <div class="dl-title">Participant Evaluation Collation</div>
+            <div class="dl-proj">EXT-2026-048 • Daet LGU Training</div>
+          </div>
+          <a href="survey.html" class="btn-act btn-act-outline btn-act-sm">View Survey</a>
+        </div>
+      </div>
+    `;
+
+    // Bottom Right: Proponent Budget Utilization
+    bottomRight.innerHTML = `
+      <div class="ds-sec-head">
+        <div class="ds-sec-title"><i class="fas fa-wallet" style="color:#DAA520;"></i> My Project Budget Utilization</div>
+        <a href="funding.html" class="ds-sec-action">Manage Project Funds</a>
+      </div>
+      <div class="fund-list">
+        <div class="fund-row">
+          <div class="fr-left">
+            <div class="fr-dot c1"></div>
+            <div class="fr-label">EXT-2026-048 (Daet LGU)</div>
+          </div>
+          <div class="fr-val">₱52,500 / ₱70,000 <small style="color:#059669;font-weight:600;">(75%)</small></div>
+        </div>
+        <div class="fund-row">
+          <div class="fr-left">
+            <div class="fr-dot c2"></div>
+            <div class="fr-label">EXT-2026-001 (Health Literacy)</div>
+          </div>
+          <div class="fr-val">₱45,000 / ₱85,000 <small style="color:#059669;font-weight:600;">(53%)</small></div>
+        </div>
+        <div class="fund-row">
+          <div class="fr-left">
+            <div class="fr-dot c4"></div>
+            <div class="fr-label">Pending Reimbursement Claim</div>
+          </div>
+          <div class="fr-val" style="color:#6B7280;">₱12,500.00</div>
+        </div>
+        <div class="fund-total-row">
+          <div class="ft-label">Total Allocated to My Projects</div>
+          <div class="ft-val">₱155,000.00</div>
+        </div>
+      </div>
+    `;
+
+  /* ==========================================================
+     B. ROLE: EXTENSION COORDINATOR (Dr. Mary Grace Bolos)
+     Focus: Central operations, proposal intake & completeness check (Stage 1),
+            routing to Dean, active projects monitoring, partners & beneficiaries,
+            8-stage pipeline, status notice broadcast.
+     ========================================================== */
+  } else if (currentRole === 'coordinator') {
+    // Header
+    headerWrap.innerHTML = `
+      <div class="ds-header-titles">
+        <h2><i class="fas fa-clipboard-check" style="color:#8B1A1A;"></i> Extension Coordinator Operations Dashboard</h2>
+        <p>Welcome back, <strong>Dr. Mary Grace Bolos</strong>! Proposal intake &amp; completeness queue, Dean routing, institutional tracking, and partner linkage oversight.</p>
+      </div>
+      <div class="ds-header-meta">
+        <span class="ds-badge-term"><i class="fas fa-network-wired" style="color:#8B1A1A;margin-right:0.35rem;"></i>CCMS Extension Operations Hub</span>
+        <a href="faculty-requests.html" class="btn btn-sm btn-outline" style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.45rem 0.9rem;font-weight:700;border-color:#2563EB;color:#2563EB;background:#EFF6FF;">
+          <i class="fas fa-chalkboard-teacher"></i> Faculty Requests
+        </a>
+        <a href="proposals.html" class="btn btn-sm btn-primary" style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.45rem 0.9rem;font-weight:700;">
+          <i class="fas fa-tasks"></i> Intake Queue
+        </a>
+      </div>
+    `;
+
+    // 4 Primary Cards
+    primaryWrap.innerHTML = `
+      <a href="proposals.html" class="ds-card c-maroon">
+        <div class="dsc-title">Proposal Intake Queue</div>
+        <div class="dsc-val">2</div>
+        <div class="dsc-trend down"><i class="fas fa-clock"></i> <span>Awaiting completeness check</span></div>
+      </a>
+      <a href="projects.html" class="ds-card c-gold">
+        <div class="dsc-title">Active College Projects</div>
+        <div class="dsc-val">18</div>
+        <div class="dsc-trend up"><i class="fas fa-arrow-up"></i> <span>Monitored in implementation</span></div>
+      </a>
+      <a href="proposals.html" class="ds-card c-blue">
+        <div class="dsc-title">Routed to Dean</div>
+        <div class="dsc-val">${3 + verifiedProposals.length}</div>
+        <div class="dsc-trend up"><i class="fas fa-paper-plane"></i> <span>Stage 2 Dean review</span></div>
+      </a>
+      <a href="status-updates.html" class="ds-card c-green">
+        <div class="dsc-title">Authorized to Implement</div>
+        <div class="dsc-val">23</div>
+        <div class="dsc-trend up"><i class="fas fa-check-circle"></i> <span>NTP / MOA Active</span></div>
+      </a>
+    `;
+
+    // 4 Secondary Metrics (Coordinator monitors beneficiaries & partners)
+    secondaryWrap.innerHTML = `
+      <div class="dsm-card">
+        <div class="dsm-icon i-teal"><i class="fas fa-users"></i></div>
+        <div class="dsm-info">
+          <div class="dsm-val">2,850+</div>
+          <div class="dsm-label">Community Beneficiaries</div>
+        </div>
+      </div>
+      <div class="dsm-card">
+        <div class="dsm-icon i-orange"><i class="fas fa-handshake"></i></div>
+        <div class="dsm-info">
+          <div class="dsm-val">35</div>
+          <div class="dsm-label">Partner Organizations</div>
+        </div>
+      </div>
+      <div class="dsm-card">
+        <div class="dsm-icon i-purple"><i class="fas fa-coins"></i></div>
+        <div class="dsm-info">
+          <div class="dsm-val">₱460,000</div>
+          <div class="dsm-label">College Extension Pool</div>
+        </div>
+      </div>
+      <div class="dsm-card">
+        <div class="dsm-icon i-rose"><i class="fas fa-medal"></i></div>
+        <div class="dsm-info">
+          <div class="dsm-val">4.80 / 5.0</div>
+          <div class="dsm-label">Institutional Satisfaction</div>
+        </div>
+      </div>
+    `;
+
+    // Main Left: Proposal Intake & Completeness Queue (Stage 1)
+    const isP50Verified = verifiedProposals.includes('EXT-2026-050');
+    mainLeft.innerHTML = `
+      <div class="ds-sec-head">
+        <div class="ds-sec-title"><i class="fas fa-clipboard-list"></i> Proposal Intake &amp; Completeness Queue (Stage 1)</div>
+        <a href="proposals.html" class="ds-sec-action">View Full Proposal Intake</a>
+      </div>
+      <div class="ds-table-wrap">
+        <table class="ds-table">
+          <thead>
+            <tr>
+              <th>Proposal &amp; Proponent</th>
+              <th>Required Attachments</th>
+              <th>Stage Status</th>
+              <th>Coordinator Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <strong>AI-Assisted Data Management for RHUs</strong>
+                <span class="ds-pcode">EXT-2026-050 • Prof. Roberto De Leon (CCMS-IS)</span>
+              </td>
+              <td>
+                <span style="display:inline-flex;align-items:center;gap:0.3rem;font-weight:700;color:#059669;font-size:0.75rem;">
+                  <i class="fas fa-check-circle"></i> 5/5 Files Complete
+                </span>
+                <span class="ds-pcode">WFP, Budget, Partner Intent verified</span>
+              </td>
+              <td>
+                <span class="ds-status ${isP50Verified ? 's-endorsed' : 's-review'}" id="status-tag-50">
+                  ${isP50Verified ? 'Routed to Dean' : 'Stage 1: Pending Check'}
+                </span>
+              </td>
+              <td>
+                ${isP50Verified 
+                  ? `<span style="font-size:0.72rem;font-weight:700;color:#059669;"><i class="fas fa-check"></i> Forwarded</span>`
+                  : `<button class="btn-act btn-act-primary btn-act-sm" onclick="coordinatorVerifyProposal('EXT-2026-050')"><i class="fas fa-paper-plane"></i> Verify &amp; Route to Dean</button>`
+                }
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Cyber Safety &amp; Digital Citizenship for Schools</strong>
+                <span class="ds-pcode">EXT-2026-049 • Prof. Lei-anne Araña (CCMS-IT)</span>
+              </td>
+              <td>
+                <span style="display:inline-flex;align-items:center;gap:0.3rem;font-weight:700;color:#D97706;font-size:0.75rem;">
+                  <i class="fas fa-exclamation-triangle"></i> 4/5 Files (Draft MOA Pending)
+                </span>
+                <span class="ds-pcode">DepEd Division partner letter awaiting</span>
+              </td>
+              <td><span class="ds-status s-review">Stage 1: In Review</span></td>
+              <td>
+                <a href="documents.html" class="btn-act btn-act-outline btn-act-sm"><i class="fas fa-file-search"></i> Inspect Attachments</a>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Community Health Outreach</strong>
+                <span class="ds-pcode">EXT-2026-001 • Prince Jheck T. Juan</span>
+              </td>
+              <td>
+                <span style="display:inline-flex;align-items:center;gap:0.3rem;font-weight:700;color:#059669;font-size:0.75rem;">
+                  <i class="fas fa-check-circle"></i> Complete &amp; Endorsed
+                </span>
+              </td>
+              <td><span class="ds-status s-approved">Stage 2 Endorsed</span></td>
+              <td>
+                <a href="status-updates.html" class="btn-act btn-act-outline btn-act-sm"><i class="fas fa-route"></i> Track Process</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    // Main Right: 8-Stage Institutional Process Pipeline & Quick Actions
+    mainRight.innerHTML = `
+      <div class="ds-section">
+        <div class="ds-sec-head">
+          <div class="ds-sec-title"><i class="fas fa-route" style="color:#8B1A1A;"></i> 8-Stage Process Pipeline</div>
+          <a href="status-updates.html" class="ds-sec-action">Track Details</a>
+        </div>
+        <div class="pipe-wrap-8">
+          <div class="pipe-stage-row">
+            <div class="psr-left"><span class="psr-num active">1</span><span class="psr-name">Stage 1: Completeness Check</span></div>
+            <span class="psr-count hl">2 proposals</span>
+          </div>
+          <div class="pipe-stage-row">
+            <div class="psr-left"><span class="psr-num">2</span><span class="psr-name">Stage 2: Dean Endorsement</span></div>
+            <span class="psr-count hl">3 proposals</span>
+          </div>
+          <div class="pipe-stage-row">
+            <div class="psr-left"><span class="psr-num">3</span><span class="psr-name">Stage 3: Eligibility Check [E]</span></div>
+            <span class="psr-count">4 verified</span>
+          </div>
+          <div class="pipe-stage-row">
+            <div class="psr-left"><span class="psr-num">4</span><span class="psr-name">Stage 4: Compliance Revisions</span></div>
+            <span class="psr-count">2 active</span>
+          </div>
+          <div class="pipe-stage-row">
+            <div class="psr-left"><span class="psr-num">5</span><span class="psr-name">Stage 5: Technical Evaluation</span></div>
+            <span class="psr-count">3 reviewed</span>
+          </div>
+          <div class="pipe-stage-row">
+            <div class="psr-left"><span class="psr-num">6</span><span class="psr-name">Stage 6: Inst. Endorsement</span></div>
+            <span class="psr-count">1 pending</span>
+          </div>
+          <div class="pipe-stage-row">
+            <div class="psr-left"><span class="psr-num">7</span><span class="psr-name">Stage 7: Board Approval</span></div>
+            <span class="psr-count">2 ready</span>
+          </div>
+          <div class="pipe-stage-row">
+            <div class="psr-left"><span class="psr-num active" style="background:#059669;">8</span><span class="psr-name">Stage 8: NTP / Implementation</span></div>
+            <span class="psr-count" style="background:#ECFDF5;color:#059669;border:1px solid #A7F3D0;">18 active</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions for Coordinator -->
+      <div class="ds-section" style="flex:1;">
+        <div class="ds-sec-head">
+          <div class="ds-sec-title"><i class="fas fa-bolt" style="color:#F59E0B;"></i> Coordinator Operational Actions</div>
+        </div>
+        <div class="qa-grid">
+          <a href="proposals.html" class="qa-btn">
+            <i class="fas fa-clipboard-check"></i>
+            <span>Intake Queue</span>
+          </a>
+          <a href="status-updates.html" class="qa-btn">
+            <i class="fas fa-bullhorn"></i>
+            <span>Post Update</span>
+          </a>
+          <a href="documents.html" class="qa-btn">
+            <i class="fas fa-folder-open"></i>
+            <span>Review Docs</span>
+          </a>
+          <a href="partners.html" class="qa-btn">
+            <i class="fas fa-handshake"></i>
+            <span>Partner MOAs</span>
+          </a>
+          <a href="beneficiaries.html" class="qa-btn">
+            <i class="fas fa-users"></i>
+            <span>Beneficiaries</span>
+          </a>
+          <a href="reports.html" class="qa-btn">
+            <i class="fas fa-chart-bar"></i>
+            <span>College Reports</span>
+          </a>
+        </div>
+      </div>
+    `;
+
+    // Bottom Left: Coordinator Live Status Updates Log
+    bottomLeft.innerHTML = `
+      <div class="ds-sec-head">
+        <div class="ds-sec-title"><i class="fas fa-history" style="color:#8B1A1A;"></i> Live Status Notice Log (Dispatched)</div>
+        <a href="status-updates.html" class="ds-sec-action">Post New Notice</a>
+      </div>
+      <div class="dl-list">
+        <div class="dl-item">
+          <div class="dl-date" style="background:#ECFDF5;color:#059669;border-color:#A7F3D0;"><span class="d">22</span><span class="m">Sep</span></div>
+          <div class="dl-info">
+            <div class="dl-title">Eligibility Check (Stage 3) Approved by Review Panel</div>
+            <div class="dl-proj">EXT-2026-048 • Daet LGU Training • Notified Prince Jheck Juan</div>
+          </div>
+          <span class="ds-status s-approved">Dispatched</span>
+        </div>
+        <div class="dl-item">
+          <div class="dl-date" style="background:#FFFBEB;color:#D97706;border-color:#FDE68A;"><span class="d">21</span><span class="m">Sep</span></div>
+          <div class="dl-info">
+            <div class="dl-title">Technical Evaluation Note: Add Security Matrix</div>
+            <div class="dl-proj">EXT-2026-045 • Municipal Library • Notified Prof. Santos</div>
+          </div>
+          <span class="ds-status s-review">Revision Sent</span>
+        </div>
+        <div class="dl-item">
+          <div class="dl-date" style="background:#EFF6FF;color:#2563EB;border-color:#BFDBFE;"><span class="d">20</span><span class="m">Sep</span></div>
+          <div class="dl-info">
+            <div class="dl-title">Notice to Proceed (NTP) Issued for Implementation</div>
+            <div class="dl-proj">EXT-2026-038 • Digital Literacy Brgy. Lag-on</div>
+          </div>
+          <span class="ds-status s-ongoing">Authorized</span>
+        </div>
+      </div>
+    `;
+
+    // Bottom Right: College Funding Distribution
+    bottomRight.innerHTML = `
+      <div class="ds-sec-head">
+        <div class="ds-sec-title"><i class="fas fa-wallet" style="color:#DAA520;"></i> College-Wide Funding Allocation</div>
+        <a href="funding.html" class="ds-sec-action">Manage Funds</a>
+      </div>
+      <div class="fund-list">
+        <div class="fund-row">
+          <div class="fr-left">
+            <div class="fr-dot c1"></div>
+            <div class="fr-label">Institutional University Allocation</div>
+          </div>
+          <div class="fr-val">₱285,000.00</div>
+        </div>
+        <div class="fund-row">
+          <div class="fr-left">
+            <div class="fr-dot c2"></div>
+            <div class="fr-label">External Partner / LGU Counterpart</div>
+          </div>
+          <div class="fr-val">₱120,000.00</div>
+        </div>
+        <div class="fund-row">
+          <div class="fr-left">
+            <div class="fr-dot c3"></div>
+            <div class="fr-label">Pending Verification / Pipeline</div>
+          </div>
+          <div class="fr-val" style="color:#6B7280;">₱55,000.00</div>
+        </div>
+        <div class="fund-total-row">
+          <div class="ft-label">Total College Extension Fund</div>
+          <div class="ft-val">₱460,000.00</div>
+        </div>
+      </div>
+    `;
+
+  /* ==========================================================
+     C. ROLE: COLLEGE DEAN (Dr. Daniel Maligat)
+     Focus: Strategic academic oversight, Stage 2 proposal endorsements,
+            faculty extension engagement rate, institutional budget absorption,
+            flagship external MOAs & audits.
+     ========================================================== */
+  } else if (currentRole === 'dean') {
+    // Header
+    headerWrap.innerHTML = `
+      <div class="ds-header-titles">
+        <h2><i class="fas fa-user-graduate" style="color:#8B1A1A;"></i> College Dean Executive Dashboard</h2>
+        <p>Welcome back, <strong>Dr. Daniel Maligat</strong>! Executive academic oversight: review proposal compliance, record Dean endorsements, monitor faculty engagement, and strategic partnerships.</p>
+      </div>
+      <div class="ds-header-meta">
+        <span class="ds-badge-term"><i class="fas fa-shield-alt" style="color:#8B1A1A;margin-right:0.35rem;"></i>CCMS Dean Executive Office</span>
+        <a href="faculty-requests.html" class="btn btn-sm btn-outline" style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.45rem 0.9rem;font-weight:700;border-color:#DAA520;color:#92400E;background:#FFFDF7;">
+          <i class="fas fa-chalkboard-teacher"></i> Faculty Special Orders
+        </a>
+        <a href="approvals.html" class="btn btn-sm btn-primary" style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.45rem 0.9rem;font-weight:700;">
+          <i class="fas fa-stamp"></i> Endorsements Queue
+        </a>
+      </div>
+    `;
+
+    // 4 Primary Cards
+    const isP50Endorsed = endorsedProposals.includes('EXT-2026-050');
+    const isP45Endorsed = endorsedProposals.includes('EXT-2026-045');
+    let pendingDeanCount = 2;
+    if (isP50Endorsed) pendingDeanCount--;
+    if (isP45Endorsed) pendingDeanCount--;
+
+    primaryWrap.innerHTML = `
+      <a href="approvals.html" class="ds-card c-maroon">
+        <div class="dsc-title">Awaiting Dean Endorsement</div>
+        <div class="dsc-val">${pendingDeanCount}</div>
+        <div class="dsc-trend down"><i class="fas fa-stamp"></i> <span>Stage 2 College Review</span></div>
+      </a>
+      <a href="approvals.html" class="ds-card c-green">
+        <div class="dsc-title">Total Endorsed Proposals</div>
+        <div class="dsc-val">${28 + endorsedProposals.length}</div>
+        <div class="dsc-trend up"><i class="fas fa-check-double"></i> <span>Endorsed to University VP-RE</span></div>
+      </a>
+      <a href="reports.html" class="ds-card c-gold">
+        <div class="dsc-title">Faculty Engagement</div>
+        <div class="dsc-val">84%</div>
+        <div class="dsc-trend up"><i class="fas fa-users"></i> <span>32 of 38 Faculty Active</span></div>
+      </a>
+      <a href="funding.html" class="ds-card c-blue">
+        <div class="dsc-title">Budget Absorption</div>
+        <div class="dsc-val">88%</div>
+        <div class="dsc-trend up"><i class="fas fa-chart-line"></i> <span>₱405k / ₱460k Committed</span></div>
+      </a>
+    `;
+
+    // 4 Secondary Metrics (Academic Leadership & Accreditation)
+    secondaryWrap.innerHTML = `
+      <div class="dsm-card">
+        <div class="dsm-icon i-purple"><i class="fas fa-graduation-cap"></i></div>
+        <div class="dsm-info">
+          <div class="dsm-val">4 Programs</div>
+          <div class="dsm-label">Accredited Departments</div>
+        </div>
+      </div>
+      <div class="dsm-card">
+        <div class="dsm-icon i-orange"><i class="fas fa-file-contract"></i></div>
+        <div class="dsm-info">
+          <div class="dsm-val">14 MOAs</div>
+          <div class="dsm-label">Strategic External Linkages</div>
+        </div>
+      </div>
+      <div class="dsm-card">
+        <div class="dsm-icon i-teal"><i class="fas fa-user-friends"></i></div>
+        <div class="dsm-info">
+          <div class="dsm-val">78 Students</div>
+          <div class="dsm-label">Service Volunteers</div>
+        </div>
+      </div>
+      <div class="dsm-card">
+        <div class="dsm-icon i-rose"><i class="fas fa-award"></i></div>
+        <div class="dsm-info">
+          <div class="dsm-val">100% Compliant</div>
+          <div class="dsm-label">AACCUP / CHED Audit</div>
+        </div>
+      </div>
+    `;
+
+    // Main Left: Proposals Awaiting College Dean Endorsement (Stage 2)
+    mainLeft.innerHTML = `
+      <div class="ds-sec-head">
+        <div class="ds-sec-title"><i class="fas fa-stamp"></i> Proposals Awaiting College Dean Endorsement (Stage 2)</div>
+        <a href="approvals.html" class="ds-sec-action">View All Endorsement Records</a>
+      </div>
+      <div class="ds-table-wrap">
+        <table class="ds-table">
+          <thead>
+            <tr>
+              <th>Proposal &amp; Department</th>
+              <th>Proponent / Lead</th>
+              <th>Requested Budget</th>
+              <th>Coordinator Status</th>
+              <th>Dean Executive Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <strong>AI-Assisted Data Management for RHUs</strong>
+                <span class="ds-pcode">EXT-2026-050 • Health Informatics</span>
+              </td>
+              <td>Prof. Roberto De Leon <span class="ds-pcode">Dept. of Info Systems</span></td>
+              <td><strong>₱95,000</strong> <span class="ds-pcode">Univ + LGU</span></td>
+              <td>
+                <span class="ds-status s-approved"><i class="fas fa-check"></i> Checked Complete (Dr. Bolos)</span>
+              </td>
+              <td>
+                <div style="display:flex;gap:0.35rem;" id="dean-act-50">
+                  ${isP50Endorsed 
+                    ? `<span class="ds-status s-endorsed"><i class="fas fa-signature"></i> Endorsed by Dean</span>`
+                    : `<button class="btn-act btn-act-success btn-act-sm" onclick="deanEndorseProposal('EXT-2026-050')"><i class="fas fa-folder-open"></i> Review Files &amp; Endorse</button>
+                       <a href="proposals.html" class="btn-act btn-act-outline btn-act-sm" title="View Proposal"><i class="fas fa-eye"></i> Form</a>`
+                  }
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Basud Municipal Library Management System</strong>
+                <span class="ds-pcode">EXT-2026-045 • Systems Development</span>
+              </td>
+              <td>Prof. Maria Santos <span class="ds-pcode">Dept. of Computer Science</span></td>
+              <td><strong>₱110,000</strong> <span class="ds-pcode">DOST Counterpart</span></td>
+              <td>
+                <span class="ds-status s-approved"><i class="fas fa-check"></i> Checked Complete (Dr. Bolos)</span>
+              </td>
+              <td>
+                <div style="display:flex;gap:0.35rem;" id="dean-act-45">
+                  ${isP45Endorsed 
+                    ? `<span class="ds-status s-endorsed"><i class="fas fa-signature"></i> Endorsed by Dean</span>`
+                    : `<button class="btn-act btn-act-success btn-act-sm" onclick="deanEndorseProposal('EXT-2026-045')"><i class="fas fa-folder-open"></i> Review Files &amp; Endorse</button>
+                       <a href="proposals.html" class="btn-act btn-act-outline btn-act-sm" title="View Proposal"><i class="fas fa-eye"></i> Form</a>`
+                  }
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Community Health Outreach</strong>
+                <span class="ds-pcode">EXT-2026-001 • Community Service</span>
+              </td>
+              <td>Prince Jheck T. Juan <span class="ds-pcode">Dept. of Info Tech</span></td>
+              <td><strong>₱85,000</strong></td>
+              <td>
+                <span class="ds-status s-approved"><i class="fas fa-check"></i> Formally Endorsed</span>
+              </td>
+              <td>
+                <span class="ds-status s-endorsed"><i class="fas fa-signature"></i> Endorsed by Dean Maligat</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    // Main Right: Flagship Partnerships & Dean Executive Actions
+    mainRight.innerHTML = `
+      <div class="ds-section">
+        <div class="ds-sec-head">
+          <div class="ds-sec-title"><i class="fas fa-university" style="color:#8B1A1A;"></i> Strategic Partnerships &amp; MOAs</div>
+          <a href="partners.html" class="ds-sec-action">View All Linkages</a>
+        </div>
+        <div class="guidance-box">
+          <div class="guidance-item g-info">
+            <i class="fas fa-handshake g-icon"></i>
+            <div class="g-content">
+              <span class="g-sender">DOST Region V Provincial Office</span>
+              <span class="g-msg">Flagship consultancy &amp; technical training agreement. Active through 2027.</span>
+            </div>
+          </div>
+          <div class="guidance-item g-success">
+            <i class="fas fa-landmark g-icon"></i>
+            <div class="g-content">
+              <span class="g-sender">Municipality of Basud LGU</span>
+              <span class="g-msg">Municipal digital transformation &amp; library computerization MOA enacted.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions for Dean -->
+      <div class="ds-section" style="flex:1;">
+        <div class="ds-sec-head">
+          <div class="ds-sec-title"><i class="fas fa-bolt" style="color:#F59E0B;"></i> Dean Executive Actions</div>
+        </div>
+        <div class="qa-grid">
+          <a href="approvals.html" class="qa-btn">
+            <i class="fas fa-stamp"></i>
+            <span>Endorse Queue</span>
+          </a>
+          <a href="partners.html" class="qa-btn">
+            <i class="fas fa-handshake"></i>
+            <span>Strategic MOAs</span>
+          </a>
+          <a href="reports.html" class="qa-btn">
+            <i class="fas fa-chart-line"></i>
+            <span>College Reports</span>
+          </a>
+          <a href="status-updates.html" class="qa-btn">
+            <i class="fas fa-route"></i>
+            <span>Process Status</span>
+          </a>
+          <a href="projects.html" class="qa-btn">
+            <i class="fas fa-database"></i>
+            <span>All Projects</span>
+          </a>
+          <a href="reports.html" class="qa-btn">
+            <i class="fas fa-award"></i>
+            <span>Accreditation</span>
+          </a>
+        </div>
+      </div>
+    `;
+
+    // Bottom Left: Faculty Engagement by Department
+    bottomLeft.innerHTML = `
+      <div class="ds-sec-head">
+        <div class="ds-sec-title"><i class="fas fa-users-cog" style="color:#8B1A1A;"></i> Faculty Extension Engagement by Department</div>
+        <span style="font-size:0.7rem;color:#6B7280;">32 / 38 Faculty Active</span>
+      </div>
+      <div>
+        <div class="eng-row">
+          <div>
+            <div class="eng-dept">Information Technology (BSIT)</div>
+            <div class="eng-sub">16 Faculty • 5 Active Projects • Prince Jheck Juan (Lead)</div>
+          </div>
+          <span class="eng-badge high">88% Engaged</span>
+        </div>
+        <div class="eng-row">
+          <div>
+            <div class="eng-dept">Computer Science (BSCS)</div>
+            <div class="eng-sub">12 Faculty • 4 Active Projects • Maria Santos (Lead)</div>
+          </div>
+          <span class="eng-badge high">80% Engaged</span>
+        </div>
+        <div class="eng-row">
+          <div>
+            <div class="eng-dept">Information Systems &amp; Multimedia</div>
+            <div class="eng-sub">4 Faculty • 2 Active Projects • Roberto De Leon (Lead)</div>
+          </div>
+          <span class="eng-badge high">100% Engaged</span>
+        </div>
+      </div>
+    `;
+
+    // Bottom Right: Dean Extension Budget Audit & Sign-off
+    bottomRight.innerHTML = `
+      <div class="ds-sec-head">
+        <div class="ds-sec-title"><i class="fas fa-file-invoice-dollar" style="color:#DAA520;"></i> College Budget &amp; Resource Audit</div>
+        <a href="funding.html" class="ds-sec-action">Executive Audit</a>
+      </div>
+      <div class="fund-list">
+        <div class="fund-row">
+          <div class="fr-left">
+            <div class="fr-dot c1"></div>
+            <div class="fr-label">Approved College Extension Budget</div>
+          </div>
+          <div class="fr-val">₱460,000.00</div>
+        </div>
+        <div class="fund-row">
+          <div class="fr-left">
+            <div class="fr-dot c2"></div>
+            <div class="fr-label">Committed / Disbursed to Date</div>
+          </div>
+          <div class="fr-val">₱405,000.00 <small style="color:#059669;font-weight:600;">(88%)</small></div>
+        </div>
+        <div class="fund-row">
+          <div class="fr-left">
+            <div class="fr-dot c3"></div>
+            <div class="fr-label">Available Contingency Reserve</div>
+          </div>
+          <div class="fr-val" style="color:#6B7280;">₱55,000.00</div>
+        </div>
+        <div class="fund-total-row">
+          <div class="ft-label">Dean Sign-Off Status</div>
+          <div class="ft-val" style="font-size:0.85rem;color:#059669;">
+            <i class="fas fa-check-circle"></i> Audited &amp; Approved (Dean Maligat)
+          </div>
+        </div>
+      </div>
+    `;
+  }
+};
+
+/* Dean 1-Click Endorsement Action */
+function deanEndorseProposal(projId) {
+  window.location.href = 'approvals.html';
+}
+
+/* Coordinator Verify Completeness Action */
+function coordinatorVerifyProposal(projId) {
+  let verified = [];
+  try {
+    verified = JSON.parse(localStorage.getItem('grace_coord_verified')) || [];
+  } catch(e) {}
+  if (!verified.includes(projId)) {
+    verified.push(projId);
+    localStorage.setItem('grace_coord_verified', JSON.stringify(verified));
+  }
+  showToast(`<strong>${projId}</strong> completeness verified by Dr. Mary Grace Bolos! Routed to Dean Maligat.`, 'fa-paper-plane');
+  renderDashboardByRole('coordinator');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const initialRole = localStorage.getItem('graceRole') || 'proponent';
+  renderDashboardByRole(initialRole);
+});
 </script>
 </body>
 </html>

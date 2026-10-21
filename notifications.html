@@ -3,11 +3,208 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="G.R.A.C.E PORTAL - Notification Center">
+  <meta name="description" content="G.R.A.C.E PORTAL - User-Specific Notification Center">
   <title>Notifications | G.R.A.C.E PORTAL</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/dashboard.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    /* ── Role Switcher Bar ────────────────────────────────────────── */
+    .role-switcher-bar {
+      background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12px;
+      padding: 0.75rem 1.25rem; margin-bottom: 1.25rem;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.03); flex-wrap: wrap;
+    }
+    .rsb-left { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+    .rsb-tag {
+      font-size: 0.72rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.06em; color: #6B7280; display: flex; align-items: center; gap: 0.4rem;
+    }
+    .rsb-tag i { color: #8B1A1A; }
+    .rsb-indicator {
+      display: inline-flex; align-items: center; gap: 0.45rem;
+      background: #FDF2F2; color: #8B1A1A; border: 1px solid #FCDEDE;
+      padding: 0.3rem 0.75rem; border-radius: 20px; font-size: 0.78rem; font-weight: 700;
+    }
+    .rsb-tabs { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+    .rsb-btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.45rem 0.85rem; border-radius: 8px; font-size: 0.78rem; font-weight: 700;
+      border: 1px solid #E5E7EB; background: #F9FAFB; color: #4B5563;
+      cursor: pointer; transition: all 0.2s ease;
+    }
+    .rsb-btn:hover { background: #F3F4F6; color: #111827; border-color: #D1D5DB; }
+    .rsb-btn.active {
+      background: #8B1A1A; color: white; border-color: #8B1A1A;
+      box-shadow: 0 2px 6px rgba(139,26,26,0.25);
+    }
+    .rsb-btn.active i { color: #F59E0B; }
+    .rsb-btn small { font-size: 0.68rem; font-weight: 500; opacity: 0.85; margin-left: 0.2rem; }
+
+    /* ── Metric Summary Cards ─────────────────────────────────────── */
+    .notif-kpi-grid {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; margin-bottom: 1.25rem;
+    }
+    .notif-kpi-card {
+      background: #fff; border: 1px solid #E5E7EB; border-radius: 12px;
+      padding: 1rem 1.15rem; display: flex; align-items: center; justify-content: space-between;
+      cursor: pointer; transition: all 0.2s ease; text-decoration: none; color: inherit;
+    }
+    .notif-kpi-card:hover, .notif-kpi-card.active {
+      transform: translateY(-2px); border-color: #8B1A1A;
+      box-shadow: 0 6px 14px rgba(139,26,26,0.08);
+    }
+    .notif-kpi-card.active { border-left: 4px solid #8B1A1A; background: #FFFDFD; }
+    .notif-kpi-info h4 { font-size: 1.35rem; font-weight: 800; margin: 0; color: #111827; }
+    .notif-kpi-info p { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; color: #6B7280; margin: 0.2rem 0 0; }
+    .notif-kpi-icon {
+      width: 40px; height: 40px; border-radius: 10px; display: flex;
+      align-items: center; justify-content: center; font-size: 1rem;
+    }
+
+    /* ── Filter & Search Toolbar ──────────────────────────────────── */
+    .notif-toolbar {
+      background: #fff; border: 1px solid #E5E7EB; border-radius: 12px;
+      padding: 0.85rem 1.25rem; margin-bottom: 1.25rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+    }
+    .notif-toolbar-left { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; flex: 1; }
+    .notif-search-wrap {
+      position: relative; min-width: 260px; flex: 1; max-width: 380px;
+    }
+    .notif-search-wrap i {
+      position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%);
+      color: #9CA3AF; font-size: 0.82rem;
+    }
+    .notif-search-input {
+      width: 100%; padding: 0.5rem 0.75rem 0.5rem 2.25rem; border: 1px solid #D1D5DB;
+      border-radius: 8px; font-size: 0.82rem; font-family: inherit; outline: none;
+    }
+    .notif-search-input:focus { border-color: #8B1A1A; box-shadow: 0 0 0 3px rgba(139,26,26,0.1); }
+    .notif-filter-select {
+      padding: 0.5rem 0.85rem; border: 1px solid #D1D5DB; border-radius: 8px;
+      font-size: 0.82rem; background: #fff; font-family: inherit; color: #374151; font-weight: 600;
+    }
+    .notif-toolbar-right { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+    .btn-notif-action {
+      display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 0.85rem;
+      border-radius: 8px; font-size: 0.78rem; font-weight: 700; cursor: pointer; transition: all 0.15s ease;
+      border: 1px solid #D1D5DB; background: #fff; color: #374151;
+    }
+    .btn-notif-action:hover { background: #F3F4F6; color: #111827; }
+    .btn-notif-action.btn-maroon {
+      background: #8B1A1A; color: #fff; border-color: #8B1A1A;
+    }
+    .btn-notif-action.btn-maroon:hover { background: #6F1414; }
+
+    /* ── Notifications List & Items ───────────────────────────────── */
+    .notif-feed { display: flex; flex-direction: column; gap: 0.75rem; }
+    .notif-item-card {
+      background: #fff; border: 1px solid #E5E7EB; border-radius: 12px;
+      padding: 1.15rem 1.35rem; display: flex; gap: 1.15rem; position: relative;
+      transition: all 0.2s ease;
+    }
+    .notif-item-card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04); border-color: #D1D5DB;
+    }
+    .notif-item-card.unread {
+      background: #FFFCFC; border-color: #F8D7DA; border-left: 5px solid #8B1A1A;
+    }
+    .notif-item-card.read { opacity: 0.88; }
+    .notif-item-card.read:hover { opacity: 1; }
+
+    .notif-avatar-wrap {
+      width: 44px; height: 44px; border-radius: 10px; display: flex;
+      align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;
+    }
+    .notif-content-wrap { flex: 1; min-width: 0; }
+    .notif-top-row {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 0.75rem; margin-bottom: 0.35rem; flex-wrap: wrap;
+    }
+    .notif-title-line {
+      display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
+    }
+    .notif-heading {
+      font-size: 0.94rem; font-weight: 700; color: #111827; margin: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+    .notif-item-card.unread .notif-heading { color: #8B1A1A; font-weight: 800; }
+    .badge-unread-pill {
+      font-size: 0.65rem; font-weight: 800; text-transform: uppercase;
+      background: #8B1A1A; color: #fff; padding: 0.15rem 0.45rem; border-radius: 4px;
+      letter-spacing: 0.05em; display: inline-flex; align-items: center; gap: 0.25rem;
+    }
+    .notif-desc {
+      font-size: 0.83rem; color: #4B5563; line-height: 1.45; margin: 0 0 0.75rem 0;
+    }
+    .notif-footer-meta {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 0.75rem; flex-wrap: wrap; font-size: 0.74rem; color: #6B7280;
+    }
+    .notif-meta-tags { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+    .notif-tag-badge {
+      display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.2rem 0.55rem;
+      border-radius: 20px; font-weight: 700; font-size: 0.7rem; border: 1px solid transparent;
+    }
+    .notif-time-str { display: inline-flex; align-items: center; gap: 0.3rem; color: #6B7280; }
+    .notif-actions-group { display: flex; align-items: center; gap: 0.45rem; }
+    .btn-item-action {
+      display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.35rem 0.7rem;
+      border-radius: 6px; font-size: 0.72rem; font-weight: 700; cursor: pointer;
+      border: 1px solid #D1D5DB; background: #fff; color: #374151; transition: all 0.15s ease;
+      text-decoration: none;
+    }
+    .btn-item-action:hover { background: #F3F4F6; color: #111827; }
+    .btn-item-action.primary {
+      background: #8B1A1A; color: #fff; border-color: #8B1A1A;
+    }
+    .btn-item-action.primary:hover { background: #6F1414; }
+    .btn-item-icon-only {
+      width: 28px; height: 28px; display: inline-flex; align-items: center;
+      justify-content: center; border-radius: 6px; border: 1px solid #E5E7EB;
+      background: #F9FAFB; color: #6B7280; cursor: pointer; transition: all 0.15s ease;
+    }
+    .btn-item-icon-only:hover { background: #FEE2E2; color: #DC2626; border-color: #FCA5A5; }
+
+    /* ── Empty State ──────────────────────────────────────────────── */
+    .notif-empty-box {
+      background: #fff; border: 1px dashed #D1D5DB; border-radius: 12px;
+      padding: 3.5rem 1.5rem; text-align: center; color: #6B7280;
+    }
+    .notif-empty-icon {
+      width: 64px; height: 64px; border-radius: 50%; background: #F3F4F6;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 1.75rem; color: #9CA3AF; margin-bottom: 1rem;
+    }
+    .notif-empty-box h4 { font-size: 1.1rem; color: #111827; margin: 0 0 0.35rem; }
+    .notif-empty-box p { font-size: 0.84rem; margin: 0 0 1.25rem; max-width: 400px; margin-inline: auto; }
+
+    /* Floating Toast */
+    #notif-toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+      background: #111827; color: white; padding: 0.85rem 1.25rem;
+      border-radius: 8px; font-size: 0.82rem; font-weight: 500;
+      display: flex; align-items: center; gap: 0.6rem;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.18); transform: translateY(100px);
+      opacity: 0; transition: all 0.25s ease; pointer-events: none;
+    }
+    #notif-toast.show { transform: translateY(0); opacity: 1; pointer-events: auto; }
+    #notif-toast i { color: #10B981; font-size: 1rem; }
+
+    @media (max-width: 1024px) {
+      .notif-kpi-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .notif-kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .role-switcher-bar { flex-direction: column; align-items: flex-start; }
+      .rsb-tabs { width: 100%; }
+      .rsb-btn { flex: 1; justify-content: center; }
+      .notif-toolbar { flex-direction: column; align-items: stretch; }
+      .notif-search-wrap { max-width: none; }
+    }
+  </style>
 </head>
 <body>
   <div class="dashboard-layout">
@@ -17,123 +214,439 @@
       <header class="topbar" id="topbar"></header>
 
       <div class="dashboard-content">
-        <div class="page-header">
-          <div><h2>Notification Center</h2><p class="page-subtitle">Project updates, approval status changes, deadline reminders, and system alerts</p></div>
-          <div class="page-header-actions">
-            <button class="btn btn-sm btn-outline"><i class="fas fa-check-double"></i> Mark All Read</button>
+        
+        <!-- Role Switcher Banner (Tailored Notifications per User Persona) -->
+        <div class="role-switcher-bar">
+          <div class="rsb-left">
+            <span class="rsb-tag"><i class="fas fa-shield-alt"></i> User Notification Profile:</span>
+            <div class="rsb-indicator" id="role-indicator">
+              <i class="fas fa-user-circle"></i>
+              <span id="role-indicator-text">Loading profile...</span>
+            </div>
+          </div>
+          <div class="rsb-tabs">
+            <button class="rsb-btn" id="btn-role-proponent" onclick="switchNotifRole('proponent')">
+              <i class="fas fa-user-edit"></i>
+              <span>Proponent</span>
+              <small>Prince Jheck</small>
+            </button>
+            <button class="rsb-btn" id="btn-role-coordinator" onclick="switchNotifRole('coordinator')">
+              <i class="fas fa-clipboard-check"></i>
+              <span>Coordinator</span>
+              <small>Dr. Mary Grace</small>
+            </button>
+            <button class="rsb-btn" id="btn-role-dean" onclick="switchNotifRole('dean')">
+              <i class="fas fa-user-graduate"></i>
+              <span>College Dean</span>
+              <small>Dr. Daniel</small>
+            </button>
           </div>
         </div>
 
-        <!-- Filter Tabs -->
-        <div class="filter-bar">
-          <div class="filter-group">
-            <span class="filter-label">Filter:</span>
-            <select class="form-select">
-              <option>All Notifications</option>
-              <option>Unread Only</option>
-              <option>Approval Updates</option>
-              <option>Funding</option>
-              <option>Deadlines</option>
-              <option>Documents</option>
-              <option>Submissions</option>
+        <!-- Page Header -->
+        <div class="page-header" style="margin-bottom:1.25rem;">
+          <div>
+            <h2 id="notif-page-heading">User Notification Center</h2>
+            <p class="page-subtitle" id="notif-page-sub">Project updates, approval statuses, document reviews, and milestone reminders for your account</p>
+          </div>
+          <div class="page-header-actions">
+            <button class="btn btn-sm btn-outline" onclick="markAllNotificationsAsRead()"><i class="fas fa-check-double"></i> Mark All Read</button>
+            <button class="btn btn-sm btn-outline" onclick="resetUserNotifications()"><i class="fas fa-sync-alt"></i> Refresh Feed</button>
+          </div>
+        </div>
+
+        <!-- KPI Metric Summary Row -->
+        <div class="notif-kpi-grid">
+          <div class="notif-kpi-card active" id="kpi-filter-all" onclick="filterByCard('all')">
+            <div class="notif-kpi-info">
+              <h4 id="kpi-count-all">0</h4>
+              <p>Total Alerts</p>
+            </div>
+            <div class="notif-kpi-icon" style="background:#F3F4F6;color:#374151;">
+              <i class="fas fa-bell"></i>
+            </div>
+          </div>
+
+          <div class="notif-kpi-card" id="kpi-filter-unread" onclick="filterByCard('unread')">
+            <div class="notif-kpi-info">
+              <h4 id="kpi-count-unread" style="color:#8B1A1A;">0</h4>
+              <p>Unread</p>
+            </div>
+            <div class="notif-kpi-icon" style="background:#FEE2E2;color:#8B1A1A;">
+              <i class="fas fa-envelope"></i>
+            </div>
+          </div>
+
+          <div class="notif-kpi-card" id="kpi-filter-approval" onclick="filterByCard('approval')">
+            <div class="notif-kpi-info">
+              <h4 id="kpi-count-approval" style="color:#059669;">0</h4>
+              <p>Approvals</p>
+            </div>
+            <div class="notif-kpi-icon" style="background:#ECFDF5;color:#059669;">
+              <i class="fas fa-clipboard-check"></i>
+            </div>
+          </div>
+
+          <div class="notif-kpi-card" id="kpi-filter-documents" onclick="filterByCard('documents')">
+            <div class="notif-kpi-info">
+              <h4 id="kpi-count-documents" style="color:#7C3AED;">0</h4>
+              <p>Documents</p>
+            </div>
+            <div class="notif-kpi-icon" style="background:#F5F3FF;color:#7C3AED;">
+              <i class="fas fa-folder-open"></i>
+            </div>
+          </div>
+
+          <div class="notif-kpi-card" id="kpi-filter-deadline" onclick="filterByCard('deadline')">
+            <div class="notif-kpi-info">
+              <h4 id="kpi-count-deadline" style="color:#D97706;">0</h4>
+              <p>Deadlines</p>
+            </div>
+            <div class="notif-kpi-icon" style="background:#FFFBEB;color:#D97706;">
+              <i class="fas fa-clock"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <div class="notif-toolbar">
+          <div class="notif-toolbar-left">
+            <div class="notif-search-wrap">
+              <i class="fas fa-search"></i>
+              <input type="text" id="notif-search-box" class="notif-search-input" placeholder="Search notices, project codes, or keywords..." oninput="handleSearchFilter()">
+            </div>
+            <select id="notif-category-filter" class="notif-filter-select" onchange="handleDropdownFilter(this.value)">
+              <option value="all">All Notification Types</option>
+              <option value="unread">Unread Only</option>
+              <option value="approval">Approvals &amp; Endorsements</option>
+              <option value="submission">Submissions &amp; Revisions</option>
+              <option value="documents">Document Verifications</option>
+              <option value="funding">Grants &amp; Funding</option>
+              <option value="deadline">Milestone Deadlines</option>
+              <option value="completion">Completion Sign-offs</option>
             </select>
           </div>
-        </div>
-
-        <!-- Notifications List -->
-        <div class="notif-list">
-          <!-- Unread -->
-          <div class="notif-item unread">
-            <div class="notif-icon-wrap" style="background: rgba(139,26,26,0.08);">
-              <i class="fas fa-tasks" style="color: var(--maroon);"></i>
-            </div>
-            <div class="notif-body">
-              <h5>Project EXT-2026-048 progress updated</h5>
-              <p>Progress updated to 65% — Module 3: JavaScript Basics is now in progress</p>
-              <div class="notif-meta">
-                <span class="notif-time"><i class="fas fa-clock"></i> 2 hours ago</span>
-                <span class="notif-badge"><span class="badge badge-progress"><span class="badge-dot"></span>Progress</span></span>
-              </div>
-            </div>
-            <div class="notif-dot-indicator"></div>
-          </div>
-
-          <div class="notif-item unread">
-            <div class="notif-icon-wrap" style="background: rgba(218,165,32,0.08);">
-              <i class="fas fa-coins" style="color: var(--gold);"></i>
-            </div>
-            <div class="notif-body">
-              <h5>Funding verified for EXT-2026-041</h5>
-              <p>Institutional funding confirmed — ₱35,000 for ICT Consultancy Services for DOST CamNorte</p>
-              <div class="notif-meta">
-                <span class="notif-time"><i class="fas fa-clock"></i> 5 hours ago</span>
-                <span class="notif-badge"><span class="badge badge-approved"><span class="badge-dot"></span>Funding</span></span>
-              </div>
-            </div>
-            <div class="notif-dot-indicator"></div>
-          </div>
-
-          <!-- Read -->
-          <div class="notif-item">
-            <div class="notif-icon-wrap" style="background: rgba(16,185,129,0.08);">
-              <i class="fas fa-check-circle" style="color: var(--status-completed);"></i>
-            </div>
-            <div class="notif-body">
-              <h5>EXT-2026-038 marked complete</h5>
-              <p>Digital Literacy Program for Brgy. Lag-on — Final report submitted and approved</p>
-              <div class="notif-meta">
-                <span class="notif-time"><i class="fas fa-clock"></i> 1 day ago</span>
-                <span class="notif-badge"><span class="badge badge-completed"><span class="badge-dot"></span>Completed</span></span>
-              </div>
-            </div>
-          </div>
-
-          <div class="notif-item">
-            <div class="notif-icon-wrap" style="background: rgba(59,130,246,0.08);">
-              <i class="fas fa-file-alt" style="color: var(--status-review);"></i>
-            </div>
-            <div class="notif-body">
-              <h5>New proposal submitted</h5>
-              <p>Data Analytics Workshop for CamNorte Provincial Office — awaiting eligibility check</p>
-              <div class="notif-meta">
-                <span class="notif-time"><i class="fas fa-clock"></i> 2 days ago</span>
-                <span class="notif-badge"><span class="badge badge-review"><span class="badge-dot"></span>Submission</span></span>
-              </div>
-            </div>
-          </div>
-
-          <div class="notif-item">
-            <div class="notif-icon-wrap" style="background: rgba(245,158,11,0.08);">
-              <i class="fas fa-calendar-alt" style="color: var(--status-pending);"></i>
-            </div>
-            <div class="notif-body">
-              <h5>Upcoming deadline: Module 3 completion</h5>
-              <p>EXT-2026-048 — Module 3: JavaScript Basics ends Sep 25. Ensure materials and assessments are ready.</p>
-              <div class="notif-meta">
-                <span class="notif-time"><i class="fas fa-clock"></i> 3 days ago</span>
-                <span class="notif-badge"><span class="badge badge-pending"><span class="badge-dot"></span>Deadline</span></span>
-              </div>
-            </div>
-          </div>
-
-          <div class="notif-item">
-            <div class="notif-icon-wrap" style="background: rgba(99,102,241,0.08);">
-              <i class="fas fa-upload" style="color: var(--status-progress);"></i>
-            </div>
-            <div class="notif-body">
-              <h5>Attendance record uploaded</h5>
-              <p>Module 2 attendance records uploaded for EXT-2026-048 — Web Development Training</p>
-              <div class="notif-meta">
-                <span class="notif-time"><i class="fas fa-clock"></i> 5 days ago</span>
-                <span class="notif-badge"><span class="badge" style="background: rgba(99,102,241,0.1); color: #6366F1;"><span class="badge-dot" style="background: #6366F1;"></span>Document</span></span>
-              </div>
-            </div>
+          <div class="notif-toolbar-right">
+            <button class="btn-notif-action btn-maroon" onclick="markAllNotificationsAsRead()">
+              <i class="fas fa-check-double"></i> Mark All as Read
+            </button>
+            <button class="btn-notif-action" onclick="clearReadNotifications()">
+              <i class="fas fa-broom"></i> Clear Read
+            </button>
           </div>
         </div>
+
+        <!-- Dynamic Notifications Feed -->
+        <div class="notif-feed" id="notif-feed-container">
+          <!-- Rendered dynamically by JavaScript -->
+        </div>
+
       </div>
     </div>
   </div>
+
+  <!-- Toast Element -->
+  <div id="notif-toast">
+    <i class="fas fa-check-circle"></i>
+    <span id="notif-toast-text">Notifications updated</span>
+  </div>
+
   <script src="js/data.js"></script>
   <script src="js/main.js"></script>
+  <script>
+    /* ============================================================
+       G.R.A.C.E PORTAL — Role-Separated Notification Center
+       Strict separation per user persona:
+         • Proponent: Prince Jheck T. Juan
+         • Extension Coordinator: Dr. Mary Grace Bolos
+         • College Dean: Dr. Daniel Maligat
+       ============================================================ */
+
+    let currentRole = localStorage.getItem('graceRole') || 'proponent';
+    let currentCategoryFilter = 'all';
+    let currentSearchQuery = '';
+
+    const ROLE_METADATA = {
+      proponent: {
+        name: 'Prince Jheck T. Juan',
+        roleLabel: 'Project Proponent',
+        dept: 'Information Technology (BSIT)',
+        sub: 'Notices from Extension Coordinator, Dean endorsements, uploaded file reviews, and module milestones for your projects.'
+      },
+      coordinator: {
+        name: 'Dr. Mary Grace Bolos',
+        roleLabel: 'Extension Coordinator',
+        dept: 'CCMS Extension Services Office',
+        sub: 'Incoming faculty proposals, documents submitted for checking, Dean endorsement receipts, and quarterly reporting compliance.'
+      },
+      dean: {
+        name: 'Dr. Daniel Maligat',
+        roleLabel: 'College Dean',
+        dept: 'College of Computing & Multimedia Studies',
+        sub: 'Proposals routed for Dean signature, executive budget threshold alerts, and college-wide faculty extension participation quotas.'
+      }
+    };
+
+    function showToast(msg, icon = 'fa-check-circle') {
+      const toast = document.getElementById('notif-toast');
+      const text = document.getElementById('notif-toast-text');
+      if (!toast || !text) return;
+      toast.querySelector('i').className = `fas ${icon}`;
+      text.innerHTML = msg;
+      toast.classList.add('show');
+      setTimeout(() => { toast.classList.remove('show'); }, 3500);
+    }
+
+    function switchNotifRole(newRole) {
+      currentRole = newRole;
+      localStorage.setItem('graceRole', newRole);
+
+      // Re-inject sidebar and topbar
+      if (typeof injectSidebar === 'function') injectSidebar();
+      if (typeof injectTopbar === 'function') injectTopbar();
+
+      currentCategoryFilter = 'all';
+      currentSearchQuery = '';
+      const searchBox = document.getElementById('notif-search-box');
+      if (searchBox) searchBox.value = '';
+      const categorySelect = document.getElementById('notif-category-filter');
+      if (categorySelect) categorySelect.value = 'all';
+
+      renderNotifications();
+      showToast(`Switched inbox to <strong>${ROLE_METADATA[newRole].name} (${ROLE_METADATA[newRole].roleLabel})</strong>`, 'fa-user-check');
+    }
+
+    function updateRoleUI() {
+      // Role Switcher Buttons
+      const btnProp = document.getElementById('btn-role-proponent');
+      const btnCoord = document.getElementById('btn-role-coordinator');
+      const btnDean = document.getElementById('btn-role-dean');
+      if (btnProp) btnProp.classList.toggle('active', currentRole === 'proponent');
+      if (btnCoord) btnCoord.classList.toggle('active', currentRole === 'coordinator');
+      if (btnDean) btnDean.classList.toggle('active', currentRole === 'dean');
+
+      // Indicator
+      const meta = ROLE_METADATA[currentRole] || ROLE_METADATA.proponent;
+      const indicatorText = document.getElementById('role-indicator-text');
+      if (indicatorText) {
+        indicatorText.innerHTML = `<strong>${meta.name}</strong> · ${meta.roleLabel} (${meta.dept})`;
+      }
+
+      // Page Title & Subtitle
+      const heading = document.getElementById('notif-page-heading');
+      const sub = document.getElementById('notif-page-sub');
+      if (heading) heading.textContent = `${meta.roleLabel} Notifications`;
+      if (sub) sub.textContent = meta.sub;
+    }
+
+    function getCategoryBadge(type) {
+      const map = {
+        approval:   { label: 'Approval Update',  bg: '#FEF2F2', color: '#8B1A1A', border: '#FCA5A5', icon: 'fa-clipboard-check' },
+        submission: { label: 'Proposal Notice',  bg: '#EFF6FF', color: '#2563EB', border: '#BFDBFE', icon: 'fa-file-alt' },
+        documents:  { label: 'Document Review',  bg: '#F5F3FF', color: '#7C3AED', border: '#DDD6FE', icon: 'fa-folder-open' },
+        funding:    { label: 'Grants & Funding', bg: '#FFFBEB', color: '#D97706', border: '#FDE68A', icon: 'fa-coins' },
+        deadline:   { label: 'Deadline Alert',   bg: '#FFF7ED', color: '#EA580C', border: '#FFEDD5', icon: 'fa-calendar-alt' },
+        completion: { label: 'Completion',       bg: '#ECFDF5', color: '#059669', border: '#A7F3D0', icon: 'fa-check-circle' },
+        reports:    { label: 'College Report',   bg: '#F3F4F6', color: '#4B5563', border: '#E5E7EB', icon: 'fa-chart-pie' }
+      };
+      return map[type] || { label: 'Notice', bg: '#F3F4F6', color: '#4B5563', border: '#E5E7EB', icon: 'fa-bell' };
+    }
+
+    function renderNotifications() {
+      updateRoleUI();
+
+      if (!window.GRACE || typeof window.GRACE.getNotificationsForRole !== 'function') {
+        console.error('GRACE data layer not available');
+        return;
+      }
+
+      const allList = window.GRACE.getNotificationsForRole(currentRole);
+
+      // Update KPI counters
+      const countAll = allList.length;
+      const countUnread = allList.filter(n => !n.read).length;
+      const countApproval = allList.filter(n => n.type === 'approval').length;
+      const countDocs = allList.filter(n => n.type === 'documents').length;
+      const countDeadlines = allList.filter(n => n.type === 'deadline').length;
+
+      document.getElementById('kpi-count-all').textContent = countAll;
+      document.getElementById('kpi-count-unread').textContent = countUnread;
+      document.getElementById('kpi-count-approval').textContent = countApproval;
+      document.getElementById('kpi-count-documents').textContent = countDocs;
+      document.getElementById('kpi-count-deadline').textContent = countDeadlines;
+
+      // Filter list
+      let filtered = allList;
+      if (currentCategoryFilter === 'unread') {
+        filtered = filtered.filter(n => !n.read);
+      } else if (currentCategoryFilter !== 'all') {
+        filtered = filtered.filter(n => n.type === currentCategoryFilter);
+      }
+
+      if (currentSearchQuery.trim()) {
+        const q = currentSearchQuery.toLowerCase();
+        filtered = filtered.filter(n =>
+          (n.title && n.title.toLowerCase().includes(q)) ||
+          (n.message && n.message.toLowerCase().includes(q)) ||
+          (n.type && n.type.toLowerCase().includes(q))
+        );
+      }
+
+      const container = document.getElementById('notif-feed-container');
+      if (!container) return;
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="notif-empty-box">
+            <div class="notif-empty-icon"><i class="fas fa-inbox"></i></div>
+            <h4>No Notifications Found</h4>
+            <p>You have caught up with all notices for this filter. Switch views or select "All Notifications" to view your full history.</p>
+            <button class="btn btn-sm btn-outline" onclick="filterByCard('all')">View All Notifications</button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(item => {
+        const isUnread = !item.read;
+        const b = getCategoryBadge(item.type);
+        const actionBtn = item.actionUrl ? `
+          <a href="${item.actionUrl}" class="btn-item-action ${isUnread ? 'primary' : ''}">
+            <i class="fas fa-arrow-right"></i> ${item.actionLabel || 'View Details'}
+          </a>
+        ` : '';
+
+        return `
+          <div class="notif-item-card ${isUnread ? 'unread' : 'read'}" id="notif-card-${item.notif_id}">
+            <div class="notif-avatar-wrap" style="background:${b.bg};color:${item.color || b.color};">
+              <i class="fas ${item.icon || b.icon}"></i>
+            </div>
+            
+            <div class="notif-content-wrap">
+              <div class="notif-top-row">
+                <div class="notif-title-line">
+                  <h4 class="notif-heading">${item.title}</h4>
+                  ${isUnread ? `<span class="badge-unread-pill"><i class="fas fa-circle" style="font-size:0.4rem;"></i> New</span>` : ''}
+                </div>
+                <div style="font-size:0.72rem;color:#9CA3AF;display:inline-flex;align-items:center;gap:0.3rem;">
+                  <i class="fas fa-clock"></i> ${item.time}
+                </div>
+              </div>
+
+              <p class="notif-desc">${item.message}</p>
+
+              <div class="notif-footer-meta">
+                <div class="notif-meta-tags">
+                  <span class="notif-tag-badge" style="background:${b.bg};color:${b.color};border-color:${b.border};">
+                    <i class="fas ${b.icon}"></i> ${b.label}
+                  </span>
+                  <span style="font-size:0.7rem;color:#6B7280;background:#F9FAFB;padding:0.2rem 0.5rem;border-radius:4px;border:1px solid #E5E7EB;">
+                    Recipient: <strong>${ROLE_METADATA[currentRole].name.split(' ')[0]}</strong>
+                  </span>
+                </div>
+
+                <div class="notif-actions-group">
+                  ${actionBtn}
+                  <button class="btn-item-action" onclick="toggleReadStatus('${item.notif_id}', ${!isUnread})" title="${isUnread ? 'Mark as Read' : 'Mark as Unread'}">
+                    <i class="fas ${isUnread ? 'fa-check' : 'fa-envelope'}"></i> ${isUnread ? 'Mark Read' : 'Unread'}
+                  </button>
+                  <button class="btn-item-icon-only" onclick="deleteNotificationItem('${item.notif_id}')" title="Dismiss Notice">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleReadStatus(notifId, newReadStatus) {
+      if (!window.GRACE) return;
+      window.GRACE.markNotificationRead(notifId, currentRole, newReadStatus);
+      renderNotifications();
+      showToast(newReadStatus ? 'Marked notification as read' : 'Marked notification as unread', 'fa-check');
+    }
+
+    function deleteNotificationItem(notifId) {
+      if (!window.GRACE) return;
+      window.GRACE.deleteNotification(notifId, currentRole);
+      renderNotifications();
+      showToast('Notification dismissed', 'fa-trash-alt');
+    }
+
+    function markAllNotificationsAsRead() {
+      if (!window.GRACE) return;
+      window.GRACE.markAllNotificationsRead(currentRole);
+      renderNotifications();
+      showToast(`All notifications for <strong>${ROLE_METADATA[currentRole].roleLabel}</strong> marked as read`, 'fa-check-double');
+    }
+
+    function clearReadNotifications() {
+      if (!window.GRACE) return;
+      const list = window.GRACE.getNotificationsForRole(currentRole);
+      const readItems = list.filter(n => n.read);
+      if (readItems.length === 0) {
+        showToast('No read notifications to clear', 'fa-info-circle');
+        return;
+      }
+      readItems.forEach(item => {
+        window.GRACE.deleteNotification(item.notif_id, currentRole);
+      });
+      renderNotifications();
+      showToast(`Cleared ${readItems.length} read notifications`, 'fa-broom');
+    }
+
+    function resetUserNotifications() {
+      if (!window.GRACE) return;
+      window.GRACE.resetNotificationsForRole(currentRole);
+      renderNotifications();
+      showToast('Notification feed refreshed to standard state', 'fa-sync-alt');
+    }
+
+    function filterByCard(filterType) {
+      currentCategoryFilter = filterType;
+      
+      // Update active card styling
+      document.querySelectorAll('.notif-kpi-card').forEach(c => c.classList.remove('active'));
+      const activeCard = document.getElementById(`kpi-filter-${filterType}`);
+      if (activeCard) activeCard.classList.add('active');
+
+      const select = document.getElementById('notif-category-filter');
+      if (select) {
+        if (filterType === 'all' || filterType === 'unread' || filterType === 'approval' || filterType === 'documents' || filterType === 'deadline') {
+          select.value = filterType;
+        } else {
+          select.value = 'all';
+        }
+      }
+
+      renderNotifications();
+    }
+
+    function handleDropdownFilter(val) {
+      currentCategoryFilter = val;
+      document.querySelectorAll('.notif-kpi-card').forEach(c => c.classList.remove('active'));
+      const card = document.getElementById(`kpi-filter-${val}`);
+      if (card) card.classList.add('active');
+      renderNotifications();
+    }
+
+    function handleSearchFilter() {
+      const box = document.getElementById('notif-search-box');
+      currentSearchQuery = box ? box.value : '';
+      renderNotifications();
+    }
+
+    // React in real time to any portal actions
+    window.addEventListener('grace-notifs-updated', (e) => {
+      renderNotifications();
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      currentRole = localStorage.getItem('graceRole') || 'proponent';
+      renderNotifications();
+    });
+  </script>
 </body>
 </html>

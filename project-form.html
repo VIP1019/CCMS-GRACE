@@ -218,6 +218,75 @@
     .breadcrumb a { color: #8B1A1A; text-decoration: none; font-weight: 500; }
     .breadcrumb .sep { color: #D1D5DB; }
     .breadcrumb .current { color: #374151; font-weight: 600; }
+
+    /* Modal Overlays & Real Form CNSC-OP-EXT-01A Paper Styling */
+    .pd-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.52); z-index: 2000;
+      align-items: flex-start; justify-content: center;
+      padding: 2rem 1rem; overflow-y: auto;
+    }
+    .pd-overlay.open { display: flex; }
+    .pd-modal {
+      background: #fff; border-radius: 14px;
+      width: 100%; max-width: 920px;
+      box-shadow: 0 24px 72px rgba(0,0,0,0.22);
+      position: relative; overflow: hidden;
+      margin: auto;
+    }
+    .pd-header {
+      background: linear-gradient(120deg, #78350F, #B45309, #D97706);
+      padding: 1.1rem 1.5rem; color: #fff;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    }
+    .pd-header h2 { font-size: 1.05rem; font-weight: 800; margin: 0; }
+    .pd-header p { font-size: 0.76rem; opacity: 0.85; margin: 0.15rem 0 0; }
+    .pd-close {
+      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 8px; width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; cursor: pointer; font-size: 1rem; flex-shrink: 0;
+    }
+    .pd-close:hover { background: rgba(255,255,255,0.28); }
+    .pd-btn {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      padding: 0.42rem 0.95rem; border-radius: 7px; font-size: 0.78rem;
+      font-weight: 600; cursor: pointer; border: 1px solid transparent;
+      text-decoration: none;
+    }
+
+    .real-form-paper {
+      background: #fff; color: #111827; padding: 2rem 2.5rem;
+      max-width: 840px; margin: 0 auto; border: 1px solid #D1D5DB;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08); font-family: 'Times New Roman', Times, serif; line-height: 1.4;
+    }
+    .real-form-header {
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 2px solid #000; padding-bottom: 0.75rem; margin-bottom: 1.25rem;
+    }
+    .real-form-header-center { text-align: center; flex: 1; }
+    .rf-title-main { font-size: 13pt; font-weight: bold; text-transform: uppercase; margin: 0; }
+    .rf-sub { font-size: 10pt; margin: 2px 0; }
+    .rf-code-box { border: 1px solid #000; padding: 4px 8px; font-size: 8pt; font-family: 'Arial', sans-serif; text-align: right; }
+    .real-form-title-banner {
+      background: #E5E7EB; border: 1px solid #000; text-align: center; font-weight: bold;
+      font-size: 11pt; padding: 6px; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .real-form-table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; font-size: 9.5pt; }
+    .real-form-table th, .real-form-table td { border: 1px solid #000; padding: 6px 8px; vertical-align: top; }
+    .real-form-table th { background: #F3F4F6; font-weight: bold; text-align: left; }
+    .rf-section-head { background: #E5E7EB; font-weight: bold; font-size: 10pt; padding: 5px 8px; border: 1px solid #000; border-bottom: none; margin-top: 1rem; }
+    .rf-signature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 2rem; font-size: 9pt; text-align: center; }
+    .rf-sig-line { border-bottom: 1px solid #000; margin-top: 3.5rem; margin-bottom: 0.35rem; font-weight: bold; }
+
+    @media print {
+      body * { visibility: hidden !important; }
+      #rf-print-area, #rf-print-area * { visibility: visible !important; }
+      #rf-print-area { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; }
+      .pd-overlay { position: static; background: none; }
+      .pd-modal { box-shadow: none; border: none; }
+      .pd-header, .no-print { display: none !important; }
+    }
   </style>
 </head>
 <body>
@@ -234,38 +303,34 @@
         <div class="breadcrumb">
           <a href="dashboard.html">Dashboard</a>
           <span class="sep">/</span>
+          <a href="projects.html">Projects</a>
+          <span class="sep">/</span>
           <a href="proposals.html">Proposals</a>
           <span class="sep">/</span>
-          <span class="current">New Proposal</span>
+          <span class="current">New Project &amp; Proposal</span>
         </div>
 
         <!-- Form Header Row -->
         <div class="form-header-row">
           <div class="form-header-title">
-            <h3>New Project Proposal</h3>
-            <div class="form-code">Form CNSC-OP-EXT-01A — Complete the required project information before submitting the proposal for evaluation.</div>
+            <h3>Create Extension Project &amp; Upload Proposal</h3>
+            <div class="form-code">Register the extension project profile and upload the official proposal document. The Extension Coordinator will verify completeness and route for approval.</div>
           </div>
-          <div class="step-indicator">
-            <div class="step-dot">1</div>
-            <span>STEP 1 OF 3 &nbsp;—&nbsp; Project Information</span>
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <span class="badge" style="background:rgba(139,26,26,0.08);color:#8B1A1A;border:1px solid rgba(139,26,26,0.2);font-weight:700;font-size:0.75rem;padding:0.35rem 0.75rem;border-radius:999px;">
+              <i class="fas fa-file-upload"></i> Proposal Upload Flow
+            </span>
           </div>
         </div>
 
-        <!-- Stepper -->
-        <div class="proposal-stepper">
-          <div class="pstep active">
-            <div class="psn">1</div>
-            Project Information
+        <!-- Direct Upload Banner -->
+        <div style="background:#F0FDF4;border:1.5px solid #A7F3D0;border-radius:10px;padding:0.9rem 1.25rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:0.85rem;">
+          <div style="width:38px;height:38px;border-radius:8px;background:rgba(5,150,105,0.15);color:#059669;display:flex;align-items:center;justify-content:center;font-size:1.15rem;flex-shrink:0;">
+            <i class="fas fa-file-upload"></i>
           </div>
-          <span class="pstep-sep">›</span>
-          <div class="pstep">
-            <div class="psn">2</div>
-            Beneficiaries &amp; Partners
-          </div>
-          <span class="pstep-sep">›</span>
-          <div class="pstep">
-            <div class="psn">3</div>
-            Review &amp; Submit
+          <div>
+            <div style="font-weight:800;font-size:0.88rem;color:#065F46;">Direct Proposal Document Upload Active</div>
+            <div style="font-size:0.76rem;color:#047857;">You do not need to manually type the entire proposal here. Enter the essential project details and directly attach your official proposal file (.pdf, .docx, .xlsx).</div>
           </div>
         </div>
 
@@ -274,7 +339,7 @@
           <div class="form-section-head">
             <div class="fsh-left">
               <div class="fsh-title">Project Information</div>
-              <div class="fsh-desc">Fields marked with (*) are mandatory</div>
+              <div class="fsh-desc">Core metadata for project registration and institutional monitoring</div>
             </div>
             <div class="fsh-entity">DB Entity: PROJECT</div>
           </div>
@@ -282,43 +347,51 @@
             <div class="fg2" style="margin-bottom:1rem;">
               <div class="fgroup">
                 <label class="flabel">Project Code <span class="auto-tag">Auto-generated</span></label>
-                <input class="finput locked" type="text" value="EXT-2026-001" readonly>
-                <div class="fhint">Official proposal title will reflect in the MOA document.</div>
+                <input class="finput locked" type="text" id="project-code" value="EXT-2026-049" readonly>
+                <div class="fhint">Official project code identifier in the CCMS registry.</div>
               </div>
               <div class="fgroup">
                 <label class="flabel">Project Title <span class="req">*</span></label>
-                <input class="finput" type="text" id="project-title" value="Community Health Outreach: Digital Literacy &amp; Basic ICT Skills Training" placeholder="Official proposal title">
-                <div class="ferror" id="title-error" style="display:none;"><i class="fas fa-exclamation-circle"></i> Project Title is required and must reflect the official Memorandum of Agreement scope.</div>
+                <input class="finput" type="text" id="project-title" value="Community Health Outreach: Digital Literacy &amp; Basic ICT Skills Training" placeholder="Official project proposal title">
+                <div class="ferror" id="title-error" style="display:none;"><i class="fas fa-exclamation-circle"></i> Project Title is required.</div>
               </div>
             </div>
+
+            <div class="fg2" style="margin-bottom:1rem;">
+              <div class="fgroup">
+                <label class="flabel">Project Proponent / Leader <span class="req">*</span></label>
+                <input class="finput locked" type="text" id="project-leader" value="Prince Jheck T. Juan" readonly>
+                <div class="fhint">Logged in Project Proponent (PER001)</div>
+              </div>
+              <div class="fgroup">
+                <label class="flabel">Location / Coverage Area <span class="req">*</span></label>
+                <input class="finput" type="text" id="coverage-area" value="Daet, Camarines Norte" placeholder="e.g. Daet, Camarines Norte">
+              </div>
+            </div>
+
             <div class="fg2" style="margin-bottom:1rem;">
               <div class="fgroup">
                 <label class="flabel">Service Type <span class="req">*</span></label>
                 <select class="fselect" id="service-type">
-                  <option selected>Community Extension</option>
+                  <option selected>Community Extension Service</option>
                   <option>Skills Enhancement Training</option>
                   <option>Consultancy Services</option>
-                  <option>System Development</option>
+                  <option>System Development &amp; Implementation</option>
                   <option>Research Collaboration</option>
                 </select>
               </div>
               <div class="fgroup">
                 <label class="flabel">Source Type <span class="req">*</span></label>
                 <select class="fselect" id="source-type">
-                  <option selected>Institutional</option>
-                  <option>External — LGU</option>
-                  <option>External — NGO</option>
-                  <option>External — Private</option>
+                  <option selected>Faculty-Initiated</option>
+                  <option>External Request — LGU</option>
+                  <option>External Request — NGO</option>
+                  <option>Institutional</option>
                 </select>
               </div>
             </div>
-            <div class="fgroup" style="margin-bottom:1rem;">
-              <label class="flabel">Project Description <span class="req">*</span></label>
-              <div class="fhint" style="margin-bottom:0.3rem;">Use objective language adhering to CCMS Extension Manual criteria.</div>
-              <textarea class="ftextarea" id="project-desc" maxlength="1000" rows="4" oninput="updateCharCount(this,'desc-count')">A collaborative community outreach program organized by CCMS faculty and student leaders aimed at delivering foundational ICT literacy, cyber safety education, and productivity software workshops to barangay officials and public school educators in Daet, Camarines Norte.</textarea>
-              <div style="display:flex;justify-content:flex-end;"><span class="fchar-count"><span id="desc-count">308</span> / 1000 characters</span></div>
-            </div>
-            <div class="fg2">
+
+            <div class="fg2" style="margin-bottom:1rem;">
               <div class="fgroup">
                 <label class="flabel">Project Start Date <span class="req">*</span></label>
                 <input class="finput" type="date" id="start-date" value="2026-09-20">
@@ -328,92 +401,97 @@
                 <input class="finput" type="date" id="end-date" value="2026-12-15">
               </div>
             </div>
-          </div>
-        </div>
 
-        <!-- Form: Proposal Information -->
-        <div class="form-section">
-          <div class="form-section-head">
-            <div class="fsh-left">
-              <div class="fsh-title">Proposal Information</div>
-            </div>
-            <div class="fsh-entity">DB Record: PROPOSAL Entity</div>
-          </div>
-          <div class="form-section-body">
             <div class="fg2">
               <div class="fgroup">
-                <label class="flabel">Proposal Version <span class="auto-tag">Initial submission</span></label>
-                <input class="finput locked" type="text" value="1" readonly>
+                <label class="flabel">Proposed Total Budget <span class="req">*</span></label>
+                <input class="finput" type="text" id="budget-total" value="₱ 45,000.00" placeholder="e.g. ₱ 45,000.00">
               </div>
               <div class="fgroup">
-                <label class="flabel">Submission Date <span class="auto-tag">System generated</span></label>
-                <input class="finput locked" type="text" value="September 16, 2026" readonly>
+                <label class="flabel">Target Beneficiaries &amp; Estimated Count</label>
+                <input class="finput" type="text" id="target-beneficiaries" value="Barangay Officials &amp; Public Educators (40 Participants)" placeholder="Target group and count">
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Form: Supporting Documents -->
+        <!-- Form: Official Proposal Document Upload (PRIMARY) -->
+        <div class="form-section">
+          <div class="form-section-head" style="background:#F0FDF4;border-bottom-color:#A7F3D0;">
+            <div class="fsh-left">
+              <div class="fsh-title" style="color:#065F46;"><i class="fas fa-file-pdf" style="margin-right:0.4rem;color:#059669;"></i> Official Project Proposal Document <span style="font-size:0.65rem;background:#059669;color:#fff;padding:1px 6px;border-radius:4px;margin-left:0.4rem;text-transform:uppercase;">Required</span></div>
+              <div class="fsh-desc" style="color:#047857;">Upload your prepared official project proposal document file. This file will be reviewed and verified by the Extension Coordinator.</div>
+            </div>
+            <div class="fsh-entity" style="color:#065F46;font-weight:700;">PROPOSAL FILE</div>
+          </div>
+          <div class="form-section-body">
+            <div class="upload-area" id="prop-upload-area" onclick="document.getElementById('proposal-file-input').click()">
+              <div class="upload-icon" style="color:#059669;"><i class="fas fa-cloud-upload-alt"></i></div>
+              <div class="upload-text" style="font-size:0.9rem;"><strong>Click to browse file</strong> or drag and drop proposal here</div>
+              <div class="upload-hint">Accepted file types: <strong>.PDF, .DOCX, .XLSX</strong> • Maximum file size: 15 MB</div>
+              <input type="file" id="proposal-file-input" style="display:none;" accept=".pdf,.docx,.xlsx" onchange="handleProposalFileSelect(this)">
+            </div>
+
+            <!-- Attached Proposal File Card -->
+            <div id="attached-proposal-card" class="attached-file" style="margin-top:1rem;border:1.5px solid #A7F3D0;background:#F0FDF4;display:flex;">
+              <div class="file-icon" style="color:#059669;"><i class="fas fa-file-pdf" id="prop-card-icon"></i></div>
+              <div class="file-info">
+                <div class="file-name" id="prop-card-name" style="font-size:0.9rem;font-weight:700;color:#065F46;">
+                  EXT-2026-049_Project_Proposal_v1.pdf
+                  <span class="file-badge-up" style="background:#059669;color:#fff;border-color:#059669;">Attached</span>
+                  <span class="file-badge-main" style="background:#EFF6FF;color:#1D4ED8;">Official Proposal</span>
+                </div>
+                <div class="file-meta" id="prop-card-meta" style="color:#047857;">2.4 MB • Application/PDF • Attached and ready for submission</div>
+              </div>
+              <div class="file-actions" style="display:flex;gap:0.4rem;align-items:center;">
+                <button type="button" class="btn btn-sm btn-outline" style="background:#fff;font-size:0.75rem;padding:0.3rem 0.65rem;color:#059669;border-color:#A7F3D0;" onclick="previewUploadedProposal()"><i class="fas fa-eye"></i> Preview</button>
+                <button type="button" class="btn btn-sm btn-outline" style="background:#fff;font-size:0.75rem;padding:0.3rem 0.65rem;color:#374151;" onclick="document.getElementById('proposal-file-input').click()"><i class="fas fa-sync-alt"></i> Replace</button>
+                <button type="button" class="btn btn-sm btn-outline" style="background:#fff;font-size:0.75rem;padding:0.3rem 0.65rem;color:#DC2626;border-color:rgba(220,38,38,0.3);" onclick="removeProposalFile()" title="Remove file"><i class="fas fa-times"></i></button>
+              </div>
+            </div>
+            <div class="ferror" id="file-error" style="display:none;margin-top:0.5rem;"><i class="fas fa-exclamation-circle"></i> Please upload or attach the official proposal document.</div>
+          </div>
+        </div>
+
+        <!-- Form: Additional Supporting Attachments (Optional) -->
         <div class="form-section">
           <div class="form-section-head">
             <div class="fsh-left">
-              <div class="fsh-title">Supporting Documents</div>
-              <div class="fsh-desc">Attach complete project syllabus, MOA/MOU drafts, or budget summaries</div>
+              <div class="fsh-title">Additional Supporting Attachments <span style="font-size:0.65rem;color:#6B7280;font-weight:500;text-transform:none;">(Optional)</span></div>
+              <div class="fsh-desc">Attach draft MOA/MOU, syllabus, activity schedule, or partner endorsement letters</div>
             </div>
           </div>
           <div class="form-section-body">
-            <div class="upload-area" onclick="document.getElementById('file-upload').click()">
-              <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
-              <div class="upload-text">Upload supporting documents<br><small>Drag and drop files here, or <a href="#">browse files</a></small></div>
-              <div class="upload-hint">Accepted file types: PDF, DOCX, XLSX • Maximum file size: 10 MB</div>
-              <input type="file" id="file-upload" style="display:none;" multiple accept=".pdf,.docx,.xlsx">
+            <div class="upload-area" style="padding:1.25rem 1rem;" onclick="document.getElementById('extra-files-input').click()">
+              <div class="upload-icon" style="font-size:1.5rem;margin-bottom:0.25rem;"><i class="fas fa-paperclip"></i></div>
+              <div class="upload-text" style="font-size:0.8rem;">Attach additional files (e.g., MOA/MOU drafts, budget sheets, syllabus)</div>
+              <input type="file" id="extra-files-input" style="display:none;" multiple accept=".pdf,.docx,.xlsx" onchange="handleExtraFilesSelect(this)">
             </div>
-
-            <!-- Attached Files -->
-            <div id="attached-files-label" style="font-size:0.75rem;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:0.06em;margin-top:1rem;margin-bottom:0.5rem;">
-              ATTACHED FILES (1) <span style="font-size:0.68rem;color:#059669;font-weight:600;">— Ready for Verification</span>
-            </div>
-            <div class="attached-file">
-              <div class="file-icon"><i class="fas fa-file-pdf"></i></div>
-              <div class="file-info">
-                <div class="file-name">Project_Proposal_v1.pdf <span class="file-badge-up">Uploaded</span> <span class="file-badge-main">Main Doc</span></div>
-                <div class="file-meta">2.4 MB &nbsp;•&nbsp; Application/PDF &nbsp;•&nbsp; Uploaded on Sep 16, 2026, 09:14 AM</div>
-              </div>
-              <div class="file-actions">
-                <button class="file-btn">View</button>
-                <button class="file-btn remove">Remove</button>
-              </div>
-            </div>
+            <div id="extra-files-list" style="margin-top:0.75rem;"></div>
           </div>
         </div>
 
-        <!-- Before Submission Checklist -->
-        <div class="form-notice-yellow" style="margin-bottom:1rem;">
-          <div style="display:flex;align-items:center;gap:0.5rem;font-weight:700;margin-bottom:0.5rem;font-size:0.8rem;">
-            <i class="fas fa-exclamation-triangle" style="color:#F59E0B;"></i>
-            BEFORE SUBMISSION CHECKLIST &nbsp;&nbsp; <span style="font-size:0.68rem;font-weight:500;color:#92400E;">CCMS Quality Assurance Protocol</span>
+        <!-- Before Submission Protocol -->
+        <div class="form-notice-yellow" style="margin-bottom:1.25rem;">
+          <div style="display:flex;align-items:center;gap:0.5rem;font-weight:700;margin-bottom:0.4rem;font-size:0.8rem;">
+            <i class="fas fa-shield-alt" style="color:#D97706;"></i>
+            INSTITUTIONAL WORKFLOW CONFIRMATION &nbsp;&nbsp; <span style="font-size:0.68rem;font-weight:500;color:#92400E;">CCMS Extension Protocol</span>
           </div>
-          <ul style="margin:0;padding-left:1.2rem;font-size:0.8rem;color:#78350F;line-height:1.9;">
-            <li>Verify that all required fields (*) are complete, accurate, and consistent with institutional project standards.</li>
-            <li>Ensure all required supporting documents (proposals, MOA/MOU drafts, program schedules) are attached.</li>
-            <li>Review the project information carefully. Submitting initiates the official Extension Office endorsement workflow.</li>
-          </ul>
-        </div>
-
-        <div style="font-size:0.72rem;color:#9CA3AF;text-align:center;margin-bottom:1rem;">
-          <i class="fas fa-cloud"></i> All changes saved to temporary session storage.
+          <div style="font-size:0.78rem;color:#78350F;line-height:1.7;">
+            Upon clicking <strong>Submit Project &amp; Proposal</strong>, the project will be registered and your proposal document will be routed to Extension Coordinator <strong>Dr. Mary Grace Bolos</strong> for Stage 1 Completeness Check.
+          </div>
         </div>
 
         <!-- Footer Actions -->
         <div class="form-footer-bar">
           <div class="form-footer-left">
-            <i class="fas fa-info-circle" style="color:#9CA3AF;"></i>
-            CCMS Extension Office &nbsp;•&nbsp; Form CNSC-OP-EXT-01A
+            <i class="fas fa-university" style="color:#8B1A1A;"></i>
+            CCMS Extension Office &nbsp;•&nbsp; Project Proposal Submission
           </div>
           <div class="form-footer-actions">
-            <button class="btn-cancel" onclick="window.location.href='proposals.html'">Cancel</button>
-            <button class="btn-draft"><i class="fas fa-save"></i> Save Draft</button>
-            <button class="btn-submit-prop" onclick="submitProposal()">Submit Proposal →</button>
+            <button type="button" class="btn-cancel" onclick="window.location.href='proposals.html'">Cancel</button>
+            <button type="button" class="btn-draft" onclick="saveDraft()"><i class="fas fa-save"></i> Save Draft</button>
+            <button type="button" class="btn-submit-prop" onclick="submitProposal()">Submit Project &amp; Proposal →</button>
           </div>
         </div>
 
@@ -422,11 +500,421 @@
   </div>
 </div>
 
+<!-- Official Form CNSC-OP-EXT-01A (Real Form) Modal -->
+<div id="modal-real-form" class="pd-overlay" onclick="if(event.target===this)closeRealFormModal();">
+  <div class="pd-modal" style="max-width:920px;">
+    <div class="pd-header">
+      <div>
+        <h2 id="rf-modal-title"><i class="fas fa-file-invoice" style="margin-right:0.4rem;"></i> Official Form CNSC-OP-EXT-01A</h2>
+        <p>Auto-Generated Official Extension Project Proposal Form</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem;">
+        <button type="button" class="pd-btn" onclick="window.print()" style="background:#fff;color:#78350F;border:none;font-weight:700;">
+          <i class="fas fa-print"></i> Print / Save as PDF
+        </button>
+        <button class="pd-close" onclick="closeRealFormModal()">&times;</button>
+      </div>
+    </div>
+    <div style="padding:1.5rem;background:#F3F4F6;max-height:80vh;overflow-y:auto;" id="rf-print-area">
+      <!-- Generated Form Paper injected here -->
+    </div>
+  </div>
+</div>
+
 <script src="js/data.js"></script>
 <script src="js/main.js"></script>
 <script>
+  let attachedProposalFile = {
+    name: 'EXT-2026-049_Project_Proposal_v1.pdf',
+    size: '2.4 MB',
+    type: 'application/pdf',
+    date: new Date().toISOString().slice(0, 10)
+  };
+
+  let extraAttachedFiles = [];
+
+  function handleProposalFileSelect(input) {
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const sizeMB = (file.size / (1024 * 1024)).toFixed(1) + ' MB';
+      attachedProposalFile = {
+        name: file.name,
+        size: sizeMB,
+        type: file.type || 'application/pdf',
+        date: new Date().toISOString().slice(0, 10)
+      };
+      renderProposalCard();
+    }
+  }
+
+  function renderProposalCard() {
+    const card = document.getElementById('attached-proposal-card');
+    const nameEl = document.getElementById('prop-card-name');
+    const metaEl = document.getElementById('prop-card-meta');
+    const iconEl = document.getElementById('prop-card-icon');
+    const errEl = document.getElementById('file-error');
+    if (errEl) errEl.style.display = 'none';
+
+    if (attachedProposalFile) {
+      if (card) card.style.display = 'flex';
+      const isDocx = attachedProposalFile.name.endsWith('.docx') || attachedProposalFile.name.endsWith('.doc');
+      const isXlsx = attachedProposalFile.name.endsWith('.xlsx') || attachedProposalFile.name.endsWith('.xls');
+      if (iconEl) {
+        iconEl.className = isDocx ? 'fas fa-file-word' : (isXlsx ? 'fas fa-file-excel' : 'fas fa-file-pdf');
+      }
+      if (nameEl) {
+        nameEl.innerHTML = `${attachedProposalFile.name} <span class="file-badge-up" style="background:#059669;color:#fff;border-color:#059669;">Attached</span> <span class="file-badge-main" style="background:#EFF6FF;color:#1D4ED8;">Official Proposal</span>`;
+      }
+      if (metaEl) {
+        metaEl.textContent = `${attachedProposalFile.size} • Attached and ready for coordinator verification`;
+      }
+    } else {
+      if (card) card.style.display = 'none';
+    }
+  }
+
+  function removeProposalFile() {
+    attachedProposalFile = null;
+    const input = document.getElementById('proposal-file-input');
+    if (input) input.value = '';
+    renderProposalCard();
+  }
+
+  function handleExtraFilesSelect(input) {
+    if (input.files && input.files.length) {
+      for (let i = 0; i < input.files.length; i++) {
+        const f = input.files[i];
+        extraAttachedFiles.push({
+          name: f.name,
+          size: (f.size / (1024 * 1024)).toFixed(1) + ' MB'
+        });
+      }
+      renderExtraFiles();
+    }
+  }
+
+  function renderExtraFiles() {
+    const listEl = document.getElementById('extra-files-list');
+    if (!listEl) return;
+    if (!extraAttachedFiles.length) {
+      listEl.innerHTML = '';
+      return;
+    }
+    listEl.innerHTML = extraAttachedFiles.map((f, idx) => `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0.85rem;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:6px;margin-bottom:0.4rem;font-size:0.8rem;">
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <i class="fas fa-paperclip" style="color:#8B1A1A;"></i>
+          <span style="font-weight:600;color:#111827;">${f.name}</span>
+          <span style="font-size:0.7rem;color:#6B7280;">(${f.size})</span>
+        </div>
+        <button type="button" onclick="extraAttachedFiles.splice(${idx},1);renderExtraFiles();" style="border:none;background:none;color:#DC2626;cursor:pointer;font-size:0.85rem;" title="Remove attachment">&times;</button>
+      </div>
+    `).join('');
+  }
+
+  function previewUploadedProposal() {
+    if (!attachedProposalFile) {
+      alert('No proposal file attached yet.');
+      return;
+    }
+    const title = document.getElementById('project-title').value.trim() || 'Extension Project Proposal';
+    const code = document.getElementById('project-code') ? document.getElementById('project-code').value : 'EXT-2026-049';
+    const leader = document.getElementById('project-leader') ? document.getElementById('project-leader').value : 'Prince Jheck T. Juan';
+    const budget = document.getElementById('budget-total') ? document.getElementById('budget-total').value : '₱ 45,000.00';
+    const serviceType = document.getElementById('service-type').value;
+    const startDate = document.getElementById('start-date').value || '2026-09-20';
+    const endDate = document.getElementById('end-date').value || '2026-12-15';
+
+    const viewerHtml = `
+      <div style="background:#fff;border-radius:10px;padding:2rem;max-width:780px;margin:auto;box-shadow:0 10px 30px rgba(0,0,0,0.1);font-family:'Times New Roman',Times,serif;line-height:1.5;">
+        <div style="text-align:center;border-bottom:2px solid #000;padding-bottom:1rem;margin-bottom:1.5rem;">
+          <div style="font-size:10pt;text-transform:uppercase;letter-spacing:1px;">Republic of the Philippines</div>
+          <div style="font-size:14pt;font-weight:bold;margin:2px 0;">UNIVERSITY OF CAMARINES NORTE</div>
+          <div style="font-size:11pt;font-weight:bold;color:#8B1A1A;">COLLEGE OF COMPUTING AND MULTIMEDIA STUDIES</div>
+          <div style="font-size:9pt;font-style:italic;">Extension Services Office • Daet, Camarines Norte</div>
+        </div>
+
+        <div style="background:#F3F4F6;border:1px solid #000;padding:8px;text-align:center;font-weight:bold;font-size:11pt;margin-bottom:1.25rem;">
+          OFFICIAL EXTENSION PROJECT PROPOSAL DOCUMENT
+        </div>
+
+        <table style="width:100%;border-collapse:collapse;margin-bottom:1.25rem;font-size:10pt;">
+          <tr>
+            <td style="border:1px solid #000;padding:6px;width:30%;background:#F9FAFB;font-weight:bold;">Project Title:</td>
+            <td style="border:1px solid #000;padding:6px;font-weight:bold;color:#8B1A1A;">${title}</td>
+          </tr>
+          <tr>
+            <td style="border:1px solid #000;padding:6px;background:#F9FAFB;font-weight:bold;">Project Code:</td>
+            <td style="border:1px solid #000;padding:6px;font-family:monospace;font-weight:bold;">${code}</td>
+          </tr>
+          <tr>
+            <td style="border:1px solid #000;padding:6px;background:#F9FAFB;font-weight:bold;">Project Leader:</td>
+            <td style="border:1px solid #000;padding:6px;">${leader}</td>
+          </tr>
+          <tr>
+            <td style="border:1px solid #000;padding:6px;background:#F9FAFB;font-weight:bold;">Service Type:</td>
+            <td style="border:1px solid #000;padding:6px;">${serviceType}</td>
+          </tr>
+          <tr>
+            <td style="border:1px solid #000;padding:6px;background:#F9FAFB;font-weight:bold;">Schedule:</td>
+            <td style="border:1px solid #000;padding:6px;">${startDate} to ${endDate}</td>
+          </tr>
+          <tr>
+            <td style="border:1px solid #000;padding:6px;background:#F9FAFB;font-weight:bold;">Total Proposed Budget:</td>
+            <td style="border:1px solid #000;padding:6px;font-weight:bold;color:#059669;">${budget}</td>
+          </tr>
+          <tr>
+            <td style="border:1px solid #000;padding:6px;background:#F9FAFB;font-weight:bold;">Attached Proposal File:</td>
+            <td style="border:1px solid #000;padding:6px;font-weight:bold;color:#1E40AF;"><i class="fas fa-file-pdf"></i> ${attachedProposalFile.name} (${attachedProposalFile.size})</td>
+          </tr>
+        </table>
+
+        <div style="border:1px dashed #9CA3AF;padding:1.5rem;background:#FAFAFA;border-radius:6px;margin-bottom:1.5rem;text-align:center;">
+          <div style="font-size:2rem;color:#059669;margin-bottom:0.5rem;"><i class="fas fa-check-circle"></i></div>
+          <div style="font-weight:bold;font-size:1rem;color:#111827;">Attached Proposal Document Verified</div>
+          <div style="font-size:0.85rem;color:#6B7280;margin-top:0.3rem;">File "${attachedProposalFile.name}" is attached and will be processed in-portal by CCMS evaluators.</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:2.5rem;font-size:9pt;text-align:center;">
+          <div>
+            <div style="border-bottom:1px solid #000;padding-bottom:2rem;margin-bottom:0.4rem;font-weight:bold;">${leader.toUpperCase()}</div>
+            <div>Project Proponent / Leader</div>
+          </div>
+          <div>
+            <div style="border-bottom:1px solid #000;padding-bottom:2rem;margin-bottom:0.4rem;font-weight:bold;">DR. MARY GRACE BOLOS</div>
+            <div>Extension Coordinator, CCMS</div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('rf-print-area').innerHTML = viewerHtml;
+    document.getElementById('rf-modal-title').innerHTML = `<i class="fas fa-file-pdf" style="margin-right:0.4rem;color:#059669;"></i> Proposal Document Preview — ${code}`;
+    document.getElementById('modal-real-form').classList.add('open');
+  }
+
+  function saveDraft() {
+    alert('Project draft and proposal file reference saved to local storage.');
+  }
+
   function updateCharCount(el, countId) {
-    document.getElementById(countId).textContent = el.value.length;
+    if (document.getElementById(countId)) {
+      document.getElementById(countId).textContent = el.value.length;
+    }
+  }
+
+  function generateRealFormFromInputs() {
+    const title = document.getElementById('project-title').value.trim() || 'Extension Project Proposal';
+    const code = document.getElementById('project-code') ? document.getElementById('project-code').value : 'EXT-2026-001';
+    const leader = document.getElementById('project-leader') ? document.getElementById('project-leader').value : 'Prince Jheck T. Juan';
+    const serviceType = document.getElementById('service-type').value;
+    const sourceType = document.getElementById('source-type').value;
+    const coverage = document.getElementById('coverage-area') ? document.getElementById('coverage-area').value : 'Daet, Camarines Norte';
+    const bens = document.getElementById('target-beneficiaries') ? document.getElementById('target-beneficiaries').value : 'Barangay Officials & Public Educators (40 Participants)';
+    const budget = document.getElementById('budget-total') ? document.getElementById('budget-total').value : '₱ 45,000.00';
+    const desc = document.getElementById('project-desc').value.trim();
+    const objectivesRaw = document.getElementById('project-objectives') ? document.getElementById('project-objectives').value.trim() : '';
+    const startDate = document.getElementById('start-date').value || '2026-09-20';
+    const endDate = document.getElementById('end-date').value || '2026-12-15';
+
+    const objLines = objectivesRaw.split('\n').filter(l => l.trim().length > 0);
+    const objListHtml = objLines.length
+      ? `<ol style="margin:4px 0 0 1.2rem;padding-left:0.5rem;line-height:1.5;">${objLines.map(l => `<li>${l.replace(/^\d+[\.\)]\s*/, '')}</li>`).join('')}</ol>`
+      : `<ol style="margin:4px 0 0 1.2rem;padding-left:0.5rem;line-height:1.5;">
+          <li>Deliver structured technical modules and workshops.</li>
+          <li>Equip stakeholders with applied software and ICT tools.</li>
+          <li>Measure training outcomes to achieve 90%+ positive evaluation.</li>
+         </ol>`;
+
+    const formHtml = `
+      <div class="real-form-paper" id="rf-paper-content">
+        <!-- University Header -->
+        <div class="real-form-header">
+          <div style="width:70px;text-align:left;">
+            <div style="font-weight:900;font-size:1.4rem;color:#8B1A1A;font-family:'Poppins',sans-serif;">UCN</div>
+          </div>
+          <div class="real-form-header-center">
+            <div style="font-size:8pt;text-transform:uppercase;letter-spacing:0.04em;">Republic of the Philippines</div>
+            <div class="rf-title-main">UNIVERSITY OF CAMARINES NORTE</div>
+            <div class="rf-sub" style="font-weight:bold;">COLLEGE OF COMPUTING AND MULTIMEDIA STUDIES</div>
+            <div class="rf-sub">Extension Services Office • Daet, Camarines Norte</div>
+          </div>
+          <div class="rf-code-box">
+            <div><strong>CNSC-OP-EXT-01A</strong></div>
+            <div>Rev. 01</div>
+            <div>Effectivity: Oct 2026</div>
+          </div>
+        </div>
+
+        <div class="real-form-title-banner">
+          EXTENSION PROJECT PROPOSAL FORM
+        </div>
+
+        <!-- I. Project Profile -->
+        <div class="rf-section-head">I. PROJECT PROFILE</div>
+        <table class="real-form-table">
+          <tr>
+            <th style="width:28%;">1. Project Title</th>
+            <td colspan="3" style="font-weight:bold;font-size:10pt;">${title}</td>
+          </tr>
+          <tr>
+            <th>2. Project Code</th>
+            <td style="width:25%;"><span style="font-family:monospace;font-weight:bold;">${code}</span></td>
+            <th style="width:22%;">3. Version No.</th>
+            <td style="width:25%;">v1 (Initial Submission)</td>
+          </tr>
+          <tr>
+            <th>4. Implementing Unit</th>
+            <td>College of Computing &amp; Multimedia Studies (CCMS)</td>
+            <th>5. Program / Discipline</th>
+            <td>BS Information Technology / BS Computer Science</td>
+          </tr>
+          <tr>
+            <th>6. Type of Extension Service</th>
+            <td>${serviceType}</td>
+            <th>7. Project Source</th>
+            <td>${sourceType}</td>
+          </tr>
+          <tr>
+            <th>8. Project Location / Coverage</th>
+            <td>${coverage}</td>
+            <th>9. Proposed Total Budget</th>
+            <td style="font-weight:bold;color:#8B1A1A;">${budget}</td>
+          </tr>
+          <tr>
+            <th>10. Target Beneficiaries</th>
+            <td colspan="3">${bens}</td>
+          </tr>
+          <tr>
+            <th>11. Implementation Period</th>
+            <td colspan="3">${startDate} to ${endDate}</td>
+          </tr>
+        </table>
+
+        <!-- II. Rationale & Background -->
+        <div class="rf-section-head">II. PROJECT RATIONALE &amp; BACKGROUND</div>
+        <table class="real-form-table">
+          <tr>
+            <td style="text-align:justify;line-height:1.5;">
+              ${desc}
+              <br><br>
+              In adherence to the University Extension Agenda and Community Development Mandate, this extension endeavor delivers specialized capability building, technical assistance, and digital modernization to address expressed stakeholder needs.
+            </td>
+          </tr>
+        </table>
+
+        <!-- III. Project Objectives -->
+        <div class="rf-section-head">III. PROJECT OBJECTIVES</div>
+        <table class="real-form-table">
+          <tr>
+            <td>
+              <strong>General Objective:</strong><br>
+              To implement responsive, high-impact extension training and digital services that elevate technical proficiency and operational efficiency among target beneficiaries.
+              <br><br>
+              <strong>Specific Objectives:</strong>
+              ${objListHtml}
+            </td>
+          </tr>
+        </table>
+
+        <!-- IV. Plan of Activities & Methodology -->
+        <div class="rf-section-head">IV. PLAN OF ACTIVITIES &amp; METHODOLOGY</div>
+        <table class="real-form-table">
+          <thead>
+            <tr>
+              <th style="width:25%;">Phase</th>
+              <th style="width:40%;">Planned Activities</th>
+              <th style="width:20%;">Expected Output</th>
+              <th style="width:15%;">Person Responsible</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Pre-Implementation</strong></td>
+              <td>Needs assessment, training syllabus finalization, partner coordination, participant profiling.</td>
+              <td>Approved syllabus, signed MOA/Endorsement</td>
+              <td>Project Leader &amp; Coordinator</td>
+            </tr>
+            <tr>
+              <td><strong>Implementation</strong></td>
+              <td>Interactive lecture delivery, hands-on computer workshops, practical exercises and demonstrations.</td>
+              <td>Attendance sheets, workshop outputs</td>
+              <td>Project Team &amp; Trainers</td>
+            </tr>
+            <tr>
+              <td><strong>Post-Implementation</strong></td>
+              <td>Client satisfaction survey administration, learning evaluation, final narrative report submission.</td>
+              <td>Accomplishment report, Certificates</td>
+              <td>Project Leader &amp; Dean</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- V. Line-Item Budget Allocation -->
+        <div class="rf-section-head">V. LINE-ITEM BUDGET ALLOCATION (SUMMARY)</div>
+        <table class="real-form-table">
+          <thead>
+            <tr>
+              <th>Expense Category</th>
+              <th>Description / Scope</th>
+              <th style="text-align:right;">Estimated Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Personal Services (PS)</strong></td>
+              <td>Facilitator &amp; Technical Support Honoraria</td>
+              <td style="text-align:right;">₱ 15,000.00</td>
+            </tr>
+            <tr>
+              <td><strong>MOOE</strong></td>
+              <td>Training kits, handouts, laboratory consumables, refreshments</td>
+              <td style="text-align:right;">₱ 25,000.00</td>
+            </tr>
+            <tr>
+              <td><strong>Contingency / Admin</strong></td>
+              <td>Communication, documentation, and coordination expenses</td>
+              <td style="text-align:right;">₱ 5,000.00</td>
+            </tr>
+            <tr style="background:#F9FAFB;font-weight:bold;">
+              <td colspan="2" style="text-align:right;">TOTAL PROPOSED BUDGET:</td>
+              <td style="text-align:right;color:#8B1A1A;">${budget}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- VI. Signatures Block (3 Roles) -->
+        <div class="rf-section-head">VI. INSTITUTIONAL SIGNATURES &amp; ENDORSEMENTS</div>
+        <div class="rf-signature-grid">
+          <div>
+            <div style="font-size:8pt;text-transform:uppercase;color:#4B5563;">Prepared &amp; Submitted by:</div>
+            <div class="rf-sig-line">${leader.toUpperCase()}</div>
+            <div style="font-weight:bold;">Project Proponent / Leader</div>
+            <div style="font-size:7.5pt;color:#6B7280;">Date: ${new Date().toISOString().slice(0, 10)}</div>
+          </div>
+          <div>
+            <div style="font-size:8pt;text-transform:uppercase;color:#4B5563;">Reviewed &amp; Verified by:</div>
+            <div class="rf-sig-line">DR. MARY GRACE BOLOS</div>
+            <div style="font-weight:bold;">Extension Coordinator</div>
+            <div style="font-size:7.5pt;color:#6B7280;">CCMS Extension Services Office</div>
+          </div>
+          <div>
+            <div style="font-size:8pt;text-transform:uppercase;color:#4B5563;">Recommending Approval / Endorsed by:</div>
+            <div class="rf-sig-line">DR. DANIEL MALIGAT</div>
+            <div style="font-weight:bold;">Dean, CCMS</div>
+            <div style="font-size:7.5pt;color:#6B7280;">College of Computing &amp; Multimedia Studies</div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('rf-print-area').innerHTML = formHtml;
+    document.getElementById('rf-modal-title').innerHTML = `<i class="fas fa-file-invoice" style="margin-right:0.4rem;"></i> Form CNSC-OP-EXT-01A — ${code}`;
+    document.getElementById('modal-real-form').classList.add('open');
+  }
+
+  function closeRealFormModal() {
+    document.getElementById('modal-real-form').classList.remove('open');
   }
 
   function submitProposal() {
@@ -437,8 +925,119 @@
       return;
     }
     document.getElementById('title-error').style.display = 'none';
-    // Show success notification
-    alert('Proposal submitted successfully! Reference: EXT-2026-001');
+
+    if (!attachedProposalFile) {
+      const errEl = document.getElementById('file-error');
+      if (errEl) errEl.style.display = 'flex';
+      alert('Please upload or attach the official proposal document before submitting.');
+      return;
+    }
+
+    const code = document.getElementById('project-code') ? document.getElementById('project-code').value : 'EXT-2026-049';
+    const leader = document.getElementById('project-leader') ? document.getElementById('project-leader').value : 'Prince Jheck T. Juan';
+    const coverage = document.getElementById('coverage-area') ? document.getElementById('coverage-area').value : 'Daet, Camarines Norte';
+    const serviceType = document.getElementById('service-type').value;
+    const sourceType = document.getElementById('source-type').value;
+    const startDate = document.getElementById('start-date').value || '2026-09-20';
+    const endDate = document.getElementById('end-date').value || '2026-12-15';
+    const budget = document.getElementById('budget-total') ? document.getElementById('budget-total').value : '₱ 45,000.00';
+    const bens = document.getElementById('target-beneficiaries') ? document.getElementById('target-beneficiaries').value : 'Community Stakeholders';
+
+    // 1. Save new project
+    const newProj = {
+      project_id: code,
+      project_code: `CCMS-${code}`,
+      title: title,
+      description: `Extension project submitted by ${leader}. Official proposal document (${attachedProposalFile.name}) attached. Coverage: ${coverage}.`,
+      service_type: serviceType,
+      source_type: sourceType,
+      start_date: startDate,
+      end_date: endDate,
+      project_status: 'Submitted',
+      ntp_issued: false,
+      ntp_date: null,
+      ntp_reference: null,
+      moa_signed: false,
+      moa_reference: null,
+      created_by: 'PER001',
+      budget: budget
+    };
+
+    try {
+      const projList = JSON.parse(localStorage.getItem('grace_custom_projects')) || [];
+      if (!projList.some(p => p.project_id === code)) {
+        projList.unshift(newProj);
+        localStorage.setItem('grace_custom_projects', JSON.stringify(projList));
+      }
+      if (window.GRACE && GRACE.projects && !GRACE.projects.some(p => p.project_id === code)) {
+        GRACE.projects.unshift(newProj);
+      }
+    } catch(e) {}
+
+    // 2. Save new proposal
+    const propId = 'PROP-' + code.replace('EXT-2026-', '');
+    const newProp = {
+      proposal_id: propId,
+      project_id: code,
+      version_no: 1,
+      submission_date: new Date().toISOString().slice(0, 10),
+      evaluation_status: 'Pending',
+      approval_status: 'Pending',
+      remarks: `Proposal document "${attachedProposalFile.name}" attached. Awaiting Extension Coordinator completeness check.`
+    };
+
+    try {
+      const propList = JSON.parse(localStorage.getItem('grace_custom_proposals')) || [];
+      if (!propList.some(p => p.proposal_id === propId)) {
+        propList.unshift(newProp);
+        localStorage.setItem('grace_custom_proposals', JSON.stringify(propList));
+      }
+      if (window.GRACE && GRACE.proposals && !GRACE.proposals.some(p => p.proposal_id === propId)) {
+        GRACE.proposals.unshift(newProp);
+      }
+    } catch(e) {}
+
+    // 3. Save uploaded document to compiled docs
+    try {
+      const docKey = 'grace_documents_v1';
+      const docList = JSON.parse(localStorage.getItem(docKey)) || [];
+      const newDoc = {
+        document_id: 'DOC-' + Date.now().toString().slice(-4),
+        project_id: code,
+        title: attachedProposalFile.name,
+        category: 'Project Proposal',
+        version: 'v1.0',
+        date: new Date().toISOString().slice(0, 10),
+        status: 'For Checking',
+        size: attachedProposalFile.size,
+        by: leader
+      };
+      docList.unshift(newDoc);
+      localStorage.setItem(docKey, JSON.stringify(docList));
+    } catch(e) {}
+
+    // 4. Log status update
+    try {
+      const suKey = 'grace_status_updates_v4';
+      const suList = JSON.parse(localStorage.getItem(suKey)) || [];
+      suList.unshift({
+        id: Date.now(),
+        project_id: code,
+        stage: 'Completeness Check',
+        status: 'Submitted',
+        next_action: 'Coordinator: verify completeness of uploaded proposal file',
+        message: `New extension project "${title}" created and proposal document "${attachedProposalFile.name}" uploaded by Project Proponent. Routed to Extension Coordinator completeness check.`,
+        posted_by: leader,
+        by: leader,
+        at: new Date().toISOString(),
+        role_label: 'Project Proponent',
+        date: new Date().toISOString().slice(0, 10),
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      });
+      localStorage.setItem(suKey, JSON.stringify(suList));
+    } catch(e) {}
+
+    alert(`Project ${code} created successfully!\n\nOfficial proposal file "${attachedProposalFile.name}" has been uploaded and routed to Extension Coordinator Dr. Mary Grace Bolos for completeness check.`);
     window.location.href = 'proposals.html';
   }
 </script>

@@ -8,6 +8,452 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/dashboard.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>
+    /* ── Proposal Detail Modal ─────────────────────────────────── */
+    .pd-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.48); z-index: 2000;
+      align-items: flex-start; justify-content: center;
+      padding: 2rem 1rem; overflow-y: auto;
+    }
+    .pd-overlay.open { display: flex; }
+
+    .pd-modal {
+      background: #fff; border-radius: 16px;
+      width: 100%; max-width: 860px;
+      box-shadow: 0 24px 72px rgba(0,0,0,0.18);
+      position: relative; overflow: hidden;
+      margin: auto;
+    }
+
+    /* Header band */
+    .pd-header {
+      background: linear-gradient(120deg, #5a0e0e 0%, #8B1A1A 60%, #b22222 100%);
+      padding: 1.25rem 1.5rem; color: #fff;
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
+    }
+    .pd-header-left h2 {
+      font-size: 1rem; font-weight: 800; margin: 0 0 0.2rem;
+      font-family: 'Poppins', sans-serif;
+    }
+    .pd-header-left p { font-size: 0.78rem; opacity: 0.82; margin: 0; }
+    .pd-header-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.6rem; }
+    .pd-hbadge {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 20px; padding: 0.2rem 0.65rem;
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.04em;
+    }
+    .pd-close {
+      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 8px; width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; cursor: pointer; font-size: 0.9rem; flex-shrink: 0;
+      transition: background 0.15s;
+    }
+    .pd-close:hover { background: rgba(255,255,255,0.28); }
+
+    /* Role boundary notice */
+    .pd-role-notice {
+      margin: 1rem 1.5rem 0;
+      padding: 0.65rem 0.85rem;
+      border-radius: 8px; font-size: 0.75rem;
+      display: flex; align-items: center; gap: 0.6rem;
+      border: 1px solid;
+    }
+    .pd-role-notice.info   { background: #EFF6FF; border-color: #BFDBFE; color: #1E40AF; }
+    .pd-role-notice.warn   { background: #FEF3C7; border-color: #FDE68A; color: #92400E; }
+    .pd-role-notice i      { font-size: 0.95rem; flex-shrink: 0; }
+
+    /* Body */
+    .pd-body { padding: 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 1.25rem; }
+
+    /* Sections */
+    .pd-section { border: 1px solid #E5E7EB; border-radius: 12px; overflow: hidden; }
+    .pd-sec-head {
+      padding: 0.75rem 1rem; background: #F9FAFB;
+      border-bottom: 1px solid #E5E7EB;
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .pd-sec-head h4 {
+      font-size: 0.75rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.07em; color: #374151; margin: 0;
+    }
+    .pd-sec-head i { color: #8B1A1A; font-size: 0.8rem; }
+    .pd-sec-body { padding: 1rem; }
+
+    /* Grid for fields */
+    .pd-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; }
+    .pd-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.85rem; }
+    .pd-field { display: flex; flex-direction: column; gap: 0.2rem; }
+    .pd-field-label {
+      font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; color: #9CA3AF;
+    }
+    .pd-field-val { font-size: 0.82rem; color: #111827; font-weight: 500; }
+    .pd-field-val.mono {
+      font-family: monospace; background: #F3F4F6;
+      padding: 0.15rem 0.45rem; border-radius: 4px;
+      font-size: 0.78rem; color: #374151; display: inline-block;
+    }
+
+    /* Badges inside modal */
+    .pd-badge {
+      display: inline-flex; align-items: center; gap: 0.25rem;
+      border-radius: 20px; padding: 0.18rem 0.65rem;
+      font-size: 0.68rem; font-weight: 700; border: 1px solid;
+    }
+    .pd-b-green  { background: rgba(5,150,105,0.1);  color: #059669; border-color: rgba(5,150,105,0.25); }
+    .pd-b-amber  { background: rgba(245,158,11,0.1); color: #D97706; border-color: rgba(245,158,11,0.25); }
+    .pd-b-blue   { background: rgba(37,99,235,0.1);  color: #2563EB; border-color: rgba(37,99,235,0.2); }
+    .pd-b-red    { background: rgba(139,26,26,0.08); color: #8B1A1A; border-color: rgba(139,26,26,0.2); }
+    .pd-b-gray   { background: #F3F4F6; color: #6B7280; border-color: #E5E7EB; }
+    .pd-b-purple { background: rgba(124,58,237,0.1); color: #7C3AED; border-color: rgba(124,58,237,0.2); }
+
+    /* Approval stage timeline */
+    .pd-timeline { display: flex; flex-direction: column; gap: 0; }
+    .pd-tl-item {
+      display: flex; align-items: flex-start; gap: 0.75rem;
+      position: relative; padding-bottom: 0;
+    }
+    .pd-tl-item:not(:last-child)::before {
+      content: ''; position: absolute; left: 13px; top: 28px;
+      width: 2px; height: calc(100% + 0px); background: #E5E7EB;
+    }
+    .pd-tl-dot {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem; font-weight: 800; flex-shrink: 0;
+      position: relative; z-index: 1; margin-top: 1px;
+    }
+    .pd-tl-dot.approved { background: #059669; color: #fff; }
+    .pd-tl-dot.pending  { background: #F3F4F6; color: #9CA3AF; border: 2px solid #E5E7EB; }
+    .pd-tl-dot.returned { background: #DC2626; color: #fff; }
+    .pd-tl-info { padding-bottom: 1rem; flex: 1; }
+    .pd-tl-stage { font-size: 0.8rem; font-weight: 700; color: #111827; }
+    .pd-tl-meta  { font-size: 0.7rem; color: #9CA3AF; margin-top: 0.15rem; }
+    .pd-tl-remarks { font-size: 0.72rem; color: #6B7280; margin-top: 0.2rem; font-style: italic; }
+
+    /* Document list */
+    .pd-doc-list { display: flex; flex-direction: column; gap: 0.5rem; }
+    .pd-doc-item {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.65rem 0.85rem; background: #F9FAFB;
+      border: 1px solid #E5E7EB; border-radius: 8px;
+    }
+    .pd-doc-icon { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; flex-shrink: 0; }
+    .pd-doc-name { font-size: 0.8rem; font-weight: 600; color: #111827; }
+    .pd-doc-meta { font-size: 0.68rem; color: #9CA3AF; margin-top: 0.1rem; }
+    .pd-doc-actions { margin-left: auto; display: flex; gap: 0.4rem; }
+
+    /* Related info compact table */
+    .pd-mini-table { width: 100%; border-collapse: collapse; }
+    .pd-mini-table th {
+      font-size: 0.63rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; color: #9CA3AF; background: #F9FAFB;
+      padding: 0.55rem 0.75rem; text-align: left; border-bottom: 1px solid #E5E7EB;
+    }
+    .pd-mini-table td {
+      padding: 0.65rem 0.75rem; border-bottom: 1px solid #F3F4F6;
+      font-size: 0.78rem; color: #374151; vertical-align: middle;
+    }
+    .pd-mini-table tr:last-child td { border-bottom: none; }
+
+    /* Role-based action panel */
+    .pd-action-panel {
+      border-top: 1px solid #E5E7EB;
+      padding: 1rem 1.5rem;
+      display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap;
+      background: #FAFAFA;
+    }
+    .pd-action-label {
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.05em; color: #9CA3AF; margin-right: auto;
+    }
+
+    /* Action buttons */
+    .pd-btn {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      padding: 0.42rem 0.95rem; border-radius: 7px; font-size: 0.78rem;
+      font-weight: 600; cursor: pointer; border: 1px solid; transition: all 0.15s;
+      text-decoration: none;
+    }
+    .pd-btn-blue  { color: #2563EB; border-color: #BFDBFE; background: #EFF6FF; }
+    .pd-btn-blue:hover { background: #2563EB; color: #fff; }
+    .pd-btn-green { color: #059669; border-color: #A7F3D0; background: #F0FDF4; }
+    .pd-btn-green:hover { background: #059669; color: #fff; }
+    .pd-btn-gray  { color: #6B7280; border-color: #E5E7EB; background: #F9FAFB; }
+    .pd-btn-gray:hover { background: #374151; color: #fff; border-color: #374151; }
+    .pd-btn-red   { color: #8B1A1A; border-color: rgba(139,26,26,0.25); background: rgba(139,26,26,0.06); }
+    .pd-btn-red:hover { background: #8B1A1A; color: #fff; }
+    /* INSTITUTIONAL DECISION buttons — only shown for authorized roles */
+    .pd-btn-decision {
+      color: #059669; border-color: rgba(5,150,105,0.3); background: rgba(5,150,105,0.07);
+      font-weight: 700;
+    }
+    .pd-btn-decision:hover { background: #059669; color: #fff; }
+
+    /* Table layout and scrollability fixes — ensure full visibility and prevent header text overlapping */
+    .table-container {
+      overflow-x: auto !important;
+      -webkit-overflow-scrolling: touch;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid #E5E7EB;
+      margin-bottom: 1.5rem;
+      width: 100%;
+      max-width: 100%;
+    }
+    #proposals-table {
+      width: 100%;
+      min-width: 960px;
+      border-collapse: collapse;
+      table-layout: auto;
+    }
+    #proposals-table th {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #4B5563;
+      background: #F9FAFB;
+      white-space: nowrap;
+      line-height: 1.35;
+      padding: 0.85rem 0.85rem;
+      border-bottom: 1px solid #E5E7EB;
+      vertical-align: middle;
+      box-sizing: border-box;
+    }
+    #proposals-table td {
+      padding: 0.85rem 0.85rem;
+      vertical-align: middle;
+      font-size: 0.82rem;
+      border-bottom: 1px solid #F3F4F6;
+      box-sizing: border-box;
+    }
+    #proposals-table th:nth-child(1), #proposals-table td:nth-child(1) { width: 105px; white-space: nowrap; }
+    #proposals-table th:nth-child(2), #proposals-table td:nth-child(2) { min-width: 240px; }
+    #proposals-table th:nth-child(3), #proposals-table td:nth-child(3) { width: 70px; text-align: center; }
+    #proposals-table th:nth-child(4), #proposals-table td:nth-child(4) { width: 115px; white-space: nowrap; }
+    #proposals-table th:nth-child(5), #proposals-table td:nth-child(5) { width: 145px; }
+    #proposals-table th:nth-child(6), #proposals-table td:nth-child(6) { min-width: 170px; }
+    #proposals-table th:nth-child(7), #proposals-table td:nth-child(7) { width: 205px; text-align: center; }
+
+    /* Action buttons 2x2 grid */
+    .prop-actions-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(88px, 1fr));
+      gap: 0.35rem;
+      width: 195px;
+      margin: 0 auto;
+    }
+    .prop-actions-grid button {
+      width: 100%;
+      justify-content: center;
+      padding: 0.35rem 0.45rem;
+      font-size: 0.72rem;
+      box-sizing: border-box;
+    }
+
+    /* Interactive Summary Cards & Filter States */
+    .summary-card.clickable {
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      border: 2px solid transparent;
+      user-select: none;
+    }
+    .summary-card.clickable:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+    }
+    .summary-card.clickable.active-filter {
+      transform: translateY(-2px);
+      border-color: #8B1A1A;
+      box-shadow: 0 0 0 3px rgba(139, 26, 26, 0.15), 0 8px 16px rgba(0, 0, 0, 0.06);
+    }
+    .summary-card.clickable.active-filter::after {
+      content: 'FILTER ACTIVE';
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      font-size: 0.58rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: #8B1A1A;
+      color: #fff;
+    }
+
+    /* Scope Toggle */
+    .scope-toggle {
+      display: inline-flex;
+      background: #F3F4F6;
+      padding: 3px;
+      border-radius: 8px;
+      border: 1px solid #E5E7EB;
+      gap: 3px;
+    }
+    .scope-btn {
+      border: none;
+      background: transparent;
+      padding: 0.38rem 0.85rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #6B7280;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.15s ease;
+    }
+    .scope-btn.active {
+      background: #fff;
+      color: #8B1A1A;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      font-weight: 700;
+    }
+    .scope-btn:hover:not(.active) {
+      color: #111827;
+      background: rgba(255,255,255,0.6);
+    }
+
+    /* Action buttons in table */
+    .btn-view-details {
+      display: inline-flex; align-items: center; gap: 0.25rem;
+      padding: 0.32rem 0.55rem; border-radius: 6px; font-size: 0.72rem;
+      font-weight: 600; cursor: pointer;
+      color: #2563EB; border: 1px solid #BFDBFE; background: #EFF6FF;
+      transition: all 0.15s; white-space: nowrap;
+    }
+    .btn-view-details:hover { background: #2563EB; color: #fff; border-color: #2563EB; }
+
+    .btn-view-form {
+      display: inline-flex; align-items: center; gap: 0.25rem;
+      padding: 0.32rem 0.55rem; border-radius: 6px; font-size: 0.72rem;
+      font-weight: 700; cursor: pointer;
+      color: #92400E; border: 1px solid #FDE68A; background: #FFFBEB;
+      transition: all 0.15s; white-space: nowrap;
+    }
+    .btn-view-form:hover { background: #D97706; color: #fff; border-color: #D97706; }
+
+    .btn-status-update {
+      display: inline-flex; align-items: center; gap: 0.25rem;
+      padding: 0.32rem 0.55rem; border-radius: 6px; font-size: 0.72rem;
+      font-weight: 600; cursor: pointer;
+      color: #8B1A1A; border: 1px solid rgba(139,26,26,0.3); background: rgba(139,26,26,0.06);
+      transition: all 0.15s; white-space: nowrap;
+    }
+    .btn-status-update:hover { background: #8B1A1A; color: #fff; border-color: #8B1A1A; }
+
+    .btn-view-docs {
+      display: inline-flex; align-items: center; gap: 0.25rem;
+      padding: 0.32rem 0.55rem; border-radius: 6px; font-size: 0.72rem;
+      font-weight: 600; cursor: pointer;
+      color: #059669; border: 1px solid #A7F3D0; background: #ECFDF5;
+      transition: all 0.15s; white-space: nowrap;
+    }
+    .btn-view-docs:hover { background: #059669; color: #fff; border-color: #059669; }
+
+    /* Official Form CNSC-OP-EXT-01A Paper Styling */
+    .real-form-paper {
+      background: #fff;
+      color: #111827;
+      padding: 2rem 2.5rem;
+      max-width: 860px;
+      margin: 0 auto;
+      border: 1px solid #D1D5DB;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      font-family: 'Times New Roman', Times, serif;
+      line-height: 1.4;
+    }
+    .real-form-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid #000;
+      padding-bottom: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .real-form-header-center {
+      text-align: center;
+      flex: 1;
+    }
+    .rf-title-main { font-size: 13pt; font-weight: bold; text-transform: uppercase; margin: 0; }
+    .rf-sub { font-size: 10pt; margin: 2px 0; }
+    .rf-code-box {
+      border: 1px solid #000;
+      padding: 4px 8px;
+      font-size: 8pt;
+      font-family: 'Arial', sans-serif;
+      text-align: right;
+    }
+    .real-form-title-banner {
+      background: #E5E7EB;
+      border: 1px solid #000;
+      text-align: center;
+      font-weight: bold;
+      font-size: 11pt;
+      padding: 6px;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .real-form-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1rem;
+      font-size: 9.5pt;
+    }
+    .real-form-table th, .real-form-table td {
+      border: 1px solid #000;
+      padding: 6px 8px;
+      vertical-align: top;
+    }
+    .real-form-table th {
+      background: #F3F4F6;
+      font-weight: bold;
+      text-align: left;
+    }
+    .rf-section-head {
+      background: #E5E7EB;
+      font-weight: bold;
+      font-size: 10pt;
+      padding: 5px 8px;
+      border: 1px solid #000;
+      border-bottom: none;
+      margin-top: 1rem;
+    }
+    .rf-signature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 2rem;
+      font-size: 9pt;
+      text-align: center;
+    }
+    .rf-sig-line {
+      border-bottom: 1px solid #000;
+      margin-top: 3.5rem;
+      margin-bottom: 0.35rem;
+      font-weight: bold;
+    }
+
+    /* Separator label */
+    .pd-sep {
+      font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; color: #9CA3AF; padding: 0 0.25rem;
+    }
+
+    @media (max-width: 700px) {
+      .pd-grid-2, .pd-grid-3 { grid-template-columns: 1fr; }
+      .pd-overlay { padding: 0.5rem; }
+    }
+  </style>
 </head>
 <body>
 <div class="dashboard-layout">
@@ -19,32 +465,64 @@
     <div class="dashboard-content">
       <div class="page-header">
         <div>
-          <h2>Project Proposals</h2>
-          <p class="page-subtitle">Track all submitted proposals, version history, evaluation and approval status — <em>PROPOSAL entity (3NF)</em></p>
+          <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+            <h2 id="page-proposals-title">Project Proposals</h2>
+            <span id="role-view-badge" class="badge badge-primary" style="display:none;background:rgba(139,26,26,0.08);color:#8B1A1A;border:1px solid rgba(139,26,26,0.2);font-size:0.75rem;padding:0.3rem 0.65rem;border-radius:999px;">
+              <i class="fas fa-user-circle"></i> Proponent: Prince Jheck T. Juan
+            </span>
+          </div>
+          <p class="page-subtitle" id="page-proposals-subtitle">Track all submitted proposals, version history, evaluation and approval status — <em>PROPOSAL entity (3NF)</em></p>
         </div>
-        <div class="page-header-actions">
-          <button class="btn btn-sm btn-outline"><i class="fas fa-download"></i> Export</button>
-          <a href="project-form.html" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> New Proposal</a>
+        <div class="page-header-actions" style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+          <div class="scope-toggle" id="proponent-scope-wrap" style="display:none;">
+            <button class="scope-btn active" id="btn-scope-my" onclick="setScope('my')"><i class="fas fa-user-check"></i> My Proposals</button>
+            <button class="scope-btn" id="btn-scope-all" onclick="setScope('all')"><i class="fas fa-globe"></i> All CCMS Proposals</button>
+          </div>
+          <a href="project-form.html" class="btn btn-sm btn-primary" id="btn-new-proposal"><i class="fas fa-plus"></i> New Proposal</a>
         </div>
       </div>
 
-      <!-- Summary Cards -->
-      <div class="summary-cards">
-        <div class="summary-card card-maroon">
-          <div class="summary-card-info"><h3>7</h3><p>Total Proposals</p><span class="summary-card-trend up"><i class="fas fa-file-alt"></i> all versions</span></div>
+      <!-- Summary Cards (Interactive Filters) -->
+      <div class="summary-cards" style="grid-template-columns:repeat(auto-fit,minmax(190px,1fr));">
+        <div class="summary-card card-maroon clickable" id="card-filter-all" onclick="applyCardFilter('all')" title="Click to show all proposals">
+          <div class="summary-card-info">
+            <h3 id="stat-total">7</h3>
+            <p id="label-stat-total">Total Proposals</p>
+            <span class="summary-card-trend up"><i class="fas fa-file-alt"></i> all versions</span>
+          </div>
           <div class="summary-card-icon"><i class="fas fa-file-alt"></i></div>
         </div>
-        <div class="summary-card card-gold">
-          <div class="summary-card-info"><h3>2</h3><p>Pending Evaluation</p><span class="summary-card-trend"><i class="fas fa-hourglass-half"></i> under review</span></div>
+        <div class="summary-card card-gold clickable" id="card-filter-pending" onclick="applyCardFilter('pending')" title="Click to show pending & under review proposals">
+          <div class="summary-card-info">
+            <h3 id="stat-pending">2</h3>
+            <p>Pending Evaluation</p>
+            <span class="summary-card-trend"><i class="fas fa-hourglass-half"></i> under review</span>
+          </div>
           <div class="summary-card-icon"><i class="fas fa-hourglass-half"></i></div>
         </div>
-        <div class="summary-card card-green">
-          <div class="summary-card-info"><h3>5</h3><p>Approved</p><span class="summary-card-trend up"><i class="fas fa-check"></i> for implementation</span></div>
+        <div class="summary-card card-green clickable" id="card-filter-approved" onclick="applyCardFilter('approved')" title="Click to show approved proposals">
+          <div class="summary-card-info">
+            <h3 id="stat-approved">5</h3>
+            <p>Approved</p>
+            <span class="summary-card-trend up"><i class="fas fa-check"></i> for implementation</span>
+          </div>
           <div class="summary-card-icon"><i class="fas fa-check-circle"></i></div>
         </div>
-        <div class="summary-card card-blue">
-          <div class="summary-card-info"><h3>2</h3><p>Revised (v2+)</p><span class="summary-card-trend"><i class="fas fa-history"></i> version tracked</span></div>
+        <div class="summary-card card-blue clickable" id="card-filter-revised" onclick="applyCardFilter('revised')" title="Click to show revised proposals (v2+)">
+          <div class="summary-card-info">
+            <h3 id="stat-revised">2</h3>
+            <p>Revised (v2+)</p>
+            <span class="summary-card-trend"><i class="fas fa-history"></i> version tracked</span>
+          </div>
           <div class="summary-card-icon"><i class="fas fa-history"></i></div>
+        </div>
+        <div class="summary-card clickable" id="card-filter-rejected" onclick="applyCardFilter('rejected')" title="Click to show rejected proposals" style="border-top-color:#DC2626;">
+          <div class="summary-card-info">
+            <h3 id="stat-rejected">0</h3>
+            <p>Rejected</p>
+            <span class="summary-card-trend"><i class="fas fa-ban"></i> not approved</span>
+          </div>
+          <div class="summary-card-icon" style="background:#FEF2F2;color:#DC2626;"><i class="fas fa-times-circle"></i></div>
         </div>
       </div>
 
@@ -52,26 +530,34 @@
       <div class="filter-bar">
         <div class="filter-group">
           <span class="filter-label">Status:</span>
-          <select class="form-select" id="filter-status">
-            <option>All Status</option>
-            <option>Pending</option>
-            <option>Under Evaluation</option>
-            <option>Approved</option>
-            <option>Returned</option>
+          <select class="form-select" id="filter-status" onchange="handleDropdownFilter()">
+            <option value="all">All Status</option>
+            <option value="Pending">Pending</option>
+            <option value="Under Evaluation">Under Evaluation</option>
+            <option value="Approved">Approved</option>
+            <option value="Returned">Returned</option>
+            <option value="Rejected">Rejected</option>
+            <option value="revised">Revised (v2+)</option>
           </select>
         </div>
         <div class="filter-group">
           <span class="filter-label">Approval:</span>
-          <select class="form-select" id="filter-approval">
-            <option>All</option>
-            <option>Approved</option>
-            <option>Pending</option>
+          <select class="form-select" id="filter-approval" onchange="handleDropdownFilter()">
+            <option value="all">All Approval</option>
+            <option value="Approved">Approved</option>
+            <option value="Pending">Pending</option>
+            <option value="Rejected">Rejected</option>
           </select>
+        </div>
+        <div class="filter-group" id="filter-reset-wrap" style="display:none;">
+          <button class="btn btn-sm btn-outline" style="border-style:dashed;color:#8B1A1A;font-size:0.75rem;" onclick="resetAllFilters()">
+            <i class="fas fa-times-circle"></i> Reset Filter
+          </button>
         </div>
         <div class="filter-group" style="margin-left:auto;">
           <div class="search-bar" style="position:relative;">
             <i class="fas fa-search" style="position:absolute;left:0.6rem;top:50%;transform:translateY(-50%);color:var(--gray-400);font-size:0.8rem;"></i>
-            <input type="text" class="form-input" style="padding-left:2rem;font-size:0.85rem;" placeholder="Search proposals...">
+            <input type="text" class="form-input" id="search-proposals" style="padding-left:2rem;font-size:0.85rem;" placeholder="Search proposals..." oninput="handleSearchFilter()">
           </div>
         </div>
       </div>
@@ -79,20 +565,22 @@
       <!-- Proposals Table -->
       <div class="table-container">
         <div class="table-header">
-          <h4><i class="fas fa-file-alt" style="color:var(--maroon);margin-right:0.5rem;"></i>All Proposals</h4>
-          <span style="font-size:0.8rem;color:var(--gray-500);">proposal_id · project_id · version_no · submission_date · evaluation_status · approval_status</span>
+          <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+            <h4 id="table-proposals-title"><i class="fas fa-file-alt" style="color:var(--maroon);margin-right:0.5rem;"></i>All Proposals</h4>
+            <span id="active-filter-pill" style="display:none;background:#FEF3C7;color:#92400E;font-size:0.72rem;font-weight:700;padding:2px 8px;border-radius:999px;"></span>
+          </div>
+          <span id="table-proposals-meta" style="font-size:0.8rem;color:var(--gray-500);">proposal_id · project_id · version_no · submission_date · evaluation_status · approval_status</span>
         </div>
         <table id="proposals-table">
           <thead>
             <tr>
               <th>Proposal ID</th>
-              <th>Project</th>
-              <th>Version</th>
+              <th>Project Details</th>
+              <th style="text-align:center;">Version</th>
               <th>Submission Date</th>
-              <th>Evaluation Status</th>
-              <th>Approval Status</th>
+              <th>Status</th>
               <th>Remarks</th>
-              <th>Actions</th>
+              <th style="text-align:center;">Actions</th>
             </tr>
           </thead>
           <tbody id="proposals-tbody">
@@ -107,43 +595,1557 @@
   </div><!-- /main-content -->
 </div><!-- /dashboard-layout -->
 
+<!-- ══════════════════════════════════════════════════════
+     PROPOSAL DETAIL MODAL
+     ══════════════════════════════════════════════════════ -->
+<div class="pd-overlay" id="pd-overlay">
+  <div class="pd-modal" id="pd-modal">
+
+    <!-- Header -->
+    <div class="pd-header">
+      <div class="pd-header-left">
+        <h2 id="pd-title">Proposal Record</h2>
+        <p id="pd-subtitle">Complete proposal information and institutional record</p>
+        <div class="pd-header-badges" id="pd-header-badges"></div>
+      </div>
+      <button class="pd-close" id="pd-close" onclick="closePDModal()" title="Close"><i class="fas fa-times"></i></button>
+    </div>
+
+    <!-- Role notice (populated by JS) -->
+    <div id="pd-role-notice-wrap"></div>
+
+    <!-- Body -->
+    <div class="pd-body" id="pd-body">
+      <!-- All sections injected by JS -->
+    </div>
+
+    <!-- Role-aware action panel -->
+    <div class="pd-action-panel" id="pd-actions">
+      <!-- Populated by JS -->
+    </div>
+
+  </div>
+</div>
+
 <script src="js/data.js"></script>
 <script src="js/main.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', () => {
+/* ══════════════════════════════════════════════════════
+   PROPOSALS TABLE — unchanged logic, updated Actions column
+   ══════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════
+   PROPOSALS CONTROLLER — User-Based (Proponent) + Interactive Cards
+   ══════════════════════════════════════════════════════ */
+let activeScope = 'all';          // 'my' (user-based) or 'all' (college-wide)
+let activeCardFilter = 'all';     // 'all' | 'pending' | 'approved' | 'revised'
+let currentVisibleProposals = [];
+
+function isProponentProposal(p) {
+  if (!window.GRACE) return false;
+  const proj = GRACE.getProjectById(p.project_id);
+  if (!proj) return false;
+  // Created by Prince Jheck Juan (PER001)
+  if (proj.created_by === 'PER001') return true;
+  // Team member or leader is Prince Jheck Juan
+  const team = GRACE.getTeamByProject(p.project_id);
+  if (team && team.some(t => t.person_id === 'PER001')) return true;
+  // Associated status updates posted by Prince Jheck Juan
+  try {
+    const savedUpdates = JSON.parse(localStorage.getItem('grace_status_updates_v4')) || [];
+    if (savedUpdates.some(u => u.project_id === p.project_id && (u.posted_by || '').includes('Juan'))) return true;
+  } catch (e) {}
+  return false;
+}
+
+function getScopedProposals() {
+  if (!window.GRACE || !GRACE.proposals) return [];
+  let list = GRACE.proposals.slice();
+  try {
+    const custom = JSON.parse(localStorage.getItem('grace_custom_proposals')) || [];
+    custom.forEach(cp => {
+      if (!list.some(p => p.proposal_id === cp.proposal_id)) {
+        list.unshift(cp);
+      }
+    });
+  } catch (e) {}
+  // Apply status changes posted by the Extension Coordinator (including Reject)
+  try {
+    const ov = JSON.parse(localStorage.getItem('grace_proposal_status_overrides')) || {};
+    list = list.map(p => ov[p.proposal_id] ? Object.assign({}, p, ov[p.proposal_id]) : p);
+  } catch (e) {}
+  if (activeScope === 'my') {
+    return list.filter(isProponentProposal);
+  }
+  return list;
+}
+
+/* Card predicates — the same rules drive the card counts and the card filters */
+function isRejectedP(p) { return p.evaluation_status === 'Rejected' || p.approval_status === 'Rejected'; }
+function isApprovedP(p) { return p.evaluation_status === 'Approved' && p.approval_status === 'Approved'; }
+function isPendingP(p) { return !isRejectedP(p) && (p.evaluation_status === 'Pending' || p.evaluation_status === 'Under Evaluation' || p.approval_status === 'Pending'); }
+
+function updateSummaryCards(list) {
+  const total = list.length;
+  const pending = list.filter(isPendingP).length;
+  const approved = list.filter(isApprovedP).length;
+  const revised = list.filter(p => p.version_no > 1).length;
+  const elRejected = document.getElementById('stat-rejected');
+  if (elRejected) elRejected.textContent = list.filter(isRejectedP).length;
+
+  const elTotal = document.getElementById('stat-total');
+  const elPending = document.getElementById('stat-pending');
+  const elApproved = document.getElementById('stat-approved');
+  const elRevised = document.getElementById('stat-revised');
+  const elLabelTotal = document.getElementById('label-stat-total');
+
+  if (elTotal) elTotal.textContent = total;
+  if (elPending) elPending.textContent = pending;
+  if (elApproved) elApproved.textContent = approved;
+  if (elRevised) elRevised.textContent = revised;
+  if (elLabelTotal) elLabelTotal.textContent = activeScope === 'my' ? 'My Proposals' : 'Total Proposals';
+}
+
+function applyCardFilter(type) {
+  if (activeCardFilter === type && type !== 'all') {
+    activeCardFilter = 'all';
+  } else {
+    activeCardFilter = type;
+  }
+
+  ['all', 'pending', 'approved', 'revised', 'rejected'].forEach(k => {
+    const card = document.getElementById(`card-filter-${k}`);
+    if (card) {
+      if (k === activeCardFilter && activeCardFilter !== 'all') {
+        card.classList.add('active-filter');
+      } else if (k === 'all' && activeCardFilter === 'all') {
+        card.classList.add('active-filter');
+      } else {
+        card.classList.remove('active-filter');
+      }
+    }
+  });
+
+  const selStatus = document.getElementById('filter-status');
+  // The card is the single source of truth for this filter, so reset the dropdowns
+  if (selStatus) selStatus.value = 'all';
+  const selAppr = document.getElementById('filter-approval');
+  if (selAppr) selAppr.value = 'all';
+
+  renderProposals();
+}
+
+function handleDropdownFilter() {
+  const selStatus = document.getElementById('filter-status').value;
+  if (selStatus === 'all') activeCardFilter = 'all';
+  else if (selStatus === 'Pending' || selStatus === 'Under Evaluation') activeCardFilter = 'pending';
+  else if (selStatus === 'Approved') activeCardFilter = 'approved';
+  else if (selStatus === 'revised') activeCardFilter = 'revised';
+  else if (selStatus === 'Rejected') activeCardFilter = 'rejected';
+  else activeCardFilter = 'custom';
+
+  ['all', 'pending', 'approved', 'revised', 'rejected'].forEach(k => {
+    const card = document.getElementById(`card-filter-${k}`);
+    if (card) {
+      if (k === activeCardFilter) card.classList.add('active-filter');
+      else card.classList.remove('active-filter');
+    }
+  });
+
+  renderProposals();
+}
+
+function handleSearchFilter() {
+  renderProposals();
+}
+
+function resetAllFilters() {
+  activeCardFilter = 'all';
+  const selStatus = document.getElementById('filter-status');
+  const selApproval = document.getElementById('filter-approval');
+  const searchInput = document.getElementById('search-proposals');
+  if (selStatus) selStatus.value = 'all';
+  if (selApproval) selApproval.value = 'all';
+  if (searchInput) searchInput.value = '';
+
+  ['all', 'pending', 'approved', 'revised', 'rejected'].forEach(k => {
+    const card = document.getElementById(`card-filter-${k}`);
+    if (card) {
+      if (k === 'all') card.classList.add('active-filter');
+      else card.classList.remove('active-filter');
+    }
+  });
+
+  renderProposals();
+}
+
+function setScope(scope) {
+  activeScope = scope;
+  const btnMy = document.getElementById('btn-scope-my');
+  const btnAll = document.getElementById('btn-scope-all');
+  if (btnMy && btnAll) {
+    if (scope === 'my') {
+      btnMy.classList.add('active');
+      btnAll.classList.remove('active');
+    } else {
+      btnAll.classList.add('active');
+      btnMy.classList.remove('active');
+    }
+  }
+
+  const tableTitle = document.getElementById('table-proposals-title');
+  if (tableTitle) {
+    tableTitle.innerHTML = scope === 'my'
+      ? `<i class="fas fa-user-check" style="color:var(--maroon);margin-right:0.5rem;"></i>My Project Proposals`
+      : `<i class="fas fa-file-alt" style="color:var(--maroon);margin-right:0.5rem;"></i>All CCMS Proposals`;
+  }
+
+  const scoped = getScopedProposals();
+  updateSummaryCards(scoped);
+  renderProposals();
+}
+
+function getCurrentVisibleProposals() {
+  return currentVisibleProposals;
+}
+
+function exportProposalsCSV() {
+  const currentProposals = getCurrentVisibleProposals();
+  if (!currentProposals.length) {
+    alert('No proposals to export.');
+    return;
+  }
+  let csv = 'Proposal ID,Project ID,Project Title,Version,Submission Date,Evaluation Status,Approval Status,Remarks\n';
+  currentProposals.forEach(p => {
+    const proj = GRACE.getProjectById(p.project_id);
+    const title = proj ? `"${proj.title.replace(/"/g, '""')}"` : '';
+    const remarks = `"${(p.remarks || '').replace(/"/g, '""')}"`;
+    csv += `${p.proposal_id},${p.project_id},${title},v${p.version_no},${p.submission_date},${p.evaluation_status},${p.approval_status},${remarks}\n`;
+  });
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `proposals_export_${activeScope}_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function renderProposals() {
   const tbody = document.getElementById('proposals-tbody');
   const info  = document.getElementById('proposals-info');
+  const activePill = document.getElementById('active-filter-pill');
+  const resetWrap = document.getElementById('filter-reset-wrap');
   if (!tbody || !window.GRACE) return;
 
+  const scopedList = getScopedProposals();
+  updateSummaryCards(scopedList);
+
+  const selStatus = document.getElementById('filter-status') ? document.getElementById('filter-status').value : 'all';
+  const selApproval = document.getElementById('filter-approval') ? document.getElementById('filter-approval').value : 'all';
+  const query = document.getElementById('search-proposals') ? document.getElementById('search-proposals').value.trim().toLowerCase() : '';
+
+  let filtered = scopedList.filter(p => {
+    const proj = GRACE.getProjectById(p.project_id);
+    const projTitle = proj ? proj.title.toLowerCase() : '';
+    const projId = p.project_id.toLowerCase();
+    const propId = p.proposal_id.toLowerCase();
+    const remarks = (p.remarks || '').toLowerCase();
+
+    // 1. Card Filter check
+    if (activeCardFilter === 'pending') {
+      if (!isPendingP(p)) return false;
+    } else if (activeCardFilter === 'approved') {
+      if (!isApprovedP(p)) return false;
+    } else if (activeCardFilter === 'revised') {
+      if (p.version_no <= 1) return false;
+    } else if (activeCardFilter === 'rejected') {
+      if (!isRejectedP(p)) return false;
+    }
+
+    // 2. Dropdown Status filter
+    if (selStatus !== 'all') {
+      if (selStatus === 'revised') {
+        if (p.version_no <= 1) return false;
+      } else if (selStatus === 'Pending') {
+        if (p.evaluation_status !== 'Pending' && p.evaluation_status !== 'Under Evaluation') return false;
+      } else if (p.evaluation_status !== selStatus) {
+        return false;
+      }
+    }
+
+    // 3. Dropdown Approval filter
+    if (selApproval !== 'all') {
+      if (p.approval_status !== selApproval) return false;
+    }
+
+    // 4. Search query
+    if (query) {
+      const match = propId.includes(query) || projId.includes(query) || projTitle.includes(query) || remarks.includes(query);
+      if (!match) return false;
+    }
+
+    return true;
+  });
+
+  currentVisibleProposals = filtered;
+
+  // Active filter badge & reset wrap
+  const hasFilter = activeCardFilter !== 'all' || selStatus !== 'all' || selApproval !== 'all' || query.length > 0;
+  if (resetWrap) resetWrap.style.display = hasFilter ? 'flex' : 'none';
+  if (activePill) {
+    if (hasFilter) {
+      let filterText = [];
+      if (activeCardFilter !== 'all') filterText.push(activeCardFilter.toUpperCase());
+      if (selStatus !== 'all') filterText.push(selStatus);
+      if (selApproval !== 'all') filterText.push(`Approval: ${selApproval}`);
+      if (query) filterText.push(`"${query}"`);
+      activePill.textContent = `Active Filter: ${filterText.join(' · ')}`;
+      activePill.style.display = 'inline-block';
+    } else {
+      activePill.style.display = 'none';
+    }
+  }
+
+  // Render rows
   const statusBadge = (s) => {
     const map = {
-      'Approved':          'badge-approved',
-      'Under Evaluation':  'badge-review',
-      'Pending':           'badge-pending',
-      'Returned':          'badge-danger'
+      'Approved':         'badge-approved',
+      'Under Evaluation': 'badge-review',
+      'Pending':          'badge-pending',
+      'Returned':         'badge-danger',
+      'Rejected':         'badge-danger'
     };
     return `<span class="badge ${map[s]||'badge-pending'}">${s}</span>`;
   };
 
-  GRACE.proposals.forEach(p => {
-    const proj = GRACE.getProjectById(p.project_id);
-    const projLabel = proj ? `<div style="font-weight:600;font-size:0.83rem;">${p.project_id}</div><div style="font-size:0.77rem;color:var(--gray-500);">${proj.title.substring(0,45)}...</div>` : p.project_id;
-    tbody.innerHTML += `<tr>
-      <td><code style="font-size:0.78rem;background:var(--gray-100);padding:2px 6px;border-radius:4px;">${p.proposal_id}</code></td>
-      <td>${projLabel}</td>
-      <td><span class="badge badge-info" style="background:rgba(59,130,246,0.1);color:#2563eb;">v${p.version_no}</span></td>
-      <td>${p.submission_date}</td>
-      <td>${statusBadge(p.evaluation_status)}</td>
-      <td>${statusBadge(p.approval_status)}</td>
-      <td style="font-size:0.8rem;color:var(--gray-600);max-width:200px;">${p.remarks}</td>
-      <td>
-        <button class="btn btn-sm btn-outline" title="View"><i class="fas fa-eye"></i></button>
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr>
+      <td colspan="7" style="text-align:center;padding:3rem 1.5rem;color:#6B7280;">
+        <div style="font-size:2.2rem;color:#D1D5DB;margin-bottom:0.6rem;"><i class="fas fa-filter"></i></div>
+        <div style="font-weight:700;font-size:1rem;color:#374151;">No project proposals found</div>
+        <div style="font-size:0.82rem;color:#9CA3AF;margin-top:0.35rem;">
+          ${hasFilter ? 'No proposals match your active filter criteria.' : (activeScope === 'my' ? 'You have no submitted proposals yet.' : 'No proposals found.')}
+        </div>
+        ${hasFilter ? `<button class="btn btn-sm btn-outline" style="margin-top:1rem;color:#8B1A1A;border-color:rgba(139,26,26,0.3);" onclick="resetAllFilters()"><i class="fas fa-times-circle"></i> Clear Active Filter</button>` : ''}
       </td>
     </tr>`;
+  } else {
+    tbody.innerHTML = filtered.map(p => {
+      const proj = GRACE.getProjectById(p.project_id);
+      const isMine = isProponentProposal(p);
+      const projLabel = proj
+        ? `<div style="display:flex;flex-direction:column;gap:3px;">
+             <div style="display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;">
+               <span style="display:inline-block;white-space:nowrap;font-family:ui-monospace,monospace;font-size:0.75rem;font-weight:700;color:#8B1A1A;background:rgba(139,26,26,0.06);padding:1px 6px;border-radius:4px;width:fit-content;">${p.project_id}</span>
+               ${isMine && activeScope === 'all' ? `<span style="font-size:0.65rem;background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0;font-weight:700;padding:1px 5px;border-radius:999px;">MY PROJECT</span>` : ''}
+             </div>
+             <span style="font-weight:600;font-size:0.83rem;color:#111827;line-height:1.35;cursor:pointer;" onclick="openPDModal('${p.proposal_id}')" title="Click to view proposal details">${proj.title}</span>
+           </div>`
+        : `<span style="font-family:ui-monospace,monospace;font-weight:700;">${p.project_id}</span>`;
+
+      return `<tr>
+        <td><code style="font-size:0.78rem;background:var(--gray-100);padding:2px 6px;border-radius:4px;font-weight:600;">${p.proposal_id}</code></td>
+        <td>${projLabel}</td>
+        <td style="text-align:center;"><span class="badge badge-info" style="background:rgba(59,130,246,0.1);color:#2563eb;font-weight:700;">v${p.version_no}</span></td>
+        <td><span style="font-size:0.82rem;color:#4B5563;white-space:nowrap;">${p.submission_date}</span></td>
+        <td>
+          <div style="display:flex;flex-direction:column;gap:3px;align-items:flex-start;">
+            ${statusBadge(p.evaluation_status)}
+            <span style="font-size:0.7rem;color:#6B7280;font-weight:500;">Approval: <strong>${p.approval_status}</strong></span>
+          </div>
+        </td>
+        <td style="font-size:0.8rem;color:var(--gray-600);line-height:1.4;">${p.remarks}</td>
+        <td style="text-align:center;">
+          <div class="prop-actions-grid">
+            <button class="btn-view-details" onclick="openPDModal('${p.proposal_id}')" id="view-btn-${p.proposal_id}" title="View Complete Proposal Details">
+              <i class="fas fa-eye"></i> Details
+            </button>
+            <button class="btn-view-form" onclick="viewOfficialForm('${p.proposal_id}')" title="Auto-Generate Real Form CNSC-OP-EXT-01A">
+              <i class="fas fa-file-invoice"></i> Real Form
+            </button>
+            ${(localStorage.getItem('graceRole') || 'proponent') === 'proponent' ? '' : `<button class="btn-status-update" onclick="openQuickStatusModal('${p.project_id}')" title="Update Project Status (5 Generalized Statuses)">
+              <i class="fas fa-route"></i> Status
+            </button>`}
+            <button class="btn-view-docs" onclick="openCompiledDocsModal('${p.project_id}')" title="View Compiled Documents Per Project">
+              <i class="fas fa-folder-open"></i> Docs
+            </button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  // Footer status info
+  if (info) {
+    const scopeStr = activeScope === 'my' ? 'User-based (Prince Jheck T. Juan)' : 'College-wide';
+    if (hasFilter) {
+      info.textContent = `Showing ${filtered.length} of ${scopedList.length} proposal records (${scopeStr} • Filter: ${activeCardFilter !== 'all' ? activeCardFilter.toUpperCase() : 'Custom'})`;
+    } else {
+      info.textContent = `Showing all ${filtered.length} proposal records (${scopeStr})`;
+    }
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const role = localStorage.getItem('graceRole') || 'proponent';
+
+  const pageTitle = document.getElementById('page-proposals-title');
+  const pageSubtitle = document.getElementById('page-proposals-subtitle');
+  const roleBadge = document.getElementById('role-view-badge');
+  const scopeWrap = document.getElementById('proponent-scope-wrap');
+
+  if (role === 'proponent') {
+    activeScope = 'my';
+    if (pageTitle) pageTitle.textContent = 'My Project Proposals';
+    if (pageSubtitle) pageSubtitle.innerHTML = 'Track your prepared and submitted extension project proposals, revision versions, and institutional approval progress';
+    if (roleBadge) {
+      roleBadge.style.display = 'inline-flex';
+      roleBadge.innerHTML = '<i class="fas fa-user-circle" style="margin-right:0.35rem;"></i>Proponent: Prince Jheck T. Juan';
+    }
+    if (scopeWrap) scopeWrap.style.display = 'inline-flex';
+    const tableTitle = document.getElementById('table-proposals-title');
+    if (tableTitle) {
+      tableTitle.innerHTML = '<i class="fas fa-user-check" style="color:var(--maroon);margin-right:0.5rem;"></i>My Project Proposals';
+    }
+  } else if (role === 'coordinator') {
+    activeScope = 'all';
+    if (pageTitle) pageTitle.textContent = 'Project Proposals';
+    if (pageSubtitle) pageSubtitle.innerHTML = 'Track all submitted proposals across CCMS departments, verify completeness, and route for College Dean review';
+    if (roleBadge) {
+      roleBadge.style.display = 'inline-flex';
+      roleBadge.innerHTML = '<i class="fas fa-user-tie" style="margin-right:0.35rem;"></i>Extension Coordinator: Dr. Mary Grace Bolos';
+    }
+    if (scopeWrap) scopeWrap.style.display = 'none';
+  } else if (role === 'dean') {
+    activeScope = 'all';
+    if (pageTitle) pageTitle.textContent = 'Proposals for Dean Review';
+    if (pageSubtitle) pageSubtitle.innerHTML = 'Executive proposal oversight, academic alignment, and College Dean endorsement review';
+    if (roleBadge) {
+      roleBadge.style.display = 'inline-flex';
+      roleBadge.innerHTML = '<i class="fas fa-user-graduate" style="margin-right:0.35rem;"></i>College Dean: Dr. Daniel Maligat';
+    }
+    if (scopeWrap) scopeWrap.style.display = 'none';
+  }
+
+  const cardAll = document.getElementById('card-filter-all');
+  if (cardAll) cardAll.classList.add('active-filter');
+
+  renderProposals();
+});
+
+/* ══════════════════════════════════════════════════════
+   PROPOSAL DETAIL MODAL — full record + role-aware actions
+   ══════════════════════════════════════════════════════ */
+
+function closePDModal() {
+  document.getElementById('pd-overlay').classList.remove('open');
+}
+
+// Close on backdrop click
+document.getElementById('pd-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closePDModal();
+});
+
+function openPDModal(proposalId) {
+  if (!window.GRACE) return;
+
+  const role     = GRACE.getCurrentRole();
+  const allProps = getScopedProposals();
+  const proposal = allProps.find(p => p.proposal_id === proposalId) || (GRACE.proposals ? GRACE.proposals.find(p => p.proposal_id === proposalId) : null);
+  if (!proposal) return;
+
+  const project    = GRACE.getProjectById(proposal.project_id);
+  const approvals  = GRACE.getApprovalsByProject(proposal.project_id);
+  const documents  = GRACE.getDocumentsByProject(proposal.project_id);
+  const team       = GRACE.getTeamByProject(proposal.project_id);
+  const funding    = GRACE.getFundingByProject(proposal.project_id);
+  const bens       = GRACE.getBeneficiariesByProject(proposal.project_id);
+  const partners   = GRACE.getPartnersByProject(proposal.project_id);
+  const activities = GRACE.getActivitiesByProject(proposal.project_id);
+
+  // -- Badge helpers
+  const badge = (text, cls) => `<span class="pd-badge pd-b-${cls}">${text}</span>`;
+  const evalBadge = s => s === 'Approved' ? badge(s,'green') : s === 'Under Evaluation' ? badge(s,'amber') : s === 'Returned' ? badge(s,'red') : badge(s,'gray');
+  const stageIcon = d => d === 'Approved' ? 'approved' : d === 'Pending' ? 'pending' : 'returned';
+  const stageNum  = d => d === 'Approved' ? '<i class="fas fa-check"></i>' : d === 'Pending' ? '?' : '<i class="fas fa-times"></i>';
+
+  // -- Populate Header
+  document.getElementById('pd-title').textContent = `${proposal.proposal_id} — Proposal Record`;
+  document.getElementById('pd-subtitle').textContent = project ? project.title : proposal.project_id;
+  document.getElementById('pd-header-badges').innerHTML = `
+    <span class="pd-hbadge"><i class="fas fa-code-branch"></i> v${proposal.version_no}</span>
+    <span class="pd-hbadge"><i class="fas fa-calendar-alt"></i> ${proposal.submission_date}</span>
+    <span class="pd-hbadge"><i class="fas fa-layer-group"></i> ${project ? project.service_type : '—'}</span>
+    <span class="pd-hbadge"><i class="fas fa-tag"></i> ${project ? project.source_type : '—'}</span>
+  `;
+
+  // -- Role notice
+  const roleNotices = {
+    coordinator: { cls: 'info', msg: 'You are viewing this as <strong>Extension Coordinator</strong>. You review and verify proposals, record compliance, coordinate follow-ups, and post project status updates so the Project Proponent stays informed. Endorsement is made by the College Dean.' },
+    proponent:   { cls: 'info', msg: 'You are viewing this as <strong>Project Proponent</strong>. You can view the full proposal record and upload revised documents if revisions are required. Project status is posted by the Extension Coordinator.' },
+    dean:        { cls: 'info', msg: 'You are viewing this as <strong>College Dean</strong>. You may record your endorsement or return for revision through your designated endorsement action.' }
+  };
+  const rn = roleNotices[role] || roleNotices['proponent'];
+  document.getElementById('pd-role-notice-wrap').innerHTML = `
+    <div class="pd-role-notice ${rn.cls}">
+      <i class="fas fa-${rn.cls === 'warn' ? 'exclamation-triangle' : 'info-circle'}"></i>
+      <span>${rn.msg}</span>
+    </div>`;
+
+  // -- Build all sections
+  const otherProposals = GRACE.proposals.filter(p => p.project_id === proposal.project_id && p.proposal_id !== proposal.proposal_id);
+
+  // Current stage: check if Extension Coordinator posted a status update, or fall back to approvals
+  let currentStage = 'Proposal Submitted';
+  try {
+    const savedUpdates = JSON.parse(localStorage.getItem('grace_status_updates_v4'));
+    if (Array.isArray(savedUpdates)) {
+      const projUpdates = savedUpdates.filter(u => u.project_id === proposal.project_id).sort((a,b) => new Date(b.at) - new Date(a.at));
+      if (projUpdates.length) {
+        currentStage = projUpdates[0].stage;
+      }
+    }
+  } catch(e) {}
+  if (currentStage === 'Proposal Submitted' && approvals.length) {
+    const lastApproval = approvals[approvals.length - 1];
+    currentStage = lastApproval ? lastApproval.approval_stage : 'Proposal Submitted';
+  }
+
+  // Section 1 — Proposal Information
+  const sec1 = `
+    <div class="pd-section">
+      <div class="pd-sec-head"><i class="fas fa-file-alt"></i><h4>Proposal Information</h4></div>
+      <div class="pd-sec-body">
+        <div class="pd-grid-3">
+          <div class="pd-field"><div class="pd-field-label">Proposal ID</div><div class="pd-field-val mono">${proposal.proposal_id}</div></div>
+          <div class="pd-field"><div class="pd-field-label">Project ID</div><div class="pd-field-val mono">${proposal.project_id}</div></div>
+          <div class="pd-field"><div class="pd-field-label">Version</div><div class="pd-field-val">${evalBadge(`Version ${proposal.version_no}`)}</div></div>
+        </div>
+        <div class="pd-grid-2" style="margin-top:0.85rem;">
+          <div class="pd-field"><div class="pd-field-label">Project Title</div><div class="pd-field-val">${project ? project.title : '—'}</div></div>
+          <div class="pd-field"><div class="pd-field-label">Project Proponent</div><div class="pd-field-val">${project && project.created_by ? GRACE.getPersonName(project.created_by) : '—'}</div></div>
+        </div>
+        <div class="pd-grid-3" style="margin-top:0.85rem;">
+          <div class="pd-field"><div class="pd-field-label">Submission Date</div><div class="pd-field-val">${proposal.submission_date}</div></div>
+          <div class="pd-field"><div class="pd-field-label">Service Type</div><div class="pd-field-val">${project ? project.service_type : '—'}</div></div>
+          <div class="pd-field"><div class="pd-field-label">Source Type</div><div class="pd-field-val">${project ? project.source_type : '—'}</div></div>
+        </div>
+        ${otherProposals.length ? `<div style="margin-top:0.85rem;padding:0.6rem 0.8rem;background:#FEF9EE;border:1px solid #FDE68A;border-radius:8px;font-size:0.75rem;color:#92400E;">
+          <i class="fas fa-history" style="margin-right:0.4rem;"></i><strong>Version History:</strong>
+          This project has ${otherProposals.length + 1} proposal version(s).
+          ${otherProposals.map(op => `<span style="margin-left:0.5rem;"><code style="background:#FEF3C7;padding:1px 5px;border-radius:3px;">${op.proposal_id} (v${op.version_no})</code></span>`).join('')}
+        </div>` : ''}
+      </div>
+    </div>`;
+
+  // Section 2 — Process & Status
+  const sec2 = `
+    <div class="pd-section">
+      <div class="pd-sec-head"><i class="fas fa-route"></i><h4>Process &amp; Status</h4></div>
+      <div class="pd-sec-body">
+        <div class="pd-grid-3" style="margin-bottom:1rem;">
+          <div class="pd-field"><div class="pd-field-label">Current Stage</div><div class="pd-field-val">${currentStage}</div></div>
+          <div class="pd-field"><div class="pd-field-label">Evaluation Status</div><div class="pd-field-val">${evalBadge(proposal.evaluation_status)}</div></div>
+          <div class="pd-field"><div class="pd-field-label">Approval Status</div><div class="pd-field-val">${evalBadge(proposal.approval_status)}</div></div>
+        </div>
+        <div class="pd-field" style="margin-bottom:0.85rem;">
+          <div class="pd-field-label">Current Remarks</div>
+          <div class="pd-field-val" style="font-style:italic;color:#6B7280;">"${proposal.remarks}"</div>
+        </div>
+        <div class="pd-field-label" style="margin-bottom:0.6rem;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#9CA3AF;">Institutional Process History</div>
+        <div class="pd-timeline">
+          ${approvals.length ? approvals.map((a, i) => `
+            <div class="pd-tl-item">
+              <div class="pd-tl-dot ${stageIcon(a.decision)}">${stageNum(a.decision)}</div>
+              <div class="pd-tl-info">
+                <div class="pd-tl-stage">${a.approval_stage} ${evalBadge(a.decision, a.decision === 'Approved' ? 'green' : a.decision === 'Pending' ? 'amber' : 'red')}</div>
+                <div class="pd-tl-meta">
+                  ${a.decision_date ? `<i class="fas fa-calendar-alt"></i> ${a.decision_date}` : '<i class="fas fa-clock"></i> Pending'}
+                  ${a.approved_by ? ` · Recorded by: ${GRACE.getPersonName(a.approved_by)}` : ''}
+                  ${a.signature_reference ? ` · Ref: <code style="background:#F3F4F6;padding:1px 4px;border-radius:3px;font-size:0.68rem;">${a.signature_reference}</code>` : ''}
+                </div>
+                <div class="pd-tl-remarks">${a.remarks}</div>
+              </div>
+            </div>`).join('') :
+            `<div style="color:#9CA3AF;font-size:0.8rem;padding:0.5rem;">No institutional records found for this project.</div>`
+          }
+        </div>
+      </div>
+    </div>`;
+
+  // Section 3 — Documents
+  const docTypeColor = t => ({ 'Proposal':'#2563EB','Budget':'#059669','MOA':'#8B1A1A','Training Material':'#7C3AED','Attendance Record':'#D97706','Report':'#374151','Survey Results':'#14B8A6','Photo Documentation':'#F97316','Certificate':'#059669' }[t] || '#6B7280');
+  const docTypeBg    = t => ({ 'Proposal':'#EFF6FF','Budget':'#F0FDF4','MOA':'rgba(139,26,26,0.08)','Training Material':'rgba(124,58,237,0.1)','Attendance Record':'rgba(217,119,6,0.1)','Report':'#F9FAFB','Survey Results':'rgba(20,184,166,0.1)','Photo Documentation':'rgba(249,115,22,0.1)','Certificate':'#F0FDF4' }[t] || '#F9FAFB');
+
+  const sec3 = `
+    <div class="pd-section">
+      <div class="pd-sec-head"><i class="fas fa-folder-open"></i><h4>Documents &amp; Files</h4></div>
+      <div class="pd-sec-body">
+        ${documents.length ? `<div class="pd-doc-list">
+          ${documents.map(d => `
+            <div class="pd-doc-item">
+              <div class="pd-doc-icon" style="background:${docTypeBg(d.document_type)};color:${docTypeColor(d.document_type)};">
+                <i class="fas fa-${d.file_type==='PDF'?'file-pdf':d.file_type==='XLSX'?'file-excel':d.file_type==='DOCX'?'file-word':d.file_type==='PPTX'?'file-powerpoint':'file-archive'}"></i>
+              </div>
+              <div>
+                <a href="javascript:void(0)" onclick="viewCompiledDocument('${d.file_name}', '${d.document_type}', '${proposal.project_id}', 'v${d.version_no}', '${d.uploaded_at}')" class="pd-doc-name" style="text-decoration:none;cursor:pointer;" onmouseover="this.style.color='#8B1A1A'" onmouseout="this.style.color='#111827'">${d.file_name}</a>
+                <div class="pd-doc-meta">${d.document_type} · v${d.version_no} · ${d.file_size} · Uploaded ${d.uploaded_at} by ${GRACE.getPersonName(d.uploaded_by)}</div>
+              </div>
+              <div class="pd-doc-actions">
+                <button class="pd-btn pd-btn-blue" title="View Document" onclick="viewCompiledDocument('${d.file_name}', '${d.document_type}', '${proposal.project_id}', 'v${d.version_no}', '${d.uploaded_at}')"><i class="fas fa-eye"></i> View</button>
+              </div>
+            </div>`).join('')}
+        </div>` : `<div style="color:#9CA3AF;font-size:0.82rem;">No documents on file for this project.</div>`}
+      </div>
+    </div>`;
+
+  // Section 4 — Related Project Information
+  const sec4 = `
+    <div class="pd-section">
+      <div class="pd-sec-head"><i class="fas fa-sitemap"></i><h4>Related Project Information</h4></div>
+      <div class="pd-sec-body" style="display:flex;flex-direction:column;gap:1rem;">
+
+        ${project ? `<div>
+          <div class="pd-field-label" style="margin-bottom:0.5rem;">Project Overview</div>
+          <div class="pd-grid-2">
+            <div class="pd-field"><div class="pd-field-label">Status</div><div class="pd-field-val">${evalBadge(project.project_status)}</div></div>
+            <div class="pd-field"><div class="pd-field-label">Implementation Period</div><div class="pd-field-val">${project.start_date} → ${project.end_date}</div></div>
+            <div class="pd-field"><div class="pd-field-label">NTP Issued</div><div class="pd-field-val">${project.ntp_issued ? `${badge('Yes — ' + project.ntp_reference,'green')}` : badge('Not Yet Issued','gray')}</div></div>
+            <div class="pd-field"><div class="pd-field-label">MOA Signed</div><div class="pd-field-val">${project.moa_signed ? `${badge('Yes — ' + project.moa_reference,'green')}` : badge('Not Yet Signed','amber')}</div></div>
+          </div>
+          <div class="pd-field" style="margin-top:0.75rem;"><div class="pd-field-label">Description</div><div class="pd-field-val" style="font-size:0.8rem;line-height:1.6;color:#4B5563;">${project.description}</div></div>
+        </div>` : ''}
+
+        ${team.length ? `<div>
+          <div class="pd-field-label" style="margin-bottom:0.5rem;">Project Team</div>
+          <table class="pd-mini-table">
+            <thead><tr><th>Name</th><th>Role</th><th>Status</th><th>Date Joined</th></tr></thead>
+            <tbody>${team.map(t => `<tr>
+              <td style="font-weight:600;">${GRACE.getPersonName(t.person_id)}</td>
+              <td>${t.team_role}</td>
+              <td>${badge(t.participation_status, t.participation_status==='Active'?'green':'gray')}</td>
+              <td>${t.date_joined}</td>
+            </tr>`).join('')}</tbody>
+          </table>
+        </div>` : ''}
+
+        ${bens.length ? `<div>
+          <div class="pd-field-label" style="margin-bottom:0.5rem;">Beneficiaries</div>
+          <table class="pd-mini-table">
+            <thead><tr><th>Beneficiary</th><th>Type</th><th>Participation Role</th></tr></thead>
+            <tbody>${bens.map(b => {
+              const ben = GRACE.getBeneficiaryById(b.beneficiary_id);
+              return `<tr><td style="font-weight:600;">${ben ? ben.beneficiary_name : b.beneficiary_id}</td><td>${ben ? ben.beneficiary_type : '—'}</td><td>${b.participation_role}</td></tr>`;
+            }).join('')}</tbody>
+          </table>
+        </div>` : ''}
+
+        ${partners.length ? `<div>
+          <div class="pd-field-label" style="margin-bottom:0.5rem;">Partner Organizations</div>
+          <table class="pd-mini-table">
+            <thead><tr><th>Organization</th><th>Type</th><th>Partnership Role</th></tr></thead>
+            <tbody>${partners.map(pp => {
+              const par = GRACE.getPartnerById(pp.partner_id);
+              return `<tr><td style="font-weight:600;">${par ? par.organization_name : pp.partner_id}</td><td>${par ? par.organization_type : '—'}</td><td>${pp.partnership_role}</td></tr>`;
+            }).join('')}</tbody>
+          </table>
+        </div>` : ''}
+
+        ${activities.length ? `<div>
+          <div class="pd-field-label" style="margin-bottom:0.5rem;">Activities</div>
+          <table class="pd-mini-table">
+            <thead><tr><th>Activity</th><th>Type</th><th>Schedule</th><th>Status</th></tr></thead>
+            <tbody>${activities.map(a => `<tr>
+              <td style="font-weight:600;">${a.activity_name}</td>
+              <td>${a.activity_type}</td>
+              <td style="font-size:0.72rem;">${a.schedule_start.split(' ')[0]} → ${a.schedule_end.split(' ')[0]}</td>
+              <td>${badge(a.activity_status, a.activity_status==='Completed'?'green':a.activity_status==='Ongoing'?'blue':a.activity_status==='Scheduled'?'gray':'amber')}</td>
+            </tr>`).join('')}</tbody>
+          </table>
+        </div>` : ''}
+
+        ${funding.length ? `<div>
+          <div class="pd-field-label" style="margin-bottom:0.5rem;">Funding Information</div>
+          <table class="pd-mini-table">
+            <thead><tr><th>Source</th><th>Approved Amount</th><th>Status</th><th>Remarks</th></tr></thead>
+            <tbody>${funding.map(f => {
+              const src = GRACE.getFundingSourceById(f.funding_source_id);
+              return `<tr>
+                <td style="font-weight:600;">${src ? src.source_name : f.funding_source_id}<br><span style="font-size:0.68rem;color:#9CA3AF;">${src ? src.source_type : ''}</span></td>
+                <td style="font-weight:700;">${GRACE.formatCurrency(f.approved_amount)}</td>
+                <td>${badge(f.funding_status, f.funding_status==='Released'?'green':f.funding_status==='Partially Released'?'amber':f.funding_status==='Pending'?'gray':'red')}</td>
+                <td style="font-size:0.72rem;color:#6B7280;">${f.remarks}</td>
+              </tr>`;
+            }).join('')}</tbody>
+          </table>
+        </div>` : ''}
+      </div>
+    </div>`;
+
+  // Inject all sections
+  document.getElementById('pd-body').innerHTML = sec1 + sec2 + sec3 + sec4;
+
+  // -- Role-based Action Panel
+  const actions = buildActionPanel(role, proposal, project);
+  document.getElementById('pd-actions').innerHTML = actions;
+
+  // Open modal
+  document.getElementById('pd-overlay').classList.add('open');
+  document.getElementById('pd-overlay').scrollTop = 0;
+}
+
+/* ── Role-based action panel builder ─────────────────────────── */
+function buildActionPanel(role, proposal, project) {
+  // Common action
+  const reviewBtn = `<button class="pd-btn pd-btn-blue" onclick="recordAction('review','${proposal.proposal_id}')"><i class="fas fa-search"></i> REVIEW</button>`;
+  const realFormBtn = `<button class="pd-btn" style="color:#92400E;background:#FFFBEB;border-color:#FDE68A;font-weight:700;" onclick="viewOfficialForm('${proposal.proposal_id}')"><i class="fas fa-file-invoice"></i> REAL FORM (CNSC-OP-EXT-01A)</button>`;
+  const docsBtn = `<button class="pd-btn pd-btn-gray" onclick="openCompiledDocsModal('${proposal.project_id}')"><i class="fas fa-folder-open"></i> COMPILED DOCUMENTS</button>`;
+
+  // Coordinator Actions — the coordinator records every status update and informs the proponent
+  const coordinatorActions = `
+    ${reviewBtn}
+    ${realFormBtn}
+    <button class="pd-btn pd-btn-blue" onclick="recordAction('verify','${proposal.proposal_id}')"><i class="fas fa-check-circle"></i> VERIFY</button>
+    <button class="pd-btn pd-btn-blue" onclick="recordAction('record-compliance','${proposal.proposal_id}')"><i class="fas fa-list-check"></i> RECORD COMPLIANCE</button>
+    <button class="pd-btn pd-btn-green" onclick="recordAction('sign-proposal','${proposal.proposal_id}')"><i class="fas fa-signature"></i> SIGN PROPOSAL</button>
+    <button class="pd-btn pd-btn-gray" onclick="openQuickStatusModal('${proposal.project_id}')"><i class="fas fa-route"></i> POST STATUS UPDATE</button>
+    ${docsBtn}
+  `;
+
+  // Dean Actions
+  const deanActions = `
+    ${reviewBtn}
+    ${realFormBtn}
+    <button class="pd-btn pd-btn-green" onclick="recordAction('endorse','${proposal.proposal_id}')"><i class="fas fa-stamp"></i> ENDORSE</button>
+    <button class="pd-btn pd-btn-red" onclick="recordAction('return','${proposal.proposal_id}')"><i class="fas fa-undo-alt"></i> RETURN FOR REVISION</button>
+    <button class="pd-btn pd-btn-blue" onclick="recordAction('record-endorsement','${proposal.proposal_id}')"><i class="fas fa-clipboard-check"></i> RECORD ENDORSEMENT</button>
+    ${docsBtn}
+  `;
+
+  // Proponent Actions
+  const proponentActions = `
+    ${reviewBtn}
+    ${realFormBtn}
+    <button class="pd-btn pd-btn-green" onclick="recordAction('upload-revised','${proposal.proposal_id}')"><i class="fas fa-file-upload"></i> UPLOAD REVISED PROPOSAL</button>
+    ${docsBtn}
+  `;
+
+  // Build per role (only 3 roles)
+  const roleActions = {
+    coordinator: coordinatorActions,
+    proponent:   proponentActions,
+    dean:        deanActions
+  };
+
+  return roleActions[role] || proponentActions;
+}
+
+/* ── Action toast (placeholder for actual form modals) ─────────── */
+function recordAction(type, proposalId) {
+  const labels = {
+    'review':             'Review',
+    'verify':             'Verify',
+    'sign-proposal':      'Sign Proposal',
+    'record-update':      'Record Update',
+    'endorse':            'Endorse',
+    'return':             'Return for Revision',
+    'record-endorsement': 'Record Endorsement',
+    'record-eligibility': 'Record Eligibility Result',
+    'record-compliance':  'Record Compliance Action',
+    'record-inst-action': 'Record Institutional Action',
+    'update-status':      'Update Status',
+    'sign-eligibility':   'Sign/Act on Eligibility Checklist',
+    'upload-revised':     'Upload Revised Proposal'
+  };
+  // In a full implementation, these would open dedicated form modals.
+  // For the prototype, show a brief confirmation.
+  const label = labels[type] || type;
+  if (type === 'verify') {
+    // Coordinator verifies completeness -> routes the proposal and its files to the College Dean
+    try {
+      const prop = (window.GRACE && GRACE.proposals) ? GRACE.proposals.find(x => x.proposal_id === proposalId) : null;
+      if (prop) {
+        const routed = JSON.parse(localStorage.getItem('grace_coord_routed')) || {};
+        routed[prop.project_id] = { by: 'Dr. Mary Grace Bolos', date: new Date().toISOString().slice(0, 10), ref: proposalId };
+        localStorage.setItem('grace_coord_routed', JSON.stringify(routed));
+        const v = JSON.parse(localStorage.getItem('grace_coord_verified')) || [];
+        if (v.indexOf(prop.project_id) < 0) { v.push(prop.project_id); localStorage.setItem('grace_coord_verified', JSON.stringify(v)); }
+      }
+    } catch (e) {}
+  }
+  const btn = event.currentTarget;
+  const orig = btn.innerHTML;
+  btn.innerHTML = type === 'verify' ? `<i class="fas fa-check"></i> Routed to Dean` : `<i class="fas fa-check"></i> Recorded`;
+  btn.style.borderColor = '#059669';
+  setTimeout(() => {
+    btn.innerHTML = orig;
+    btn.style.background = '';
+    btn.style.color = '';
+    btn.style.borderColor = '';
+  }, 1800);
+}
+
+/* ── Quick Status Update Modal Logic ─────────────────── */
+function openQuickStatusModal(projectId) {
+  if ((localStorage.getItem('graceRole') || 'proponent') === 'proponent') return; // proponents cannot change status
+  const p = (window.GRACE && GRACE.projects) ? GRACE.projects.find(x => x.project_id === projectId) : null;
+  document.getElementById('qsm-project-id').value = projectId;
+  document.getElementById('qsm-project-name').textContent = p ? `${projectId} — ${p.title}` : projectId;
+  document.getElementById('qsm-overlay').classList.add('open');
+}
+
+function closeQuickStatusModal() {
+  document.getElementById('qsm-overlay').classList.remove('open');
+}
+
+function saveQuickStatus(e) {
+  e.preventDefault();
+  const pid = document.getElementById('qsm-project-id').value;
+  const stage = document.getElementById('qsm-stage').value;
+  const status = document.getElementById('qsm-status').value;
+  const msg = document.getElementById('qsm-message').value.trim();
+
+  const KEY = 'grace_status_updates_v4';
+  let list = [];
+  try {
+    list = JSON.parse(localStorage.getItem(KEY)) || [];
+  } catch(err) { list = []; }
+
+  list.unshift({
+    id: Date.now(),
+    project_id: pid,
+    stage: stage,
+    status: status,
+    message: msg,
+    by: 'Dr. Mary Grace Bolos',
+    at: new Date().toISOString()
+  });
+  localStorage.setItem(KEY, JSON.stringify(list));
+
+  // Reflect the posted status on the project's latest proposal (incl. Reject)
+  const map = {
+    'Rejected':       { evaluation_status: 'Rejected',         approval_status: 'Rejected' },
+    'Needs Revision': { evaluation_status: 'Returned',         approval_status: 'Pending'  },
+    'Under Review':   { evaluation_status: 'Under Evaluation', approval_status: 'Pending'  },
+    'Submitted':      { evaluation_status: 'Pending',          approval_status: 'Pending'  }
+  };
+  if (map[status] && window.GRACE) {
+    const versions = GRACE.proposals.concat((function(){ try { return JSON.parse(localStorage.getItem('grace_custom_proposals')) || []; } catch (e) { return []; } })()).filter(x => x.project_id === pid);
+    if (versions.length) {
+      const latest = versions.reduce((a, b) => (b.version_no > a.version_no ? b : a));
+      let ov = {};
+      try { ov = JSON.parse(localStorage.getItem('grace_proposal_status_overrides')) || {}; } catch (err) {}
+      ov[latest.proposal_id] = Object.assign({}, map[status], { remarks: msg });
+      localStorage.setItem('grace_proposal_status_overrides', JSON.stringify(ov));
+    }
+  }
+
+  // Dispatch real-time notification to proponent
+  if (window.GRACE && typeof window.GRACE.addDynamicNotification === 'function') {
+    const proj = GRACE.getProjectById(pid);
+    const pTitle = proj ? proj.title : pid;
+    window.GRACE.addDynamicNotification({
+      role: 'proponent',
+      type: (status === 'Rejected' || status === 'Needs Revision') ? 'submission' : 'approval',
+      title: `Coordinator Notice: ${pid} (${status})`,
+      message: `Dr. Mary Grace Bolos updated status for "${pTitle}": ${status}. Remarks: "${msg}"`,
+      actionUrl: 'proposals.html',
+      actionLabel: 'View Proposal'
+    });
+  }
+
+  closeQuickStatusModal();
+  document.getElementById('qsm-form').reset();
+  renderProposals();
+  alert(`Status for ${pid} successfully updated to "${status}" and recorded in the status timeline!`);
+}
+
+/* ── Compiled Documents Modal Logic ─────────────────── */
+function openCompiledDocsModal(projectId) {
+  const p = (window.GRACE && GRACE.projects) ? GRACE.projects.find(x => x.project_id === projectId) : null;
+  document.getElementById('cdm-project-name').textContent = p ? `${projectId} — ${p.title}` : projectId;
+  document.getElementById('cdm-link-lib').href = `documents.html?project=${encodeURIComponent(projectId)}`;
+
+  // Compile all files from data.js and localStorage
+  const graceDocs = (window.GRACE && GRACE.getDocumentsByProject) ? GRACE.getDocumentsByProject(projectId) : [];
+  let localDocs = [];
+  try {
+    const ld = JSON.parse(localStorage.getItem('grace_documents_v1'));
+    if (Array.isArray(ld)) {
+      localDocs = ld.filter(d => d.project_id === projectId);
+    }
+  } catch(e) {}
+
+  const container = document.getElementById('cdm-docs-list');
+  const countBadge = document.getElementById('cdm-doc-count');
+
+  // Merge and display compiled files
+  let allFiles = [];
+  graceDocs.forEach(d => {
+    allFiles.push({
+      title: d.file_name,
+      category: d.document_type,
+      version: 'v' + d.version_no,
+      date: d.uploaded_at,
+      size: d.file_size,
+      status: 'Complete',
+      by: GRACE.getPersonName(d.uploaded_by)
+    });
   });
 
-  info.textContent = `Showing ${GRACE.proposals.length} proposal records`;
-});
+  localDocs.forEach(d => {
+    if (!allFiles.some(f => f.title === d.title)) {
+      allFiles.push({
+        title: d.title,
+        category: d.category,
+        version: d.version,
+        date: d.date,
+        size: '1.8 MB',
+        status: d.status || 'Submitted',
+        by: d.by || 'Proponent'
+      });
+    }
+  });
+
+  countBadge.textContent = `${allFiles.length} Compiled Documents`;
+
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  if (!allFiles.length) {
+    container.innerHTML = `<div style="text-align:center;padding:2rem;color:#9CA3AF;">No documents uploaded for this project yet.</div>`;
+  } else {
+    container.innerHTML = allFiles.map(f => {
+      const isComplete = f.status === 'Complete';
+      const isChecking = f.status === 'For Checking';
+      const isCorrection = f.status === 'Needs Correction';
+      const statusCls = isComplete ? 'background:#D1FAE5;color:#065F46;' : (isCorrection ? 'background:#FEE2E2;color:#991B1B;' : (isChecking ? 'background:#FEF3C7;color:#92400E;' : 'background:#DBEAFE;color:#1E40AF;'));
+
+      return `
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:0.75rem 1rem;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;margin-bottom:0.5rem;">
+          <div style="display:flex;align-items:center;gap:0.75rem;">
+            <div style="width:36px;height:36px;border-radius:6px;background:rgba(139,26,26,0.08);color:#8B1A1A;display:flex;align-items:center;justify-content:center;font-size:1rem;cursor:pointer;" onclick="viewCompiledDocument('${esc(f.title)}', '${esc(f.category)}', '${esc(projectId)}', '${esc(f.version)}', '${esc(f.date)}')">
+              <i class="fas fa-file-pdf"></i>
+            </div>
+            <div>
+              <a href="javascript:void(0)" onclick="viewCompiledDocument('${esc(f.title)}', '${esc(f.category)}', '${esc(projectId)}', '${esc(f.version)}', '${esc(f.date)}')" style="font-weight:700;font-size:0.85rem;color:#111827;text-decoration:none;" onmouseover="this.style.color='#8B1A1A'" onmouseout="this.style.color='#111827'">${f.title}</a>
+              <div style="font-size:0.72rem;color:#6B7280;">${f.category} · ${f.version} · ${f.date} · ${f.size}</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.6rem;">
+            <span style="font-size:0.7rem;font-weight:700;padding:0.2rem 0.55rem;border-radius:999px;${statusCls}">${f.status}</span>
+            <button onclick="viewCompiledDocument('${esc(f.title)}', '${esc(f.category)}', '${esc(projectId)}', '${esc(f.version)}', '${esc(f.date)}')" class="btn-view-details" style="font-size:0.75rem;padding:0.35rem 0.7rem;" title="View Document (In-Portal)">
+              <i class="fas fa-eye"></i> View
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  document.getElementById('cdm-overlay').classList.add('open');
+}
+
+function closeCompiledDocsModal() {
+  document.getElementById('cdm-overlay').classList.remove('open');
+}
+
+/* ══════════════════════════════════════════════════════
+   OFFICIAL FORM CNSC-OP-EXT-01A GENERATOR (REAL FORM)
+   ══════════════════════════════════════════════════════ */
+function buildForm01A(proposalId) {
+  if (!window.GRACE) return;
+  const allProps = typeof getScopedProposals === 'function' ? getScopedProposals() : (GRACE.proposals || []);
+  const proposal = allProps.find(p => p.proposal_id === proposalId) || (GRACE.proposals ? GRACE.proposals.find(p => p.proposal_id === proposalId) : null) || (GRACE.proposals ? GRACE.proposals[0] : null);
+  const project  = GRACE.getProjectById(proposal ? proposal.project_id : 'EXT-2026-048');
+  const team     = GRACE.getTeamByProject(proposal ? proposal.project_id : 'EXT-2026-048');
+  const funding  = GRACE.getFundingByProject(proposal ? proposal.project_id : 'EXT-2026-048');
+  const bens     = GRACE.getBeneficiariesByProject(proposal ? proposal.project_id : 'EXT-2026-048');
+  
+  const totalBudget = funding.length ? GRACE.formatCurrency(funding.reduce((sum, f) => sum + (f.approved_amount || f.proposed_amount || 0), 0)) : '₱ 45,000.00';
+  const proponentName = team.find(t => t.team_role.includes('Leader') || t.team_role.includes('Proponent')) ? GRACE.getPersonName(team[0].person_id) : 'Prince Jheck T. Juan';
+  const benNames = bens.length ? bens.map(b => b.beneficiary_name).join(', ') : 'Community Stakeholders & LGU Employees';
+
+  const formHtml = `
+    <div class="real-form-paper" id="rf-paper-content">
+      <!-- Header -->
+      <div class="real-form-header">
+        <div style="width:70px;text-align:left;">
+          <div style="font-weight:900;font-size:1.4rem;color:#8B1A1A;font-family:'Poppins',sans-serif;">UCN</div>
+        </div>
+        <div class="real-form-header-center">
+          <div style="font-size:8pt;text-transform:uppercase;letter-spacing:0.04em;">Republic of the Philippines</div>
+          <div class="rf-title-main">UNIVERSITY OF CAMARINES NORTE</div>
+          <div class="rf-sub" style="font-weight:bold;">COLLEGE OF COMPUTING AND MULTIMEDIA STUDIES</div>
+          <div class="rf-sub">Extension Services Office • Daet, Camarines Norte</div>
+        </div>
+        <div class="rf-code-box">
+          <div><strong>CNSC-OP-EXT-01A</strong></div>
+          <div>Rev. 01</div>
+          <div>Effectivity: Oct 2026</div>
+        </div>
+      </div>
+
+      <div class="real-form-title-banner">
+        EXTENSION PROJECT PROPOSAL FORM
+      </div>
+
+      <!-- I. Project Profile -->
+      <div class="rf-section-head">I. PROJECT PROFILE</div>
+      <table class="real-form-table">
+        <tr>
+          <th style="width:28%;">1. Project Title</th>
+          <td colspan="3" style="font-weight:bold;font-size:10pt;">${project ? project.title : 'Web Development Training for Daet LGU Employees'}</td>
+        </tr>
+        <tr>
+          <th>2. Project Code</th>
+          <td style="width:25%;"><span style="font-family:monospace;font-weight:bold;">${project ? project.project_id : 'EXT-2026-048'}</span></td>
+          <th style="width:22%;">3. Version No.</th>
+          <td style="width:25%;">v${proposal ? proposal.version_no : '1'} (Official Submission)</td>
+        </tr>
+        <tr>
+          <th>4. Implementing Unit</th>
+          <td>College of Computing &amp; Multimedia Studies (CCMS)</td>
+          <th>5. Program / Discipline</th>
+          <td>BS Information Technology / BS Computer Science</td>
+        </tr>
+        <tr>
+          <th>6. Type of Extension Service</th>
+          <td>${project ? project.service_type : 'Skills Enhancement Training'}</td>
+          <th>7. Project Source</th>
+          <td>${project ? project.source_type : 'External Request'}</td>
+        </tr>
+        <tr>
+          <th>8. Project Location / Venue</th>
+          <td>Daet, Camarines Norte</td>
+          <th>9. Proposed Total Budget</th>
+          <td style="font-weight:bold;color:#8B1A1A;">${totalBudget}</td>
+        </tr>
+        <tr>
+          <th>10. Target Beneficiaries</th>
+          <td colspan="3">${benNames} (Est. 40 Participants)</td>
+        </tr>
+        <tr>
+          <th>11. Implementation Period</th>
+          <td colspan="3">${project ? project.start_date : '2026-08-28'} to ${project ? project.end_date : '2026-10-15'}</td>
+        </tr>
+      </table>
+
+      <!-- II. Rationale & Description -->
+      <div class="rf-section-head">II. PROJECT RATIONALE &amp; BACKGROUND</div>
+      <table class="real-form-table">
+        <tr>
+          <td style="text-align:justify;line-height:1.5;">
+            ${project ? project.description : 'A comprehensive extension capability building program designed to modernize operational competencies in digital technologies.'}
+            <br><br>
+            In conformity with the University Extension Agenda and Community Development Mandate, the College of Computing and Multimedia Studies undertakes this extension endeavor to empower local government personnel and community constituents with modern information technology tools, web productivity systems, and cybersecurity best practices.
+          </td>
+        </tr>
+      </table>
+
+      <!-- III. Objectives -->
+      <div class="rf-section-head">III. PROJECT OBJECTIVES</div>
+      <table class="real-form-table">
+        <tr>
+          <td>
+            <strong>General Objective:</strong><br>
+            To deliver responsive and technologically advanced community extension services that build sustainable digital literacy, web competencies, and operational efficiency among target beneficiaries.
+            <br><br>
+            <strong>Specific Objectives:</strong>
+            <ol style="margin:4px 0 0 1.2rem;padding-left:0.5rem;line-height:1.5;">
+              <li>Deliver hands-on training modules and technical workshops aligned with stakeholder needs.</li>
+              <li>Equip participants with foundational knowledge and applied skills in digital workflows and software utilization.</li>
+              <li>Administer participant evaluations to achieve a minimum of 90% satisfaction and verify learning retention.</li>
+              <li>Establish sustainable institutional linkages and post-training technical assistance.</li>
+            </ol>
+          </td>
+        </tr>
+      </table>
+
+      <!-- IV. Plan of Activities -->
+      <div class="rf-section-head">IV. METHODOLOGY &amp; PLAN OF ACTIVITIES</div>
+      <table class="real-form-table">
+        <thead>
+          <tr>
+            <th style="width:25%;">Phase / Milestone</th>
+            <th style="width:40%;">Activities Conducted</th>
+            <th style="width:20%;">Expected Output</th>
+            <th style="width:15%;">Person Responsible</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Phase 1: Pre-Implementation</strong></td>
+            <td>Needs assessment, training syllabus development, MOA/coordination with partner LGU, participant profiling.</td>
+            <td>Approved syllabus, signed MOA/endorsements</td>
+            <td>Project Proponent &amp; Coordinator</td>
+          </tr>
+          <tr>
+            <td><strong>Phase 2: Implementation</strong></td>
+            <td>Conduct of interactive lecture sessions, hands-on computer laboratory workshops, module demonstrations.</td>
+            <td>Attendance sheets, workshop outputs</td>
+            <td>Project Team &amp; Trainers</td>
+          </tr>
+          <tr>
+            <td><strong>Phase 3: Post-Implementation</strong></td>
+            <td>Administration of Client Satisfaction Survey, post-test evaluation, preparation of Final Narrative Accomplishment Report.</td>
+            <td>Evaluation report, Certificate issuance</td>
+            <td>Project Leader &amp; Dean</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- V. Line-Item Budget Allocation -->
+      <div class="rf-section-head">V. LINE-ITEM BUDGET ALLOCATION (SUMMARY)</div>
+      <table class="real-form-table">
+        <thead>
+          <tr>
+            <th>Expense Category</th>
+            <th>Item Description</th>
+            <th style="text-align:right;">Estimated Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Personal Services (PS)</strong></td>
+            <td>Training Specialist &amp; Facilitator Honoraria</td>
+            <td style="text-align:right;">₱ 15,000.00</td>
+          </tr>
+          <tr>
+            <td><strong>Maintenance &amp; Other Operating Expenses (MOOE)</strong></td>
+            <td>Training kits, handouts, laboratory consumables, certificates, refreshments</td>
+            <td style="text-align:right;">₱ 25,000.00</td>
+          </tr>
+          <tr>
+            <td><strong>Contingency / Communication</strong></td>
+            <td>Administrative communication, travel, and documentation</td>
+            <td style="text-align:right;">₱ 5,000.00</td>
+          </tr>
+          <tr style="background:#F9FAFB;font-weight:bold;">
+            <td colspan="2" style="text-align:right;">TOTAL PROPOSED BUDGET:</td>
+            <td style="text-align:right;color:#8B1A1A;">${totalBudget}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- VI. Signatures Block (3 Roles) -->
+      <div class="rf-section-head">VI. INSTITUTIONAL SIGNATURES &amp; ENDORSEMENTS</div>
+      <div class="rf-signature-grid">
+        <div>
+          <div style="font-size:8pt;text-transform:uppercase;color:#4B5563;">Prepared &amp; Submitted by:</div>
+          <div class="rf-sig-line">${proponentName}</div>
+          <div style="font-weight:bold;">Project Proponent / Leader</div>
+          <div style="font-size:7.5pt;color:#6B7280;">Date: ${proposal ? proposal.submission_date : '2026-08-15'}</div>
+        </div>
+        <div>
+          <div style="font-size:8pt;text-transform:uppercase;color:#4B5563;">Reviewed &amp; Verified by:</div>
+          <div class="rf-sig-line">DR. MARY GRACE BOLOS</div>
+          <div style="font-weight:bold;">Extension Coordinator</div>
+          <div style="font-size:7.5pt;color:#6B7280;">CCMS Extension Services Office</div>
+        </div>
+        <div>
+          <div style="font-size:8pt;text-transform:uppercase;color:#4B5563;">Recommending Approval / Endorsed by:</div>
+          <div class="rf-sig-line">DR. DANIEL MALIGAT</div>
+          <div style="font-weight:bold;">Dean, CCMS</div>
+          <div style="font-size:7.5pt;color:#6B7280;">College of Computing &amp; Multimedia Studies</div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  return formHtml;
+}
+
+/* ══════════════════════════════════════════════════════
+   OFFICIAL FORMS VIEWER — six forms, generated from the typed proposal data.
+   View-only inside the portal (nothing to download).
+   ══════════════════════════════════════════════════════ */
+const OFFICIAL_FORMS = [
+  { key: '01A', code: 'CNSC-OP-EXT-01A', name: 'Project Proposal Form',        icon: 'fa-file-invoice' },
+  { key: '01B', code: 'CNSC-OP-EXT-01B', name: 'Budget Breakdown',             icon: 'fa-coins' },
+  { key: '01C', code: 'CNSC-OP-EXT-01C', name: 'Work & Financial Plan',        icon: 'fa-calendar-alt' },
+  { key: '01D', code: 'CNSC-OP-EXT-01D', name: 'Endorsement & Routing Sheet',  icon: 'fa-stamp' },
+  { key: '02A', code: 'CNSC-OP-EXT-02A', name: 'Attendance Sheet',             icon: 'fa-user-check' },
+  { key: '03A', code: 'CNSC-OP-EXT-03A', name: 'Terminal / Narrative Report',  icon: 'fa-clipboard-list' }
+];
+let rfCurrentProposal = null;
+
+function rfPeso(n) { return '₱ ' + Number(n).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+function rfContext(proposalId) {
+  const all = (typeof getScopedProposals === 'function' ? getScopedProposals() : []).concat(GRACE.proposals || []);
+  const proposal = all.find(p => p.proposal_id === proposalId) || GRACE.proposals[0];
+  const project = GRACE.getProjectById(proposal.project_id) || {};
+  const funding = GRACE.getFundingByProject(proposal.project_id) || [];
+  let total = project.budget ? parseFloat(String(project.budget).replace(/[^0-9.]/g, '')) : 0;
+  if (!total && funding.length) total = funding.reduce((s, f) => s + (f.approved_amount || f.proposed_amount || 0), 0);
+  if (!total) total = 45000;
+  return { proposal: proposal, project: project, total: total, leader: GRACE.getPersonName(project.created_by || 'PER001') };
+}
+
+function rfShell(code, title, body) {
+  return `<div class="real-form-paper">
+    <div class="real-form-header">
+      <div style="width:70px;text-align:left;"><div style="font-weight:900;font-size:1.4rem;color:#8B1A1A;font-family:'Poppins',sans-serif;">UCN</div></div>
+      <div class="real-form-header-center">
+        <div style="font-size:8pt;text-transform:uppercase;letter-spacing:0.04em;">Republic of the Philippines</div>
+        <div class="rf-title-main">UNIVERSITY OF CAMARINES NORTE</div>
+        <div class="rf-sub" style="font-weight:bold;">COLLEGE OF COMPUTING AND MULTIMEDIA STUDIES</div>
+        <div class="rf-sub">Extension Services Office • Daet, Camarines Norte</div>
+      </div>
+      <div class="rf-code-box"><div><strong>${code}</strong></div><div>Rev. 01</div><div>Effectivity: Oct 2026</div></div>
+    </div>
+    <div class="real-form-title-banner">${title}</div>
+    ${body}
+  </div>`;
+}
+
+function rfSignatures(c, third) {
+  return `<div class="rf-section-head">SIGNATURES</div><div class="rf-signature-grid">
+    <div><div style="font-size:8pt;text-transform:uppercase;color:#4B5563;">Prepared by:</div><div class="rf-sig-line">${c.leader}</div><div style="font-weight:bold;">Project Proponent / Leader</div></div>
+    <div><div style="font-size:8pt;text-transform:uppercase;color:#4B5563;">Verified by:</div><div class="rf-sig-line">DR. MARY GRACE BOLOS</div><div style="font-weight:bold;">Extension Coordinator</div></div>
+    <div><div style="font-size:8pt;text-transform:uppercase;color:#4B5563;">${third || 'Endorsed by:'}</div><div class="rf-sig-line">DR. DANIEL MALIGAT</div><div style="font-weight:bold;">Dean, CCMS</div></div>
+  </div>`;
+}
+
+function buildFormBody(key, proposalId) {
+  if (key === '01A') return buildForm01A(proposalId);
+  const c = rfContext(proposalId);
+  const p = c.project, t = c.total;
+  const head = `<div class="rf-section-head">PROJECT</div><table class="real-form-table"><tr><th style="width:28%;">Project Title</th><td colspan="3" style="font-weight:bold;">${p.title || ''}</td></tr>
+    <tr><th>Project Code</th><td><span style="font-family:monospace;font-weight:bold;">${p.project_id || ''}</span></td><th>Proposal / Version</th><td>${c.proposal.proposal_id} · v${c.proposal.version_no}</td></tr>
+    <tr><th>Project Leader</th><td>${c.leader}</td><th>Implementation Period</th><td>${p.start_date || ''} to ${p.end_date || ''}</td></tr></table>`;
+
+  if (key === '01B') {
+    const rows = [
+      ['Facilitator / Resource Speaker Honoraria', 'Technical instruction and facilitation', 0.30],
+      ['Technical Support Honoraria', 'Laboratory and logistics support', 0.12],
+      ['Training Kits & Printed Modules', 'Handouts, modules, materials', 0.20],
+      ['Participant Meals & Refreshments', 'Per session snacks and meals', 0.25],
+      ['Certificates & Communication', 'Certificates, tokens, communication', 0.08],
+      ['Contingency', 'Unforeseen administrative expenses', 0.05]
+    ];
+    const body = rows.map((r, i) => `<tr><td>${i + 1}</td><td><strong>${r[0]}</strong><div style="font-size:8pt;color:#6B7280;">${r[1]}</div></td><td style="text-align:right;">${(r[2] * 100).toFixed(0)}%</td><td style="text-align:right;">${rfPeso(t * r[2])}</td></tr>`).join('');
+    return rfShell('CNSC-OP-EXT-01B', 'DETAILED BUDGET BREAKDOWN', head + `<div class="rf-section-head">LINE-ITEM BUDGET</div><table class="real-form-table"><thead><tr><th>No.</th><th>Item</th><th style="text-align:right;">Share</th><th style="text-align:right;">Amount</th></tr></thead><tbody>${body}<tr style="font-weight:bold;background:#F9FAFB;"><td colspan="3" style="text-align:right;">TOTAL BUDGET:</td><td style="text-align:right;color:#8B1A1A;">${rfPeso(t)}</td></tr></tbody></table><div style="font-size:8pt;margin-top:0.5rem;">Source of funds: Institutional Extension Fund</div>` + rfSignatures(c));
+  }
+
+  if (key === '01C') {
+    const acts = [
+      ['Coordination meeting and site preparation', 'Week 1', 0.10],
+      ['Orientation and pre-assessment of participants', 'Week 2', 0.15],
+      ['Core training sessions / development work', 'Weeks 3–5', 0.45],
+      ['Mentoring, monitoring and technical assistance', 'Weeks 6–7', 0.15],
+      ['Post-assessment, evaluation and turnover', 'Week 8', 0.15]
+    ];
+    const body = acts.map((a, i) => `<tr><td>${i + 1}</td><td>${a[0]}</td><td>${a[1]}</td><td style="text-align:right;">${rfPeso(t * a[2])}</td></tr>`).join('');
+    return rfShell('CNSC-OP-EXT-01C', 'WORK AND FINANCIAL PLAN', head + `<div class="rf-section-head">ACTIVITY SCHEDULE &amp; FUNDING</div><table class="real-form-table"><thead><tr><th>No.</th><th>Activity</th><th>Schedule</th><th style="text-align:right;">Allocated Budget</th></tr></thead><tbody>${body}<tr style="font-weight:bold;background:#F9FAFB;"><td colspan="3" style="text-align:right;">TOTAL:</td><td style="text-align:right;color:#8B1A1A;">${rfPeso(t)}</td></tr></tbody></table>` + rfSignatures(c));
+  }
+
+  if (key === '01D') {
+    const docs = GRACE.getDocumentsByProject(p.project_id) || [];
+    let local = [];
+    try { local = (JSON.parse(localStorage.getItem('grace_documents_v1')) || []).filter(d => d.project_id === p.project_id); } catch (e) {}
+    const have = type => docs.some(d => (d.document_type || '').indexOf(type) > -1) || local.some(d => (d.category || '').indexOf(type) > -1);
+    const checks = [['Project Proposal', 'Proposal'], ['Budget Breakdown', 'Budget'], ['Work Plan / Schedule', 'Work'], ['Letter of Request / MOA', 'MOA']];
+    const items = checks.map(x => `<tr><td>${x[0]}</td><td style="text-align:center;font-weight:bold;color:${have(x[1]) ? '#059669' : '#9CA3AF'};">${have(x[1]) ? '✔ Submitted' : '— Not on file'}</td></tr>`).join('');
+    let deanDec = {};
+    try { deanDec = JSON.parse(localStorage.getItem('grace_dean_decisions')) || {}; } catch (e) {}
+    const d = deanDec[p.project_id];
+    const approvals = GRACE.approvals.filter(a => a.project_id === p.project_id);
+    const cc = approvals.find(a => a.approval_stage === 'Completeness Check' && a.decision === 'Approved');
+    let routed = {}; try { routed = JSON.parse(localStorage.getItem('grace_coord_routed')) || {}; } catch (e) {}
+    const dd = approvals.find(a => a.approval_stage.indexOf('Dean') === 0);
+    const deanText = d ? (d.decision === 'Approved' ? 'ENDORSED' : 'RETURNED FOR REVISION') + ' — ' + d.date : (dd ? dd.decision.toUpperCase() + ' — ' + dd.decision_date : 'PENDING');
+    return rfShell('CNSC-OP-EXT-01D', 'ENDORSEMENT &amp; ROUTING SHEET', head +
+      `<div class="rf-section-head">A. COMPLETENESS CHECK (EXTENSION COORDINATOR)</div><table class="real-form-table"><thead><tr><th>Requirement</th><th style="text-align:center;">Status</th></tr></thead><tbody>${items}</tbody></table>
+       <div style="font-size:9pt;margin:0.4rem 0;">Coordinator result: <strong>${cc || routed[p.project_id] ? 'VERIFIED COMPLETE' : 'FOR CHECKING'}</strong></div>
+       <div class="rf-section-head">B. COLLEGE DEAN ENDORSEMENT</div><table class="real-form-table"><tr><th style="width:28%;">Decision</th><td style="font-weight:bold;">${deanText}</td></tr><tr><th>Remarks</th><td>${d ? d.remarks : (dd ? dd.remarks : '—')}</td></tr></table>` + rfSignatures(c, 'Endorsed by (Dean):'));
+  }
+
+  if (key === '02A') {
+    let rows = '';
+    for (let i = 1; i <= 12; i++) rows += `<tr><td>${i}</td><td style="height:22px;"></td><td></td><td></td><td></td></tr>`;
+    return rfShell('CNSC-OP-EXT-02A', 'PARTICIPANT ATTENDANCE SHEET', head + `<div class="rf-section-head">ATTENDANCE</div><table class="real-form-table"><thead><tr><th style="width:6%;">No.</th><th>Name of Participant</th><th>Office / Barangay</th><th style="width:16%;">Time In</th><th style="width:16%;">Signature</th></tr></thead><tbody>${rows}</tbody></table>` + rfSignatures(c, 'Noted by:'));
+  }
+
+  // 03A
+  return rfShell('CNSC-OP-EXT-03A', 'TERMINAL / NARRATIVE REPORT', head +
+    `<div class="rf-section-head">I. SUMMARY OF ACCOMPLISHMENTS</div><table class="real-form-table"><tr><th style="width:28%;">Planned Activities</th><td>To be completed upon implementation</td></tr><tr><th>Accomplished</th><td>—</td></tr><tr><th>Participants Served</th><td>—</td></tr><tr><th>Budget Utilized</th><td>${rfPeso(0)} of ${rfPeso(t)}</td></tr></table>
+     <div class="rf-section-head">II. NARRATIVE</div><div style="border:1px solid #D1D5DB;min-height:90px;padding:0.5rem;font-size:9pt;color:#6B7280;">The proponent encodes the narrative after the activity. Attach photos and attendance sheets.</div>
+     <div class="rf-section-head">III. ISSUES AND RECOMMENDATIONS</div><div style="border:1px solid #D1D5DB;min-height:60px;padding:0.5rem;font-size:9pt;color:#6B7280;">—</div>` + rfSignatures(c, 'Approved by:'));
+}
+
+function showOfficialForm(key) {
+  const f = OFFICIAL_FORMS.find(x => x.key === key) || OFFICIAL_FORMS[0];
+  const tabs = OFFICIAL_FORMS.map(x => `<button type="button" class="rf-tab${x.key === f.key ? ' active' : ''}" onclick="showOfficialForm('${x.key}')"><i class="fas ${x.icon}"></i> ${x.code.replace('CNSC-OP-EXT-', '')} · ${x.name}</button>`).join('');
+  document.getElementById('rf-print-area').innerHTML = `<div class="rf-tabs">${tabs}</div>` + buildFormBody(f.key, rfCurrentProposal);
+  document.getElementById('rf-modal-title').textContent = `${f.code} — ${f.name}`;
+}
+
+function viewOfficialForm(proposalId, key) {
+  if (!window.GRACE) return;
+  rfCurrentProposal = proposalId;
+  showOfficialForm(key || '01A');
+  document.getElementById('modal-real-form').classList.add('open');
+}
+
+function closeRealFormModal() {
+  document.getElementById('modal-real-form').classList.remove('open');
+}
+
+/* ══════════════════════════════════════════════════════
+   IN-PORTAL DOCUMENT PREVIEWER (NO DOWNLOAD REQUIRED)
+   ══════════════════════════════════════════════════════ */
+function viewCompiledDocument(title, category, projectId, version, date) {
+  const p = (window.GRACE && GRACE.projects) ? GRACE.projects.find(x => x.project_id === projectId) : null;
+  const projTitle = p ? p.title : projectId;
+
+  let bodyContent = '';
+
+  if (category && category.includes('Proposal')) {
+    bodyContent = `
+      <div style="border:1px solid #D1D5DB;padding:1.5rem;background:#fff;border-radius:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #8B1A1A;padding-bottom:0.75rem;margin-bottom:1rem;">
+          <div>
+            <h3 style="margin:0;color:#8B1A1A;font-size:1.1rem;font-weight:800;">${title}</h3>
+            <div style="font-size:0.8rem;color:#4B5563;">Project: <strong>${projectId} — ${projTitle}</strong></div>
+          </div>
+          <span style="background:#D1FAE5;color:#065F46;font-size:0.75rem;font-weight:700;padding:0.25rem 0.65rem;border-radius:999px;">Verified Document</span>
+        </div>
+        <p style="font-size:0.85rem;line-height:1.6;color:#374151;">
+          This official project proposal delineates the complete operational framework, training objectives, beneficiary scope, and institutional implementation plan in compliance with the CCMS Extension Manual.
+        </p>
+        <div style="margin-top:1.25rem;text-align:center;">
+          <button class="pd-btn" style="background:#8B1A1A;color:#fff;font-weight:700;" onclick="viewOfficialForm((GRACE.proposals.slice().reverse().find(x => x.project_id === '${projectId}') || GRACE.proposals[0]).proposal_id)">
+            <i class="fas fa-file-invoice"></i> View Complete Official Form CNSC-OP-EXT-01A
+          </button>
+        </div>
+      </div>
+    `;
+  } else if (category && (category.includes('Budget') || title.includes('Budget'))) {
+    bodyContent = `
+      <div style="border:1px solid #D1D5DB;padding:1.5rem;background:#fff;border-radius:8px;">
+        <h4 style="margin:0 0 0.5rem;color:#111827;font-size:1rem;font-weight:800;">Line-Item Budget Breakdown (Form CNSC-OP-EXT-01B)</h4>
+        <p style="font-size:0.8rem;color:#6B7280;margin-bottom:1rem;">Project: ${projectId} — ${projTitle}</p>
+        <table class="pd-mini-table" style="border:1px solid #E5E7EB;margin-bottom:1rem;">
+          <thead>
+            <tr><th>Item &amp; Description</th><th>Qty / Unit</th><th>Unit Cost</th><th style="text-align:right;">Total Amount</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Training Facilitator Honoraria</strong> (Technical Instruction)</td><td>20 hours</td><td>₱ 500.00</td><td style="text-align:right;font-weight:600;">₱ 10,000.00</td></tr>
+            <tr><td><strong>Technical Support Specialist Honoraria</strong></td><td>20 hours</td><td>₱ 250.00</td><td style="text-align:right;font-weight:600;">₱ 5,000.00</td></tr>
+            <tr><td><strong>Training Kits &amp; Printed Modules</strong></td><td>40 copies</td><td>₱ 200.00</td><td style="text-align:right;font-weight:600;">₱ 8,000.00</td></tr>
+            <tr><td><strong>Participant Refreshments &amp; Meals</strong> (2-Day Session)</td><td>40 pax</td><td>₱ 300.00</td><td style="text-align:right;font-weight:600;">₱ 12,000.00</td></tr>
+            <tr><td><strong>Certificates, Token &amp; Communication Supplies</strong></td><td>1 lot</td><td>₱ 5,000.00</td><td style="text-align:right;font-weight:600;">₱ 5,000.00</td></tr>
+            <tr style="background:#F9FAFB;font-weight:bold;">
+              <td colspan="3" style="text-align:right;">TOTAL ALLOCATED BUDGET:</td>
+              <td style="text-align:right;color:#8B1A1A;font-size:0.95rem;">₱ 40,000.00</td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:#6B7280;margin-top:1rem;border-top:1px solid #E5E7EB;padding-top:0.75rem;">
+          <div>Source: <strong>Institutional Extension Fund</strong></div>
+          <div>Audited &amp; Verified by: <strong>Dr. Mary Grace Bolos (Extension Coordinator)</strong></div>
+        </div>
+      </div>
+    `;
+  } else if (category && (category.includes('Attendance') || title.includes('Attendance'))) {
+    bodyContent = `
+      <div style="border:1px solid #D1D5DB;padding:1.5rem;background:#fff;border-radius:8px;">
+        <h4 style="margin:0 0 0.5rem;color:#111827;font-size:1rem;font-weight:800;">Official Participant Attendance Sheet (Form CNSC-OP-EXT-02A)</h4>
+        <p style="font-size:0.8rem;color:#6B7280;margin-bottom:1rem;">${title} • Project: ${projectId} — ${projTitle}</p>
+        <table class="pd-mini-table" style="border:1px solid #E5E7EB;margin-bottom:1rem;">
+          <thead>
+            <tr><th>No.</th><th>Participant Name</th><th>Office / Agency</th><th>Morning Session</th><th>Afternoon Session</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td><strong>Abalos, Maria Cristina</strong></td><td>Daet LGU - HR Office</td><td><span style="color:#059669;font-weight:bold;">✔ 08:14 AM</span></td><td><span style="color:#059669;font-weight:bold;">✔ 01:10 PM</span></td><td><span class="pd-badge pd-b-green">Present</span></td></tr>
+            <tr><td>2</td><td><strong>Beltran, Reynaldo Jr.</strong></td><td>Daet LGU - IT Unit</td><td><span style="color:#059669;font-weight:bold;">✔ 08:20 AM</span></td><td><span style="color:#059669;font-weight:bold;">✔ 01:15 PM</span></td><td><span class="pd-badge pd-b-green">Present</span></td></tr>
+            <tr><td>3</td><td><strong>Castillo, Eleanor D.</strong></td><td>Daet LGU - Planning Office</td><td><span style="color:#059669;font-weight:bold;">✔ 08:05 AM</span></td><td><span style="color:#059669;font-weight:bold;">✔ 01:05 PM</span></td><td><span class="pd-badge pd-b-green">Present</span></td></tr>
+            <tr><td>4</td><td><strong>Dela Cruz, Anthony M.</strong></td><td>Daet LGU - Budget Office</td><td><span style="color:#059669;font-weight:bold;">✔ 08:25 AM</span></td><td><span style="color:#059669;font-weight:bold;">✔ 01:12 PM</span></td><td><span class="pd-badge pd-b-green">Present</span></td></tr>
+            <tr><td>5</td><td><strong>Espiritu, Joanne V.</strong></td><td>Daet LGU - Assessor Office</td><td><span style="color:#059669;font-weight:bold;">✔ 08:18 AM</span></td><td><span style="color:#059669;font-weight:bold;">✔ 01:08 PM</span></td><td><span class="pd-badge pd-b-green">Present</span></td></tr>
+          </tbody>
+        </table>
+        <div style="font-size:0.75rem;color:#6B7280;text-align:right;">
+          Verified and Certified Correct by: <strong>Extension Coordinator</strong>
+        </div>
+      </div>
+    `;
+  } else if (category && (category.includes('Satisfaction') || category.includes('Feedback') || title.includes('Satisfaction'))) {
+    bodyContent = `
+      <div style="border:1px solid #D1D5DB;padding:1.5rem;background:#fff;border-radius:8px;">
+        <h4 style="margin:0 0 0.5rem;color:#111827;font-size:1rem;font-weight:800;">Client Satisfaction Measurement Summary (CSMR)</h4>
+        <p style="font-size:0.8rem;color:#6B7280;margin-bottom:1rem;">Project: ${projectId} — ${projTitle}</p>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.25rem;">
+          <div style="background:#F0FDF4;border:1px solid #A7F3D0;padding:1rem;border-radius:8px;text-align:center;">
+            <div style="font-size:1.8rem;font-weight:900;color:#059669;">96.8%</div>
+            <div style="font-size:0.75rem;font-weight:700;color:#065F46;">Overall Satisfaction</div>
+          </div>
+          <div style="background:#EFF6FF;border:1px solid #BFDBFE;padding:1rem;border-radius:8px;text-align:center;">
+            <div style="font-size:1.8rem;font-weight:900;color:#2563EB;">4.92 / 5.0</div>
+            <div style="font-size:0.75rem;font-weight:700;color:#1E40AF;">Resource Speaker Competence</div>
+          </div>
+          <div style="background:#FFFBEB;border:1px solid #FDE68A;padding:1rem;border-radius:8px;text-align:center;">
+            <div style="font-size:1.8rem;font-weight:900;color:#D97706;">40 / 40</div>
+            <div style="font-size:0.75rem;font-weight:700;color:#92400E;">Evaluations Received</div>
+          </div>
+        </div>
+        <div style="font-size:0.82rem;line-height:1.5;color:#374151;">
+          <strong>Stakeholder Commendations:</strong>
+          <blockquote style="margin:0.5rem 0;padding-left:1rem;border-left:3px solid #8B1A1A;font-style:italic;color:#4B5563;">
+            "The web development workshop provided directly applicable digital knowledge for our municipal operations. The CCMS facilitators were exemplary."
+          </blockquote>
+        </div>
+      </div>
+    `;
+  } else {
+    bodyContent = `
+      <div style="border:1px solid #D1D5DB;padding:1.5rem;background:#fff;border-radius:8px;">
+        <h4 style="margin:0 0 0.5rem;color:#111827;font-size:1rem;font-weight:800;">${title}</h4>
+        <p style="font-size:0.8rem;color:#6B7280;margin-bottom:1.25rem;">Category: <strong>${category}</strong> · Project: <strong>${projectId} — ${projTitle}</strong> · Date: <strong>${date}</strong></p>
+        <div style="background:#F9FAFB;border:1px dashed #D1D5DB;padding:2rem;text-align:center;border-radius:8px;">
+          <i class="fas fa-file-check" style="font-size:2.5rem;color:#059669;margin-bottom:0.75rem;display:block;"></i>
+          <div style="font-weight:700;font-size:0.95rem;color:#111827;margin-bottom:0.25rem;">Official Record Verified On-File</div>
+          <p style="font-size:0.8rem;color:#6B7280;max-width:480px;margin:0 auto;">
+            This document is archived in the CCMS G.R.A.C.E. master document repository. All institutional audit signatures and metadata have been recorded and verified.
+          </p>
+        </div>
+      </div>
+    `;
+  }
+
+  document.getElementById('doc-viewer-title').textContent = title;
+  document.getElementById('doc-viewer-meta').textContent = `${category} · ${version} · ${date} · Project: ${projectId}`;
+  document.getElementById('doc-viewer-content').innerHTML = bodyContent;
+  document.getElementById('modal-doc-viewer').classList.add('open');
+}
+
+function closeDocPreviewModal() {
+  document.getElementById('modal-doc-viewer').classList.remove('open');
+}
 </script>
+
+<!-- Quick Status Update Modal (5 Generalized Statuses) -->
+<div id="qsm-overlay" class="pd-overlay" onclick="if(event.target===this)closeQuickStatusModal();">
+  <div class="pd-modal" style="max-width:540px;">
+    <div class="pd-header">
+      <div class="pd-header-left">
+        <h2><i class="fas fa-route" style="margin-right:0.4rem;"></i> Post Status Update</h2>
+        <p id="qsm-project-name">Project Status</p>
+      </div>
+      <button class="pd-close" onclick="closeQuickStatusModal()">&times;</button>
+    </div>
+    <form id="qsm-form" onsubmit="saveQuickStatus(event)" style="padding:1.5rem;">
+      <input type="hidden" id="qsm-project-id">
+      
+      <div style="margin-bottom:1rem;">
+        <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#374151;margin-bottom:0.35rem;">Current Process Stage</label>
+        <select id="qsm-stage" style="width:100%;padding:0.6rem;border:1.5px solid #D1D5DB;border-radius:8px;font-size:0.84rem;" required>
+          <option>Proposal Submitted / Completeness Check</option>
+          <option>College Dean Review &amp; Endorsement</option>
+          <option>Institutional Processing (OVPRE / Board / NTP)</option>
+          <option>Project Implementation &amp; Monitoring</option>
+          <option>Completion Documentation &amp; Evaluation</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom:1rem;">
+        <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#374151;margin-bottom:0.35rem;">Status</label>
+        <select id="qsm-status" style="width:100%;padding:0.6rem;border:1.5px solid #D1D5DB;border-radius:8px;font-size:0.84rem;" required>
+          <option value="Submitted">Submitted</option>
+          <option value="Under Review">Under Review</option>
+          <option value="Needs Revision">Needs Revision</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Completed">Completed</option>
+          <option value="Rejected">Rejected</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom:1.25rem;">
+        <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#374151;margin-bottom:0.35rem;">Message to Proponent</label>
+        <textarea id="qsm-message" rows="4" style="width:100%;padding:0.6rem;border:1.5px solid #D1D5DB;border-radius:8px;font-size:0.84rem;font-family:inherit;" placeholder="e.g. Your proposal has been reviewed. Proceeding to college endorsement." required></textarea>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:0.6rem;">
+        <button type="button" onclick="closeQuickStatusModal()" class="pd-btn pd-btn-gray">Cancel</button>
+        <button type="submit" class="pd-btn pd-btn-red" style="background:#8B1A1A;color:#fff;border-color:#8B1A1A;">
+          <i class="fas fa-paper-plane"></i> Post Update
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Compiled Project Documents Modal -->
+<div id="cdm-overlay" class="pd-overlay" onclick="if(event.target===this)closeCompiledDocsModal();">
+  <div class="pd-modal" style="max-width:680px;">
+    <div class="pd-header" style="background:linear-gradient(120deg,#064e3b,#059669,#10b981);">
+      <div class="pd-header-left">
+        <h2><i class="fas fa-folder-open" style="margin-right:0.4rem;"></i> Compiled Project Documents</h2>
+        <p id="cdm-project-name">Project Dossier</p>
+        <div style="margin-top:0.4rem;">
+          <span class="pd-hbadge" id="cdm-doc-count" style="background:rgba(255,255,255,0.25);">0 Documents</span>
+          <span class="pd-hbadge" style="background:rgba(255,255,255,0.25);">Compiled per Project</span>
+        </div>
+      </div>
+      <button class="pd-close" onclick="closeCompiledDocsModal()">&times;</button>
+    </div>
+    <div style="padding:1.5rem;">
+      <p style="font-size:0.8rem;color:#4B5563;margin-top:0;margin-bottom:1rem;">
+        All uploaded files and submissions compiled for this extension project:
+      </p>
+      
+      <div id="cdm-docs-list" style="max-height:360px;overflow-y:auto;margin-bottom:1.25rem;"></div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid #E5E7EB;padding-top:1rem;">
+        <a id="cdm-link-lib" href="documents.html" class="pd-btn pd-btn-blue">
+          <i class="fas fa-external-link-alt"></i> Open in Document Library
+        </a>
+        <button type="button" onclick="closeCompiledDocsModal()" class="pd-btn pd-btn-gray">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Official Form CNSC-OP-EXT-01A (Real Form) Modal -->
+<div id="modal-real-form" class="pd-overlay" onclick="if(event.target===this)closeRealFormModal();">
+  <div class="pd-modal" style="max-width:920px;">
+    <div class="pd-header" style="background:linear-gradient(120deg,#78350F,#B45309,#D97706);">
+      <div class="pd-header-left">
+        <h2><i class="fas fa-file-invoice" style="margin-right:0.4rem;"></i> <span id="rf-modal-title">Official Form CNSC-OP-EXT-01A</span></h2>
+        <p>Auto-Generated University Proposal Document (Official Format)</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem;">
+        <button type="button" class="pd-btn" onclick="window.print()" style="background:#fff;color:#78350F;border:none;font-weight:700;">
+          <i class="fas fa-print"></i> Print / Save as PDF
+        </button>
+        <button class="pd-close" onclick="closeRealFormModal()">&times;</button>
+      </div>
+    </div>
+    <div style="padding:1.5rem;background:#F3F4F6;max-height:80vh;overflow-y:auto;" id="rf-print-area">
+      <!-- Generated Form Paper injected here -->
+    </div>
+  </div>
+</div>
+
+<!-- In-Portal Document Viewer Modal (No download required) -->
+<div id="modal-doc-viewer" class="pd-overlay" onclick="if(event.target===this)closeDocPreviewModal();">
+  <div class="pd-modal" style="max-width:860px;">
+    <div class="pd-header">
+      <div class="pd-header-left">
+        <h2><i class="fas fa-file-alt" style="margin-right:0.4rem;"></i> <span id="doc-viewer-title">Document Preview</span></h2>
+        <p id="doc-viewer-meta">In-Portal Verified Record</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem;">
+        <button type="button" class="pd-btn" onclick="window.print()" style="background:#fff;color:#8B1A1A;border:none;font-weight:700;">
+          <i class="fas fa-print"></i> Print
+        </button>
+        <button class="pd-close" onclick="closeDocPreviewModal()">&times;</button>
+      </div>
+    </div>
+    <div id="doc-viewer-content" style="padding:1.5rem;max-height:80vh;overflow-y:auto;background:#F9FAFB;">
+      <!-- Content injected by JS -->
+    </div>
+  </div>
+</div>
 </body>
 </html>

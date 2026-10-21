@@ -3,11 +3,102 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="G.R.A.C.E PORTAL - Project Completion & Post-Implementation Monitoring">
-  <title>Completion & Results | G.R.A.C.E PORTAL</title>
+  <meta name="description" content="G.R.A.C.E PORTAL - Phase F & G: Project Completion and Post-Implementation Reporting">
+  <title>Completion & Post-Implementation | G.R.A.C.E PORTAL</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/dashboard.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .comp-banner {
+      background: white; border: 1px solid #E5E7EB; border-radius: 12px;
+      padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; display: flex;
+      justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+    }
+    .comp-role-tag {
+      font-size: 0.72rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.06em; padding: 0.25rem 0.65rem; border-radius: 6px;
+    }
+    .comp-role-tag.proponent { background: #FEF3C7; color: #92400E; }
+    .comp-role-tag.coordinator { background: #DBEAFE; color: #1E40AF; }
+    .comp-role-tag.dean { background: #D1FAE5; color: #065F46; }
+
+    .action-panel-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.5rem;
+    }
+    @media (max-width: 900px) { .action-panel-grid { grid-template-columns: 1fr; } }
+
+    .comp-card {
+      background: white; border: 1px solid #E5E7EB; border-radius: 12px;
+      padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+    .comp-card-head {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid #F3F4F6;
+    }
+    .comp-card-title {
+      font-size: 0.95rem; font-weight: 800; color: #111827; display: flex;
+      align-items: center; gap: 0.5rem;
+    }
+    .comp-card-title i { color: #8B1A1A; }
+    
+    .form-group-sm { margin-bottom: 0.85rem; }
+    .form-group-sm label {
+      display: block; font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.05em; color: #374151; margin-bottom: 0.35rem;
+    }
+    .form-group-sm select, .form-group-sm input[type=text], .form-group-sm textarea {
+      width: 100%; padding: 0.55rem 0.75rem; border: 1.5px solid #D1D5DB;
+      border-radius: 8px; font-size: 0.83rem; font-family: 'Inter', sans-serif;
+    }
+    .form-group-sm select:focus, .form-group-sm input[type=text]:focus, .form-group-sm textarea:focus {
+      outline: none; border-color: #8B1A1A; box-shadow: 0 0 0 3px rgba(139,26,26,0.1);
+    }
+
+    .btn-maroon {
+      padding: 0.65rem 1.2rem; background: linear-gradient(135deg, #8B1A1A, #6B0000);
+      color: white; border: none; border-radius: 8px; font-weight: 700;
+      font-size: 0.82rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem;
+      transition: opacity 0.2s;
+    }
+    .btn-maroon:hover { opacity: 0.92; }
+
+    .btn-secondary-sm {
+      padding: 0.45rem 0.85rem; background: #F3F4F6; color: #374151;
+      border: 1px solid #D1D5DB; border-radius: 6px; font-size: 0.78rem;
+      font-weight: 600; cursor: pointer;
+    }
+    .btn-secondary-sm:hover { background: #E5E7EB; }
+
+    .btn-success-sm {
+      padding: 0.45rem 0.85rem; background: #ECFDF5; color: #065F46;
+      border: 1px solid #A7F3D0; border-radius: 6px; font-size: 0.78rem;
+      font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 0.3rem;
+    }
+    .btn-success-sm:hover { background: #D1FAE5; }
+
+    .btn-danger-sm {
+      padding: 0.45rem 0.85rem; background: #FEF2F2; color: #991B1B;
+      border: 1px solid #FECACA; border-radius: 6px; font-size: 0.78rem;
+      font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 0.3rem;
+    }
+    .btn-danger-sm:hover { background: #FEE2E2; }
+
+    .checklist-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.6rem 0.8rem; background: #F9FAFB; border: 1px solid #E5E7EB;
+      border-radius: 6px; margin-bottom: 0.5rem; font-size: 0.8rem;
+    }
+    .checklist-left { display: flex; align-items: center; gap: 0.6rem; color: #1F2937; font-weight: 500; }
+    .checklist-badge { font-size: 0.68rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 999px; }
+    .checklist-badge.ready { background: #D1FAE5; color: #065F46; }
+    .checklist-badge.pending { background: #FEF3C7; color: #92400E; }
+
+    .comp-toast {
+      position: fixed; bottom: 1.5rem; right: 1.5rem; background: #059669;
+      color: white; padding: 0.75rem 1.25rem; border-radius: 8px; font-size: 0.85rem;
+      font-weight: 600; display: none; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+  </style>
 </head>
 <body>
   <div class="dashboard-layout">
@@ -18,159 +109,541 @@
 
       <div class="dashboard-content">
         <div class="page-header">
-          <div><h2>Project Completion &amp; Post-Implementation</h2><p class="page-subtitle">Record completion information, implementation results, beneficiary outcomes, and evaluation data</p></div>
+          <div>
+            <h2>Project Completion &amp; Post-Implementation</h2>
+            <p class="page-subtitle">Phases F &amp; G: Submit completion documents, verify accomplishments, record beneficiary feedback, and organize final records</p>
+          </div>
           <div class="page-header-actions">
-            <button class="btn btn-sm btn-outline"><i class="fas fa-download"></i> Export</button>
+            <button class="btn btn-sm btn-outline" onclick="window.print()"><i class="fas fa-print"></i> Print Summary</button>
+            <a href="documents.html" class="btn btn-sm btn-outline"><i class="fas fa-folder-open"></i> Document Library</a>
           </div>
         </div>
 
-        <!-- Summary -->
-        <div class="summary-cards">
+        <!-- Role Guidance Banner -->
+        <div class="comp-banner" id="comp-banner">
+          <div>
+            <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.3rem;">
+              <span class="comp-role-tag" id="comp-role-tag">ROLE</span>
+              <strong style="font-size:0.92rem;color:#111827;" id="comp-banner-title">Workflow Responsibility</strong>
+            </div>
+            <p style="font-size:0.8rem;color:#4B5563;margin:0;" id="comp-banner-desc">Loading role instructions...</p>
+          </div>
+          <div id="comp-banner-actions"></div>
+        </div>
+
+        <!-- Summary Metric Cards -->
+        <div class="summary-cards" style="margin-bottom:1.5rem;">
           <div class="summary-card card-green">
-            <div class="summary-card-info"><h3>23</h3><p>Completed Projects</p><span class="summary-card-trend up"><i class="fas fa-arrow-up"></i> 8 this year</span></div>
-            <div class="summary-card-icon"><i class="fas fa-check-circle"></i></div>
+            <div class="summary-card-info">
+              <h3 id="stat-completed-count">23</h3>
+              <p>Completed Projects</p>
+              <span class="summary-card-trend up"><i class="fas fa-check-circle"></i> Completion recorded</span>
+            </div>
+            <div class="summary-card-icon"><i class="fas fa-flag-checkered"></i></div>
           </div>
           <div class="summary-card card-gold">
-            <div class="summary-card-info"><h3>4.7</h3><p>Avg. Satisfaction</p><span class="summary-card-trend up"><i class="fas fa-star"></i> out of 5.0</span></div>
+            <div class="summary-card-info">
+              <h3>4.7</h3>
+              <p>Beneficiary Satisfaction</p>
+              <span class="summary-card-trend up"><i class="fas fa-star"></i> out of 5.0 rating</span>
+            </div>
             <div class="summary-card-icon"><i class="fas fa-smile"></i></div>
           </div>
           <div class="summary-card card-blue">
-            <div class="summary-card-info"><h3>1,850</h3><p>Total Beneficiaries Served</p><span class="summary-card-trend up"><i class="fas fa-arrow-up"></i> across all</span></div>
-            <div class="summary-card-icon"><i class="fas fa-users"></i></div>
+            <div class="summary-card-info">
+              <h3>1,850</h3>
+              <p>Beneficiaries Reached</p>
+              <span class="summary-card-trend up"><i class="fas fa-users"></i> across all projects</span>
+            </div>
+            <div class="summary-card-icon"><i class="fas fa-user-friends"></i></div>
           </div>
           <div class="summary-card card-maroon">
-            <div class="summary-card-info"><h3>18</h3><p>Reports Filed</p><span class="summary-card-trend up"><i class="fas fa-file-alt"></i> documented</span></div>
-            <div class="summary-card-icon"><i class="fas fa-file-alt"></i></div>
+            <div class="summary-card-info">
+              <h3 id="stat-pending-check">2</h3>
+              <p>In Review Queue</p>
+              <span class="summary-card-trend"><i class="fas fa-clock"></i> Completion check</span>
+            </div>
+            <div class="summary-card-icon"><i class="fas fa-tasks"></i></div>
           </div>
         </div>
 
-        <!-- Completed Project Detail -->
-        <div class="card" style="margin-bottom: 1.5rem;">
+        <!-- ================= PROPONENT SUBMISSION PANELS (PHASE F & G) ================= -->
+        <div class="action-panel-grid" id="proponent-action-panels" style="display:none;">
+          <!-- Phase F: Submit Completion Documents -->
+          <div class="comp-card">
+            <div class="comp-card-head">
+              <div class="comp-card-title">
+                <i class="fas fa-award"></i>
+                <span>Phase F: Submit Completion Documents</span>
+              </div>
+              <span class="badge badge-pending">Proponent Action</span>
+            </div>
+            <p style="font-size:0.78rem;color:#6B7280;margin-bottom:1rem;">
+              Compile final implementation results, accomplishment narrative, and evidence of completed deliverables to submit to the Extension Coordinator.
+            </p>
+            <form id="form-submit-completion">
+              <div class="form-group-sm">
+                <label>Target Project</label>
+                <select id="comp-submit-project" required></select>
+              </div>
+              <div class="form-group-sm">
+                <label>Report Title</label>
+                <input type="text" id="comp-submit-title" placeholder="e.g. Final Accomplishment & Narrative Report" value="Final Accomplishment & Narrative Report" required>
+              </div>
+              <div class="form-group-sm">
+                <label>Beneficiaries Served (Actual)</label>
+                <input type="text" id="comp-submit-beneficiaries" placeholder="e.g. 48 participants" required>
+              </div>
+              <div class="form-group-sm">
+                <label>Accomplishment & Deliverable Summary</label>
+                <textarea id="comp-submit-summary" rows="3" placeholder="Summarize completed activities, training outputs, and deliverable items..." required></textarea>
+              </div>
+              <div class="form-group-sm">
+                <label>Attach Completion File (PDF / DOCX)</label>
+                <input type="file" id="comp-submit-file" required>
+              </div>
+              <button type="submit" class="btn-maroon" style="width:100%;justify-content:center;">
+                <i class="fas fa-paper-plane"></i> Submit to Extension Coordinator
+              </button>
+            </form>
+          </div>
+
+          <!-- Phase G: Submit Post-Implementation & Evaluation -->
+          <div class="comp-card">
+            <div class="comp-card-head">
+              <div class="comp-card-title">
+                <i class="fas fa-poll"></i>
+                <span>Phase G: Submit Post-Implementation Records</span>
+              </div>
+              <span class="badge badge-pending">Proponent Action</span>
+            </div>
+            <p style="font-size:0.78rem;color:#6B7280;margin-bottom:1rem;">
+              Submit prescribed Post-Implementation Report or client satisfaction survey results, beneficiary feedback, and impact evaluation records.
+            </p>
+            <form id="form-submit-postimp">
+              <div class="form-group-sm">
+                <label>Target Project</label>
+                <select id="postimp-submit-project" required></select>
+              </div>
+              <div class="form-group-sm">
+                <label>Average Satisfaction Rating (1.0 – 5.0)</label>
+                <input type="text" id="postimp-submit-rating" placeholder="e.g. 4.8" value="4.8" required>
+              </div>
+              <div class="form-group-sm">
+                <label>Beneficiary Feedback Highlights</label>
+                <textarea id="postimp-submit-feedback" rows="3" placeholder="Quotes, community impact, or beneficiary evaluation highlights..." required></textarea>
+              </div>
+              <div class="form-group-sm">
+                <label>Attach Survey / Evaluation File (PDF / XLSX)</label>
+                <input type="file" id="postimp-submit-file" required>
+              </div>
+              <button type="submit" class="btn-maroon" style="width:100%;justify-content:center;">
+                <i class="fas fa-upload"></i> Submit Evaluation Records
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- ================= COORDINATOR CHECK & VERIFICATION SECTION ================= -->
+        <div id="coordinator-management-section" style="display:none;margin-bottom:1.5rem;">
+          <div class="comp-card" style="margin-bottom:1.25rem;">
+            <div class="comp-card-head">
+              <div class="comp-card-title">
+                <i class="fas fa-clipboard-check"></i>
+                <span>Phase F &amp; G Verification &amp; Official Status Recording Queue</span>
+              </div>
+              <span class="badge badge-progress">Extension Coordinator Only</span>
+            </div>
+            <p style="font-size:0.8rem;color:#4B5563;margin-bottom:1rem;">
+              Review submitted completion documents and post-implementation evaluation records against documentation requirements. Request corrections if deficient, or record completion and inform the proponent.
+            </p>
+
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Project</th>
+                    <th>Submission Type</th>
+                    <th>Date Received</th>
+                    <th>Checklist Status</th>
+                    <th>Current Status</th>
+                    <th style="text-align:right;">Coordinator Action</th>
+                  </tr>
+                </thead>
+                <tbody id="coordinator-queue-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= CENTRAL PROJECT RECORD ARCHIVE ================= -->
+        <div class="card" style="margin-bottom:1.5rem;">
           <div class="card-body">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:1rem;">
               <div>
-                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                  <span class="badge badge-completed"><span class="badge-dot"></span>Completed</span>
-                  <span class="text-xs text-muted">EXT-2026-038</span>
-                </div>
-                <h3 style="margin-bottom: 0.3rem;">Digital Literacy Program for Brgy. Lag-on</h3>
-                <p class="text-small text-muted">Community Extension Service • Apr 10 – Jun 20, 2026 • Daet, Camarines Norte</p>
+                <h4 style="margin:0;font-size:1.05rem;color:#111827;">
+                  <i class="fas fa-archive" style="color:var(--maroon);margin-right:0.5rem;"></i>
+                  Completed Project Records &amp; Post-Implementation Archive
+                </h4>
+                <p style="font-size:0.78rem;color:#6B7280;margin:0.2rem 0 0;">
+                  Step 9: All verified completion documents, beneficiary evaluations, and coordinator updates organized by project
+                </p>
               </div>
-              <button class="btn btn-sm btn-outline"><i class="fas fa-eye"></i> View Full Report</button>
-            </div>
-
-            <div class="grid grid-2" style="gap: 2rem;">
-              <!-- Completion Info -->
-              <div>
-                <h4 style="margin-bottom: 1rem;"><i class="fas fa-clipboard-check" style="color: var(--status-completed); margin-right: 0.5rem;"></i>Completion Summary</h4>
-                <table style="width: 100%;">
-                  <tbody>
-                    <tr><td style="padding: 0.5rem 0; color: var(--gray-500); font-size: 0.85rem; width: 160px;">Completion Date</td><td style="padding: 0.5rem 0; font-weight: 600;">June 20, 2026</td></tr>
-                    <tr><td style="padding: 0.5rem 0; color: var(--gray-500); font-size: 0.85rem;">Activities Completed</td><td style="padding: 0.5rem 0; font-weight: 600;">2 of 2 (100%)</td></tr>
-                    <tr><td style="padding: 0.5rem 0; color: var(--gray-500); font-size: 0.85rem;">Beneficiaries Served</td><td style="padding: 0.5rem 0; font-weight: 600;">48 of 50 target (96%)</td></tr>
-                    <tr><td style="padding: 0.5rem 0; color: var(--gray-500); font-size: 0.85rem;">Budget Utilized</td><td style="padding: 0.5rem 0; font-weight: 600;">₱48,500 of ₱50,000 (97%)</td></tr>
-                    <tr><td style="padding: 0.5rem 0; color: var(--gray-500); font-size: 0.85rem;">Overall Rating</td><td style="padding: 0.5rem 0; font-weight: 600; color: var(--gold-dark);"><i class="fas fa-star"></i> 4.7 / 5.0</td></tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <!-- Outcomes -->
-              <div>
-                <h4 style="margin-bottom: 1rem;"><i class="fas fa-chart-line" style="color: var(--gold); margin-right: 0.5rem;"></i>Beneficiary Outcomes</h4>
-                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                  <div class="outcome-item">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.3rem;">
-                      <span style="font-size: 0.85rem; font-weight: 500;">Relevance & Usefulness</span>
-                      <span style="font-size: 0.85rem; font-weight: 700; color: var(--gold-dark);">4.7</span>
-                    </div>
-                    <div class="progress-bar" style="height: 6px;"><div class="progress-bar-fill" style="width: 94%; background: var(--gold);"></div></div>
-                  </div>
-                  <div class="outcome-item">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.3rem;">
-                      <span style="font-size: 0.85rem; font-weight: 500;">Quality of Implementation</span>
-                      <span style="font-size: 0.85rem; font-weight: 700; color: var(--gold-dark);">4.5</span>
-                    </div>
-                    <div class="progress-bar" style="height: 6px;"><div class="progress-bar-fill" style="width: 90%; background: var(--gold);"></div></div>
-                  </div>
-                  <div class="outcome-item">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.3rem;">
-                      <span style="font-size: 0.85rem; font-weight: 500;">Benefits & Impact</span>
-                      <span style="font-size: 0.85rem; font-weight: 700; color: var(--gold-dark);">4.6</span>
-                    </div>
-                    <div class="progress-bar" style="height: 6px;"><div class="progress-bar-fill" style="width: 92%; background: var(--gold);"></div></div>
-                  </div>
-                  <div class="outcome-item">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.3rem;">
-                      <span style="font-size: 0.85rem; font-weight: 500;">Overall Satisfaction</span>
-                      <span style="font-size: 0.85rem; font-weight: 700; color: var(--gold-dark);">4.8</span>
-                    </div>
-                    <div class="progress-bar" style="height: 6px;"><div class="progress-bar-fill" style="width: 96%; background: var(--status-completed);"></div></div>
-                  </div>
-                  <div class="outcome-item">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.3rem;">
-                      <span style="font-size: 0.85rem; font-weight: 500;">Willingness to Recommend</span>
-                      <span style="font-size: 0.85rem; font-weight: 700; color: var(--gold-dark);">4.9</span>
-                    </div>
-                    <div class="progress-bar" style="height: 6px;"><div class="progress-bar-fill" style="width: 98%; background: var(--status-completed);"></div></div>
-                  </div>
-                </div>
+              <div class="filter-group" style="margin:0;">
+                <span class="filter-label">Filter:</span>
+                <select class="form-select" id="archive-filter-project" style="font-size:0.82rem;">
+                  <option value="">All Projects</option>
+                  <option value="EXT-2026-038">EXT-2026-038 — Digital Literacy</option>
+                  <option value="EXT-2026-025">EXT-2026-025 — Cybersecurity</option>
+                  <option value="EXT-2026-018">EXT-2026-018 — Database Workshop</option>
+                </select>
               </div>
             </div>
+
+            <!-- Detailed Completed Project Spotlight -->
+            <div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;padding:1.25rem;margin-bottom:1.5rem;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;margin-bottom:1rem;">
+                <div>
+                  <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem;">
+                    <span class="badge badge-completed"><span class="badge-dot"></span>Completion Recorded</span>
+                    <span class="badge badge-approved">Post-Implementation Logged</span>
+                    <span class="text-xs text-muted" style="font-weight:600;">EXT-2026-038</span>
+                  </div>
+                  <h3 style="margin:0;font-size:1.15rem;color:#111827;">Digital Literacy Program for Brgy. Lag-on</h3>
+                  <p class="text-small text-muted" style="margin-top:0.2rem;">Project Leader: Prince Jheck T. Juan • Completed: Jun 20, 2026 • Daet, Camarines Norte</p>
+                </div>
+                <div style="display:flex;gap:0.5rem;">
+                  <a href="project-detail.html" class="btn btn-sm btn-outline"><i class="fas fa-eye"></i> View Central Record</a>
+                </div>
+              </div>
+
+              <div class="grid grid-2" style="gap:1.5rem;">
+                <div>
+                  <h5 style="font-size:0.8rem;text-transform:uppercase;color:#6B7280;margin-bottom:0.75rem;">Verified Completion Accomplishments (Phase F)</h5>
+                  <div class="checklist-item">
+                    <div class="checklist-left"><i class="fas fa-check-circle" style="color:#059669;"></i> Final Narrative / Accomplishment Report</div>
+                    <span class="checklist-badge ready">Complete</span>
+                  </div>
+                  <div class="checklist-item">
+                    <div class="checklist-left"><i class="fas fa-check-circle" style="color:#059669;"></i> Attendance Sheets &amp; 48 Participants Reached</div>
+                    <span class="checklist-badge ready">Verified</span>
+                  </div>
+                  <div class="checklist-item">
+                    <div class="checklist-left"><i class="fas fa-check-circle" style="color:#059669;"></i> Budget Liquidation &amp; Documentation (₱48,500)</div>
+                    <span class="checklist-badge ready">Verified</span>
+                  </div>
+                  <div class="checklist-item">
+                    <div class="checklist-left"><i class="fas fa-check-circle" style="color:#059669;"></i> Deliverable Evidence &amp; Photo Certificates</div>
+                    <span class="checklist-badge ready">Archived</span>
+                  </div>
+                </div>
+
+                <div>
+                  <h5 style="font-size:0.8rem;text-transform:uppercase;color:#6B7280;margin-bottom:0.75rem;">Beneficiary Outcomes &amp; Feedback (Phase G)</h5>
+                  <div style="display:flex;justify-content:space-between;font-size:0.83rem;margin-bottom:0.3rem;">
+                    <span>Overall Client Satisfaction</span>
+                    <strong style="color:var(--gold-dark);"><i class="fas fa-star"></i> 4.7 / 5.0</strong>
+                  </div>
+                  <div class="progress-bar" style="height:6px;margin-bottom:0.75rem;"><div class="progress-bar-fill" style="width:94%;background:var(--gold);"></div></div>
+
+                  <div style="background:white;border:1px solid #E5E7EB;border-radius:6px;padding:0.75rem;font-size:0.8rem;color:#374151;font-style:italic;">
+                    "The community participants demonstrated proficiency in basic digital navigation and online services. Follow-up literacy sessions requested for Q4."
+                    <div style="font-size:0.7rem;color:#6B7280;font-style:normal;margin-top:0.3rem;font-weight:600;">
+                      Recorded by: Dr. Mary Grace Bolos (Extension Coordinator)
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Table of Archived Completions -->
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Project</th>
+                    <th>Type</th>
+                    <th>Completion Date</th>
+                    <th>Beneficiaries</th>
+                    <th>Satisfaction</th>
+                    <th>Archived Files</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="archived-projects-tbody">
+                  <tr>
+                    <td><strong>Digital Literacy – Brgy. Lag-on</strong><br><span class="text-xs text-muted">EXT-2026-038</span></td>
+                    <td>Community Service</td>
+                    <td class="text-small">Jun 20, 2026</td>
+                    <td class="text-center font-semibold">48</td>
+                    <td><span style="color:var(--gold-dark);font-weight:700;"><i class="fas fa-star"></i> 4.7</span></td>
+                    <td class="text-center"><span class="badge badge-sm" style="background:#F3F4F6;">5 files</span></td>
+                    <td><span class="badge badge-completed">Recorded Complete</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Cybersecurity Awareness Seminar</strong><br><span class="text-xs text-muted">EXT-2026-025</span></td>
+                    <td>Seminar</td>
+                    <td class="text-small">Mar 15, 2026</td>
+                    <td class="text-center font-semibold">60</td>
+                    <td><span style="color:var(--gold-dark);font-weight:700;"><i class="fas fa-star"></i> 4.5</span></td>
+                    <td class="text-center"><span class="badge badge-sm" style="background:#F3F4F6;">4 files</span></td>
+                    <td><span class="badge badge-completed">Recorded Complete</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Database Management Workshop</strong><br><span class="text-xs text-muted">EXT-2026-018</span></td>
+                    <td>Skills Training</td>
+                    <td class="text-small">Feb 28, 2026</td>
+                    <td class="text-center font-semibold">25</td>
+                    <td><span style="color:var(--gold-dark);font-weight:700;"><i class="fas fa-star"></i> 4.8</span></td>
+                    <td class="text-center"><span class="badge badge-sm" style="background:#F3F4F6;">6 files</span></td>
+                    <td><span class="badge badge-completed">Recorded Complete</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
           </div>
         </div>
 
-        <!-- Completed Projects Table -->
-        <div class="table-container">
-          <div class="table-header">
-            <h4><i class="fas fa-flag-checkered" style="color: var(--maroon); margin-right: 0.5rem;"></i>Completed Projects</h4>
-          </div>
-          <table>
-            <thead>
-              <tr>
-                <th>Project</th>
-                <th>Type</th>
-                <th>Completion Date</th>
-                <th>Beneficiaries</th>
-                <th>Satisfaction</th>
-                <th>Documents</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>Digital Literacy – Brgy. Lag-on</strong><br><span class="text-xs text-muted">EXT-2026-038</span></td>
-                <td>Community Service</td>
-                <td class="text-small">Jun 20, 2026</td>
-                <td class="text-center font-semibold">48</td>
-                <td><span style="color: var(--gold-dark); font-weight: 700;"><i class="fas fa-star"></i> 4.7</span></td>
-                <td class="text-center">5</td>
-                <td><button class="btn btn-sm btn-outline" style="padding: 0.25rem 0.5rem;"><i class="fas fa-eye"></i></button></td>
-              </tr>
-              <tr>
-                <td><strong>Cybersecurity Awareness Seminar</strong><br><span class="text-xs text-muted">EXT-2026-025</span></td>
-                <td>Seminar</td>
-                <td class="text-small">Mar 15, 2026</td>
-                <td class="text-center font-semibold">60</td>
-                <td><span style="color: var(--gold-dark); font-weight: 700;"><i class="fas fa-star"></i> 4.5</span></td>
-                <td class="text-center">4</td>
-                <td><button class="btn btn-sm btn-outline" style="padding: 0.25rem 0.5rem;"><i class="fas fa-eye"></i></button></td>
-              </tr>
-              <tr>
-                <td><strong>Database Management Workshop</strong><br><span class="text-xs text-muted">EXT-2026-018</span></td>
-                <td>Skills Training</td>
-                <td class="text-small">Feb 28, 2026</td>
-                <td class="text-center font-semibold">25</td>
-                <td><span style="color: var(--gold-dark); font-weight: 700;"><i class="fas fa-star"></i> 4.8</span></td>
-                <td class="text-center">6</td>
-                <td><button class="btn btn-sm btn-outline" style="padding: 0.25rem 0.5rem;"><i class="fas fa-eye"></i></button></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
       </div>
     </div>
   </div>
+
+  <div class="comp-toast" id="comp-toast"></div>
+
   <script src="js/data.js"></script>
   <script src="js/main.js"></script>
+  <script>
+    (function () {
+      const role = localStorage.getItem('graceRole') || 'proponent';
+      const toast = (msg) => {
+        const t = document.getElementById('comp-toast');
+        t.textContent = msg;
+        t.style.display = 'block';
+        setTimeout(() => { t.style.display = 'none'; }, 2800);
+      };
+
+      const projects = (window.GRACE && GRACE.projects) ? GRACE.projects : [];
+      const STORAGE_KEY = 'grace_completion_queue_v1';
+
+      // Seed queue items for demonstration
+      const seedQueue = [
+        {
+          id: 1,
+          project_id: 'EXT-2026-048',
+          title: 'Web Development Training for Daet LGU Employees',
+          type: 'Phase F: Final Accomplishment Report & Deliverable Evidence',
+          date: '2026-09-18',
+          checklist: 'Accomplishment narrative submitted; Certificates attached; Attendance pending',
+          status: 'For Checking',
+          notes: ''
+        },
+        {
+          id: 2,
+          project_id: 'EXT-2026-045',
+          title: 'Basud Municipal Library Management System',
+          type: 'Phase G: Client Satisfaction & Evaluation Survey',
+          date: '2026-09-15',
+          checklist: 'Survey results attached; 35 respondents; Satisfaction 4.6/5.0',
+          status: 'Submitted',
+          notes: ''
+        }
+      ];
+
+      function getQueue() {
+        try {
+          const q = JSON.parse(localStorage.getItem(STORAGE_KEY));
+          if (Array.isArray(q)) return q;
+        } catch (e) {}
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(seedQueue));
+        return seedQueue.slice();
+      }
+
+      function saveQueue(q) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(q));
+      }
+
+      // Setup Role View
+      const roleTag = document.getElementById('comp-role-tag');
+      const bannerTitle = document.getElementById('comp-banner-title');
+      const bannerDesc = document.getElementById('comp-banner-desc');
+      const propPanels = document.getElementById('proponent-action-panels');
+      const coordSec = document.getElementById('coordinator-management-section');
+
+      roleTag.className = 'comp-role-tag ' + role;
+
+      if (role === 'proponent') {
+        roleTag.textContent = 'Project Proponent';
+        bannerTitle.textContent = 'Phases F & G: Submit Completion & Post-Implementation Records';
+        bannerDesc.textContent = 'You are responsible for submitting the final accomplishment report, deliverable evidence, client satisfaction results, and beneficiary evaluation. The Extension Coordinator verifies them.';
+        propPanels.style.display = 'grid';
+      } else if (role === 'coordinator') {
+        roleTag.textContent = 'Extension Coordinator';
+        bannerTitle.textContent = 'Phases F & G: Completeness Verification & Record Management';
+        bannerDesc.textContent = 'Receive completion reports, verify deliverable evidence against requirements, request corrections when needed, and record official completion and beneficiary outcomes.';
+        coordSec.style.display = 'block';
+      } else {
+        roleTag.textContent = 'College Dean';
+        bannerTitle.textContent = 'Academic & Institutional Oversight: Completed Projects';
+        bannerDesc.textContent = 'Review completed extension accomplishments, beneficiary outcomes, and client satisfaction ratings across the College of Computer and Mathematical Sciences.';
+      }
+
+      // Populate Project Dropdowns for Proponent
+      const activeProjects = projects.filter(p => p.status !== 'Completed');
+      const pOptions = (activeProjects.length ? activeProjects : projects)
+        .map(p => `<option value="${p.project_id}">${p.project_id} — ${p.title}</option>`).join('');
+      
+      const compProjSelect = document.getElementById('comp-submit-project');
+      const postimpProjSelect = document.getElementById('postimp-submit-project');
+      if (compProjSelect) compProjSelect.innerHTML = pOptions;
+      if (postimpProjSelect) postimpProjSelect.innerHTML = pOptions;
+
+      // Render Coordinator Queue
+      function renderCoordinatorQueue() {
+        const tbody = document.getElementById('coordinator-queue-tbody');
+        if (!tbody) return;
+        const queue = getQueue();
+        const pendingCount = queue.filter(item => item.status !== 'Recorded as Complete').length;
+        const pendingBadge = document.getElementById('stat-pending-check');
+        if (pendingBadge) pendingBadge.textContent = pendingCount;
+
+        if (!queue.length) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#9CA3AF;padding:1.5rem;">No submissions awaiting completion checking.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = queue.map(item => `
+          <tr>
+            <td>
+              <strong>${item.project_id}</strong>
+              <div style="font-size:0.75rem;color:#6B7280;">${item.title}</div>
+            </td>
+            <td><span style="font-size:0.8rem;font-weight:600;color:#1F2937;">${item.type}</span></td>
+            <td style="font-size:0.8rem;color:#4B5563;">${item.date}</td>
+            <td><span style="font-size:0.75rem;color:#4B5563;">${item.checklist}</span></td>
+            <td>
+              <span class="badge ${item.status === 'Recorded as Complete' ? 'badge-completed' : (item.status === 'Needs Correction' ? 'badge-rejected' : 'badge-progress')}">
+                ${item.status}
+              </span>
+            </td>
+            <td style="text-align:right;">
+              ${item.status !== 'Recorded as Complete' ? `
+                <div style="display:flex;gap:0.4rem;justify-content:flex-end;">
+                  <button class="btn-danger-sm" onclick="requestCorrection(${item.id})">
+                    <i class="fas fa-undo"></i> Request Correction
+                  </button>
+                  <button class="btn-success-sm" onclick="recordCompletion(${item.id})">
+                    <i class="fas fa-check"></i> Record Complete
+                  </button>
+                </div>
+              ` : `<span style="font-size:0.75rem;color:#059669;font-weight:700;"><i class="fas fa-check-circle"></i> Archived</span>`}
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      window.requestCorrection = function (id) {
+        const reason = prompt('Please specify the missing requirements or corrections needed from the Proponent:');
+        if (!reason) return;
+        const queue = getQueue();
+        const item = queue.find(x => x.id === id);
+        if (item) {
+          item.status = 'Needs Correction';
+          item.checklist += ' (Deficiency: ' + reason + ')';
+          saveQueue(queue);
+          renderCoordinatorQueue();
+          // Log to status updates
+          postStatusToPortal(item.project_id, 'Project Completion Documentation', 'Needs Correction', 'Proponent: submit missing document/requirement', 'Correction requested by Coordinator: ' + reason);
+          toast('Correction request recorded. Proponent notified.');
+        }
+      };
+
+      window.recordCompletion = function (id) {
+        if (!confirm('Record this project as officially Complete and verified?')) return;
+        const queue = getQueue();
+        const item = queue.find(x => x.id === id);
+        if (item) {
+          item.status = 'Recorded as Complete';
+          saveQueue(queue);
+          renderCoordinatorQueue();
+          // Update total stat
+          const completedCount = document.getElementById('stat-completed-count');
+          if (completedCount) completedCount.textContent = Number(completedCount.textContent) + 1;
+          // Post to status updates
+          postStatusToPortal(item.project_id, 'Project Record Complete', 'Completion Recorded', 'None - no action needed', 'All completion documents and post-implementation records verified and archived.');
+          toast('Project completion officially recorded and linked to central archive.');
+        }
+      };
+
+      function postStatusToPortal(projectId, stage, status, nextAction, message) {
+        try {
+          const SU_KEY = 'grace_status_updates_v4';
+          const list = JSON.parse(localStorage.getItem(SU_KEY)) || [];
+          list.unshift({
+            id: Date.now(),
+            project_id: projectId,
+            stage: stage,
+            status: status,
+            next_action: nextAction,
+            message: message,
+            posted_by: 'Dr. Mary Grace Bolos',
+            role_label: 'Extension Coordinator',
+            date: new Date().toISOString().slice(0, 10),
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          });
+          localStorage.setItem(SU_KEY, JSON.stringify(list));
+        } catch (e) {}
+      }
+
+      // Handle Proponent Form Submissions
+      const compForm = document.getElementById('form-submit-completion');
+      if (compForm) {
+        compForm.addEventListener('submit', function (e) {
+          e.preventDefault();
+          const pid = document.getElementById('comp-submit-project').value;
+          const p = projects.find(x => x.project_id === pid);
+          const queue = getQueue();
+          queue.unshift({
+            id: Date.now(),
+            project_id: pid,
+            title: p ? p.title : pid,
+            type: 'Phase F: ' + document.getElementById('comp-submit-title').value,
+            date: new Date().toISOString().slice(0, 10),
+            checklist: 'Accomplishment narrative submitted; Deliverables attached; Actual beneficiaries: ' + document.getElementById('comp-submit-beneficiaries').value,
+            status: 'Submitted',
+            notes: document.getElementById('comp-submit-summary').value
+          });
+          saveQueue(queue);
+          toast('Completion documentation submitted to the Extension Coordinator for verification.');
+          compForm.reset();
+        });
+      }
+
+      const postimpForm = document.getElementById('form-submit-postimp');
+      if (postimpForm) {
+        postimpForm.addEventListener('submit', function (e) {
+          e.preventDefault();
+          const pid = document.getElementById('postimp-submit-project').value;
+          const p = projects.find(x => x.project_id === pid);
+          const queue = getQueue();
+          queue.unshift({
+            id: Date.now(),
+            project_id: pid,
+            title: p ? p.title : pid,
+            type: 'Phase G: Post-Implementation Evaluation & Survey',
+            date: new Date().toISOString().slice(0, 10),
+            checklist: 'Survey results uploaded; Client satisfaction: ' + document.getElementById('postimp-submit-rating').value + '/5.0',
+            status: 'Submitted',
+            notes: document.getElementById('postimp-submit-feedback').value
+          });
+          saveQueue(queue);
+          toast('Post-implementation evaluation records submitted to Coordinator.');
+          postimpForm.reset();
+        });
+      }
+
+      renderCoordinatorQueue();
+    })();
+  </script>
 </body>
 </html>

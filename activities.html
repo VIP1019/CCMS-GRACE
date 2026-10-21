@@ -3,115 +3,320 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="G.R.A.C.E PORTAL - Activities & Training Management">
+  <meta name="description" content="G.R.A.C.E PORTAL - Activities & Training Management Per Project">
   <title>Activities & Training | G.R.A.C.E PORTAL</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/dashboard.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    /* Mode Toggle Buttons */
+    .dm-nav-btns { display: inline-flex; gap: 0.35rem; background: #F3F4F6; padding: 3px; border-radius: 8px; border: 1px solid #E5E7EB; }
+    .dm-nav-btn {
+      padding: 0.42rem 0.85rem; border-radius: 6px; font-size: 0.78rem; font-weight: 600;
+      cursor: pointer; border: none; background: transparent; color: #6B7280;
+      display: inline-flex; align-items: center; gap: 0.4rem; transition: all 0.15s ease;
+    }
+    .dm-nav-btn.active {
+      background: #fff; color: #8B1A1A; font-weight: 700;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .dm-nav-btn:hover:not(.active) { color: #111827; background: rgba(255,255,255,0.6); }
+
+    /* Scope Toggle */
+    .scope-toggle { display: inline-flex; background: #F3F4F6; padding: 3px; border-radius: 8px; border: 1px solid #E5E7EB; gap: 3px; }
+    .scope-btn {
+      border: none; background: transparent; padding: 0.38rem 0.85rem;
+      font-size: 0.78rem; font-weight: 600; color: #6B7280; border-radius: 6px;
+      cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; transition: all 0.15s ease;
+    }
+    .scope-btn.active { background: #fff; color: #8B1A1A; box-shadow: 0 1px 3px rgba(0,0,0,0.1); font-weight: 700; }
+    .scope-btn:hover:not(.active) { color: #111827; background: rgba(255,255,255,0.6); }
+
+    /* Interactive Summary Cards */
+    .summary-card.clickable {
+      cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative; border: 2px solid transparent; user-select: none;
+    }
+    .summary-card.clickable:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.08); }
+    .summary-card.clickable.active-filter {
+      transform: translateY(-2px); border-color: #8B1A1A;
+      box-shadow: 0 0 0 3px rgba(139, 26, 26, 0.15), 0 8px 16px rgba(0,0,0,0.06);
+    }
+    .summary-card.clickable.active-filter::after {
+      content: 'FILTER ACTIVE'; position: absolute; top: 8px; right: 10px;
+      font-size: 0.58rem; font-weight: 800; letter-spacing: 0.06em;
+      padding: 2px 7px; border-radius: 999px; background: #8B1A1A; color: #fff;
+    }
+
+    /* Role Notice Banner */
+    .dm-note {
+      background: #EFF6FF; border: 1px solid #BFDBFE; color: #1E40AF;
+      border-radius: 8px; padding: 0.75rem 1rem; font-size: 0.8rem;
+      margin-bottom: 1.25rem; display: flex; gap: 0.6rem; align-items: center;
+    }
+
+    /* Project Activity Dossier Card (Compiled Per Project View) */
+    .project-dossier {
+      background: #fff; border: 1px solid #E5E7EB; border-radius: 12px;
+      margin-bottom: 1.5rem; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+    .project-dossier:hover { border-color: #D1D5DB; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+    .dossier-head {
+      padding: 1rem 1.25rem; background: #F9FAFB; border-bottom: 1px solid #E5E7EB;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;
+    }
+    .dossier-title-group h3 {
+      font-size: 1rem; font-weight: 800; color: #111827; margin: 0 0 0.2rem;
+      display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
+    }
+    .dossier-title-group p { font-size: 0.78rem; color: #6B7280; margin: 0; }
+    .dossier-badges { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+    .dossier-count-badge {
+      background: #ECFDF5; color: #047857; border: 1px solid #A7F3D0;
+      font-size: 0.72rem; font-weight: 700; padding: 0.25rem 0.65rem; border-radius: 999px;
+      display: inline-flex; align-items: center; gap: 0.3rem;
+    }
+    .dossier-status-pill {
+      font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 999px; text-transform: uppercase;
+    }
+    .dossier-status-pill.ongoing { background: #DBEAFE; color: #1E40AF; }
+    .dossier-status-pill.completed { background: #D1FAE5; color: #065F46; }
+    .dossier-status-pill.pending { background: #FEF3C7; color: #92400E; }
+
+    /* Dossier Table */
+    .dossier-table-wrap { background: #fff; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .dossier-table { width: 100%; min-width: 980px; border-collapse: collapse; font-size: 0.82rem; }
+    .dossier-table th {
+      text-align: left; padding: 0.75rem 0.85rem; font-size: 0.7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.05em; color: #4B5563;
+      background: #F9FAFB; border-bottom: 1px solid #E5E7EB; white-space: normal; line-height: 1.3;
+    }
+    .dossier-table td { padding: 0.85rem; border-bottom: 1px solid #F3F4F6; vertical-align: middle; }
+    .dossier-table tr:last-child td { border-bottom: none; }
+    .dossier-table tr:hover { background: #FDFEFE; }
+
+    /* Action Buttons in Activity Row */
+    .btn-act-details {
+      display: inline-flex; align-items: center; gap: 0.25rem;
+      padding: 0.32rem 0.6rem; border-radius: 6px; font-size: 0.72rem;
+      font-weight: 600; cursor: pointer; color: #2563EB;
+      border: 1px solid #BFDBFE; background: #EFF6FF; transition: all 0.15s; white-space: nowrap;
+    }
+    .btn-act-details:hover { background: #2563EB; color: #fff; }
+
+    .btn-act-update {
+      display: inline-flex; align-items: center; gap: 0.25rem;
+      padding: 0.32rem 0.65rem; border-radius: 6px; font-size: 0.72rem;
+      font-weight: 700; cursor: pointer; transition: all 0.15s; white-space: nowrap;
+    }
+    .btn-act-update.coordinator { color: #059669; border: 1px solid #A7F3D0; background: #F0FDF4; }
+    .btn-act-update.coordinator:hover { background: #059669; color: #fff; }
+    .btn-act-update.proponent { color: #8B1A1A; border: 1px solid rgba(139,26,26,0.25); background: rgba(139,26,26,0.06); }
+    .btn-act-update.proponent:hover { background: #8B1A1A; color: #fff; }
+
+    .btn-add-act-proj {
+      padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.74rem; font-weight: 700;
+      background: #8B1A1A; color: #fff; border: 1px solid #8B1A1A; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 0.3rem; transition: all 0.15s ease;
+    }
+    .btn-add-act-proj:hover { background: #6B0000; border-color: #6B0000; }
+
+    /* Modals */
+    .act-modal-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.52);
+      z-index: 9999; align-items: flex-start; justify-content: center;
+      padding: 2rem 1rem; overflow-y: auto;
+    }
+    .act-modal-overlay.open { display: flex; }
+    .act-modal-box {
+      background: #fff; border-radius: 12px; width: 100%; max-width: 620px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.2); overflow: hidden; margin: auto;
+    }
+    .act-modal-head {
+      background: linear-gradient(135deg, #5a0e0e 0%, #8B1A1A 60%, #a01d1d 100%);
+      padding: 1rem 1.25rem; color: #fff; display: flex; align-items: center; justify-content: space-between;
+    }
+    .act-modal-head h4 { margin: 0; font-size: 1rem; font-weight: 800; display: flex; align-items: center; gap: 0.4rem; }
+    .act-modal-head button { background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; opacity: 0.8; }
+    .act-modal-head button:hover { opacity: 1; }
+    .act-modal-body { padding: 1.25rem; font-size: 0.85rem; }
+
+    /* Toast */
+    .act-toast {
+      position: fixed; bottom: 1.5rem; right: 1.5rem; background: #059669; color: #fff;
+      padding: 0.75rem 1.2rem; border-radius: 8px; font-size: 0.85rem; font-weight: 700;
+      display: none; z-index: 10000; box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+    }
+  </style>
 </head>
 <body>
   <div class="dashboard-layout">
     <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar"></aside>
 
-    <!-- MAIN -->
+    <!-- MAIN CONTENT -->
     <div class="main-content">
       <header class="topbar" id="topbar"></header>
 
       <div class="dashboard-content">
+        <!-- Page Header -->
         <div class="page-header">
-          <div><h2>Activities &amp; Training Management</h2><p class="page-subtitle">Record and monitor extension activities, training sessions, and schedules</p></div>
-          <div class="page-header-actions">
-            <button class="btn btn-sm btn-outline"><i class="fas fa-download"></i> Export</button>
-            <button class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> Add Activity</button>
+          <div>
+            <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+              <h2 id="page-act-title">Activities &amp; Training Management</h2>
+              <span id="role-act-badge" class="badge badge-primary" style="display:none;background:rgba(139,26,26,0.08);color:#8B1A1A;border:1px solid rgba(139,26,26,0.2);font-size:0.75rem;padding:0.3rem 0.65rem;border-radius:999px;">
+                <i class="fas fa-user-circle"></i> Proponent: Prince Jheck T. Juan
+              </span>
+            </div>
+            <p class="page-subtitle" id="page-act-subtitle">Organize and monitor extension activities per project — project proponent implementation and coordinator monitoring</p>
+          </div>
+          <div class="page-header-actions" style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+            <!-- Proponent Scope Switcher -->
+            <div class="scope-toggle" id="proponent-scope-wrap" style="display:none;">
+              <button class="scope-btn active" id="btn-scope-my" onclick="setScope('my')"><i class="fas fa-user-check"></i> My Projects</button>
+              <button class="scope-btn" id="btn-scope-all" onclick="setScope('all')"><i class="fas fa-globe"></i> All CCMS Projects</button>
+            </div>
+            <!-- Mode Switcher: Grouped Per Project vs Master Table -->
+            <div class="dm-nav-btns">
+              <button class="dm-nav-btn active" id="btn-mode-compiled" onclick="switchViewMode('compiled')">
+                <i class="fas fa-folder-open"></i> Grouped Per Project
+              </button>
+              <button class="dm-nav-btn inactive" id="btn-mode-all" onclick="switchViewMode('all')">
+                <i class="fas fa-list"></i> Master Table
+              </button>
+            </div>
+            <button class="btn btn-sm btn-outline" onclick="exportActivitiesCSV()"><i class="fas fa-download"></i> Export</button>
+            <button class="btn btn-sm btn-primary" id="btn-add-activity" onclick="openAddActivityModal()"><i class="fas fa-plus"></i> Add Activity</button>
           </div>
         </div>
 
-        <!-- Summary Cards -->
+        <!-- Role Notification Note -->
+        <div class="dm-note" id="role-notice-banner">
+          <i class="fas fa-info-circle"></i>
+          <span id="role-notice-text">
+            Activities are organized <strong>per project</strong>. Project Proponents prepare and deliver planned sessions; the Extension Coordinator monitors milestones and updates institutional verification.
+          </span>
+        </div>
+
+        <!-- Summary Cards (Interactive Filters) -->
         <div class="summary-cards">
-          <div class="summary-card card-maroon">
-            <div class="summary-card-info"><h3>12</h3><p>Total Activities</p><span class="summary-card-trend up"><i class="fas fa-arrow-up"></i> 4 this month</span></div>
+          <div class="summary-card card-maroon clickable" id="card-filter-all" onclick="applyCardFilter('all')" title="Click to show all activities">
+            <div class="summary-card-info">
+              <h3 id="stat-total">12</h3>
+              <p id="label-stat-total">Total Activities</p>
+              <span class="summary-card-trend up"><i class="fas fa-calendar-check"></i> all records</span>
+            </div>
             <div class="summary-card-icon"><i class="fas fa-calendar-check"></i></div>
           </div>
-          <div class="summary-card card-gold">
-            <div class="summary-card-info"><h3>5</h3><p>Completed</p><span class="summary-card-trend up"><i class="fas fa-check"></i> on schedule</span></div>
+          <div class="summary-card card-gold clickable" id="card-filter-completed" onclick="applyCardFilter('completed')" title="Click to show completed activities">
+            <div class="summary-card-info">
+              <h3 id="stat-completed">5</h3>
+              <p>Completed</p>
+              <span class="summary-card-trend up"><i class="fas fa-check"></i> on schedule</span>
+            </div>
             <div class="summary-card-icon"><i class="fas fa-check-circle"></i></div>
           </div>
-          <div class="summary-card card-blue">
-            <div class="summary-card-info"><h3>4</h3><p>In Progress</p><span class="summary-card-trend up"><i class="fas fa-spinner"></i> active now</span></div>
+          <div class="summary-card card-blue clickable" id="card-filter-ongoing" onclick="applyCardFilter('ongoing')" title="Click to show ongoing/in progress activities">
+            <div class="summary-card-info">
+              <h3 id="stat-ongoing">4</h3>
+              <p>In Progress</p>
+              <span class="summary-card-trend up"><i class="fas fa-spinner"></i> active now</span>
+            </div>
             <div class="summary-card-icon"><i class="fas fa-tasks"></i></div>
           </div>
-          <div class="summary-card card-green">
-            <div class="summary-card-info"><h3>3</h3><p>Upcoming</p><span class="summary-card-trend"><i class="fas fa-clock"></i> scheduled</span></div>
+          <div class="summary-card card-green clickable" id="card-filter-scheduled" onclick="applyCardFilter('scheduled')" title="Click to show scheduled/upcoming activities">
+            <div class="summary-card-info">
+              <h3 id="stat-scheduled">3</h3>
+              <p>Upcoming</p>
+              <span class="summary-card-trend"><i class="fas fa-clock"></i> scheduled</span>
+            </div>
             <div class="summary-card-icon"><i class="fas fa-calendar-alt"></i></div>
           </div>
         </div>
 
-        <!-- Filter -->
+        <!-- Filter Bar -->
         <div class="filter-bar">
           <div class="filter-group">
             <span class="filter-label">Project:</span>
-            <select class="form-select">
-              <option>All Projects</option>
-              <option>EXT-2026-048 – Web Dev Training</option>
-              <option>EXT-2026-045 – Basud Library</option>
-              <option>EXT-2026-041 – ICT Consultancy</option>
-              <option>EXT-2026-038 – Digital Literacy</option>
-              <option>EXT-2026-033 – Network Assessment</option>
+            <select class="form-select" id="filter-project" onchange="handleFilterChange()">
+              <option value="">All Projects</option>
             </select>
           </div>
           <div class="filter-group">
             <span class="filter-label">Status:</span>
-            <select class="form-select">
-              <option>All Status</option>
-              <option>Completed</option>
-              <option>In Progress</option>
-              <option>Upcoming</option>
+            <select class="form-select" id="filter-status" onchange="handleFilterChange()">
+              <option value="">All Status</option>
+              <option value="Completed">Completed</option>
+              <option value="Ongoing">Ongoing / In Progress</option>
+              <option value="Scheduled">Scheduled / Upcoming</option>
             </select>
           </div>
           <div class="filter-group">
             <span class="filter-label">Type:</span>
-            <select class="form-select">
-              <option>All Types</option>
-              <option>Training</option>
-              <option>Workshop</option>
-              <option>Seminar</option>
-              <option>Assessment</option>
-              <option>Consultancy</option>
-              <option>Meeting</option>
+            <select class="form-select" id="filter-type" onchange="handleFilterChange()">
+              <option value="">All Types</option>
+              <option value="Training">Training</option>
+              <option value="Workshop">Workshop</option>
+              <option value="Seminar">Seminar</option>
+              <option value="Assessment">Assessment</option>
+              <option value="Testing">Testing</option>
+              <option value="Development">Development</option>
+              <option value="Consultancy">Consultancy</option>
+              <option value="Meeting">Meeting</option>
             </select>
           </div>
-        </div>
-            <!-- Activities Table -->
-        <div class="table-container" style="margin-bottom:2rem;">
-          <div class="table-header">
-            <h4><i class="fas fa-list" style="color: var(--maroon); margin-right: 0.5rem;"></i>ACTIVITY Table</h4>
-            <span style="font-size:0.8rem;color:var(--gray-500);">activity_id · project_id · activity_name · activity_type · schedule_start · schedule_end · venue · activity_status</span>
+          <div class="filter-group" id="filter-reset-wrap" style="display:none;">
+            <button class="btn btn-sm btn-outline" style="border-style:dashed;color:#8B1A1A;font-size:0.75rem;" onclick="resetAllFilters()">
+              <i class="fas fa-times-circle"></i> Reset Filter
+            </button>
           </div>
-          <table>
-            <thead>
-              <tr>
-                <th>Activity ID</th>
-                <th>Activity Name</th>
-                <th>Project</th>
-                <th>Type</th>
-                <th>Schedule Start</th>
-                <th>Schedule End</th>
-                <th>Venue</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody id="activities-tbody"></tbody>
-          </table>
-          <div class="table-footer">
-            <span class="table-info" id="act-info">Loading...</span>
+          <div class="filter-group" style="margin-left:auto;">
+            <div class="search-bar" style="position:relative;">
+              <i class="fas fa-search" style="position:absolute;left:0.6rem;top:50%;transform:translateY(-50%);color:var(--gray-400);font-size:0.8rem;"></i>
+              <input type="text" class="form-input" id="search-activities" style="padding-left:2rem;font-size:0.85rem;" placeholder="Search activities or venues..." oninput="handleFilterChange()">
+            </div>
           </div>
         </div>
 
-        <!-- ACTIVITY_PARTICIPANT Junction Table -->
-        <div class="table-container">
+        <!-- 1. GROUPED PER PROJECT VIEW (DEFAULT) -->
+        <div id="compiled-projects-container">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- 2. MASTER TABLE VIEW (TOGGLEABLE) -->
+        <div class="table-container" id="master-table-container" style="display:none;margin-bottom:2rem;">
           <div class="table-header">
-            <h4><i class="fas fa-user-check" style="color:var(--maroon);margin-right:0.5rem;"></i>ACTIVITY_PARTICIPANT Junction Table</h4>
+            <h4><i class="fas fa-list" style="color:var(--maroon);margin-right:0.5rem;"></i>Master Activities Table</h4>
+            <span style="font-size:0.8rem;color:var(--gray-500);">activity_id · project_id · activity_name · activity_type · schedule_start · schedule_end · venue · activity_status</span>
+          </div>
+          <div style="overflow-x:auto;">
+            <table style="width:100%;min-width:1150px;border-collapse:collapse;">
+              <thead>
+                <tr>
+                  <th style="padding:0.8rem;font-size:0.72rem;text-transform:uppercase;color:#4B5563;background:#F9FAFB;border-bottom:1px solid #E5E7EB;">Activity ID</th>
+                  <th style="padding:0.8rem;font-size:0.72rem;text-transform:uppercase;color:#4B5563;background:#F9FAFB;border-bottom:1px solid #E5E7EB;">Activity Name</th>
+                  <th style="padding:0.8rem;font-size:0.72rem;text-transform:uppercase;color:#4B5563;background:#F9FAFB;border-bottom:1px solid #E5E7EB;">Target Project</th>
+                  <th style="padding:0.8rem;font-size:0.72rem;text-transform:uppercase;color:#4B5563;background:#F9FAFB;border-bottom:1px solid #E5E7EB;">Type</th>
+                  <th style="padding:0.8rem;font-size:0.72rem;text-transform:uppercase;color:#4B5563;background:#F9FAFB;border-bottom:1px solid #E5E7EB;">Schedule Start</th>
+                  <th style="padding:0.8rem;font-size:0.72rem;text-transform:uppercase;color:#4B5563;background:#F9FAFB;border-bottom:1px solid #E5E7EB;">Schedule End</th>
+                  <th style="padding:0.8rem;font-size:0.72rem;text-transform:uppercase;color:#4B5563;background:#F9FAFB;border-bottom:1px solid #E5E7EB;">Venue</th>
+                  <th style="padding:0.8rem;font-size:0.72rem;text-transform:uppercase;color:#4B5563;background:#F9FAFB;border-bottom:1px solid #E5E7EB;">Status</th>
+                  <th style="padding:0.8rem;font-size:0.72rem;text-transform:uppercase;color:#4B5563;background:#F9FAFB;border-bottom:1px solid #E5E7EB;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="master-activities-tbody"></tbody>
+            </table>
+          </div>
+          <div class="table-footer">
+            <span class="table-info" id="master-act-info">Loading...</span>
+          </div>
+        </div>
+
+        <!-- 3. ACTIVITY_PARTICIPANT Junction Table -->
+        <div class="table-container" style="margin-top:2rem;">
+          <div class="table-header">
+            <h4><i class="fas fa-user-check" style="color:var(--maroon);margin-right:0.5rem;"></i>ACTIVITY_PARTICIPANT Enrollment &amp; Attendance</h4>
             <span style="font-size:0.8rem;color:var(--gray-500);">activity_participant_id · activity_id · participant_name · participant_role · affiliation · contact_no · attendance_status</span>
           </div>
           <div class="filter-bar" style="padding:0.75rem 1rem;border-bottom:1px solid var(--gray-200);">
@@ -124,105 +329,985 @@
             <div class="filter-group">
               <span class="filter-label">Attendance:</span>
               <select class="form-select" id="filter-attendance" style="font-size:0.82rem;">
-                <option value="">All</option>
+                <option value="">All Attendance</option>
                 <option value="Present">Present</option>
                 <option value="Absent">Absent</option>
               </select>
             </div>
           </div>
-          <table>
-            <thead>
-              <tr>
-                <th>Participant ID</th>
-                <th>Activity</th>
-                <th>Participant Name</th>
-                <th>Role</th>
-                <th>Affiliation</th>
-                <th>Contact No.</th>
-                <th>Attendance</th>
-              </tr>
-            </thead>
-            <tbody id="participants-tbody"></tbody>
-          </table>
+          <div style="overflow-x:auto;">
+            <table style="width:100%;min-width:980px;border-collapse:collapse;">
+              <thead>
+                <tr>
+                  <th style="padding:0.75rem;font-size:0.7rem;text-transform:uppercase;color:#4B5563;background:#F9FAFB;border-bottom:1px solid #E5E7EB;">Participant ID</th>
+                  <th style="padding:0.75rem;font-size:0.7rem;text-transform:uppercase;color:#4B5563;background:#F9FAFB;border-bottom:1px solid #E5E7EB;">Activity Details</th>
+                  <th style="padding:0.75rem;font-size:0.7rem;text-transform:uppercase;color:#4B5563;background:#F9FAFB;border-bottom:1px solid #E5E7EB;">Participant Name</th>
+                  <th style="padding:0.75rem;font-size:0.7rem;text-transform:uppercase;color:#4B5563;background:#F9FAFB;border-bottom:1px solid #E5E7EB;">Role</th>
+                  <th style="padding:0.75rem;font-size:0.7rem;text-transform:uppercase;color:#4B5563;background:#F9FAFB;border-bottom:1px solid #E5E7EB;">Affiliation / Department</th>
+                  <th style="padding:0.75rem;font-size:0.7rem;text-transform:uppercase;color:#4B5563;background:#F9FAFB;border-bottom:1px solid #E5E7EB;">Contact No.</th>
+                  <th style="padding:0.75rem;font-size:0.7rem;text-transform:uppercase;color:#4B5563;background:#F9FAFB;border-bottom:1px solid #E5E7EB;">Attendance</th>
+                </tr>
+              </thead>
+              <tbody id="participants-tbody"></tbody>
+            </table>
+          </div>
           <div class="table-footer">
             <span class="table-info" id="part-info">Loading...</span>
           </div>
         </div>
+
+      </div><!-- /dashboard-content -->
+    </div><!-- /main-content -->
+  </div><!-- /dashboard-layout -->
+
+  <!-- ══════════════════════════════════════════════════════
+       MODAL 1: ADD ACTIVITY (Project Proponent / Leader)
+       ══════════════════════════════════════════════════════ -->
+  <div id="modal-add-activity" class="act-modal-overlay">
+    <div class="act-modal-box">
+      <div class="act-modal-head">
+        <h4><i class="fas fa-calendar-plus"></i> <span id="add-modal-title">Schedule Project Activity</span></h4>
+        <button type="button" onclick="closeAddActivityModal()">&times;</button>
+      </div>
+      <form id="form-activity-add" onsubmit="handleSaveNewActivity(event)">
+        <div class="act-modal-body">
+          <div style="margin-bottom:0.85rem;">
+            <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#374151;margin-bottom:0.3rem;">Target Project <span style="color:#DC2626;">*</span></label>
+            <select id="modal-act-project-id" style="width:100%;padding:0.55rem;border:1.5px solid #D1D5DB;border-radius:6px;font-size:0.83rem;" required>
+              <!-- Injected by JS -->
+            </select>
+          </div>
+          <div style="margin-bottom:0.85rem;">
+            <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#374151;margin-bottom:0.3rem;">Activity Name / Title <span style="color:#DC2626;">*</span></label>
+            <input type="text" id="modal-act-name" placeholder="e.g. Module 3: Hands-on Practical Lab Exercises" style="width:100%;padding:0.55rem;border:1.5px solid #D1D5DB;border-radius:6px;font-size:0.83rem;" required>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.85rem;">
+            <div>
+              <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#374151;margin-bottom:0.3rem;">Activity Type</label>
+              <select id="modal-act-type" style="width:100%;padding:0.55rem;border:1.5px solid #D1D5DB;border-radius:6px;font-size:0.83rem;">
+                <option value="Training">Training</option>
+                <option value="Workshop">Workshop</option>
+                <option value="Seminar">Seminar</option>
+                <option value="Assessment">Assessment</option>
+                <option value="Testing">Testing</option>
+                <option value="Development">Development</option>
+                <option value="Consultancy">Consultancy</option>
+                <option value="Meeting">Meeting</option>
+              </select>
+            </div>
+            <div>
+              <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#374151;margin-bottom:0.3rem;">Venue / Location <span style="color:#DC2626;">*</span></label>
+              <input type="text" id="modal-act-venue" placeholder="e.g. CCMS Computer Lab 2, Daet" style="width:100%;padding:0.55rem;border:1.5px solid #D1D5DB;border-radius:6px;font-size:0.83rem;" required>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.85rem;">
+            <div>
+              <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#374151;margin-bottom:0.3rem;">Schedule Start <span style="color:#DC2626;">*</span></label>
+              <input type="date" id="modal-act-start" style="width:100%;padding:0.55rem;border:1.5px solid #D1D5DB;border-radius:6px;font-size:0.83rem;" required>
+            </div>
+            <div>
+              <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#374151;margin-bottom:0.3rem;">Schedule End <span style="color:#DC2626;">*</span></label>
+              <input type="date" id="modal-act-end" style="width:100%;padding:0.55rem;border:1.5px solid #D1D5DB;border-radius:6px;font-size:0.83rem;" required>
+            </div>
+          </div>
+          <div style="margin-bottom:0.85rem;">
+            <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#374151;margin-bottom:0.3rem;">Description, Objectives &amp; Expected Output</label>
+            <textarea id="modal-act-desc" rows="3" placeholder="Describe the planned technical instruction, syllabus coverage, or required deliverable..." style="width:100%;padding:0.55rem;border:1.5px solid #D1D5DB;border-radius:6px;font-size:0.82rem;font-family:inherit;"></textarea>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1rem;">
+            <div>
+              <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#374151;margin-bottom:0.3rem;">Facilitator / Trainer</label>
+              <input type="text" id="modal-act-trainer" value="Prince Jheck T. Juan" style="width:100%;padding:0.55rem;border:1.5px solid #D1D5DB;border-radius:6px;font-size:0.83rem;">
+            </div>
+            <div>
+              <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#374151;margin-bottom:0.3rem;">Initial Status</label>
+              <select id="modal-act-initial-status" style="width:100%;padding:0.55rem;border:1.5px solid #D1D5DB;border-radius:6px;font-size:0.83rem;">
+                <option value="Scheduled">Scheduled</option>
+                <option value="Ongoing">Ongoing</option>
+              </select>
+            </div>
+          </div>
+          <div style="padding:0.6rem 0.8rem;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:6px;font-size:0.75rem;color:#065F46;">
+            <i class="fas fa-check-circle" style="margin-right:0.35rem;"></i>
+            Upon scheduling, this activity will be assigned to the selected project and the Extension Coordinator will be updated in the monitoring records.
+          </div>
+        </div>
+        <div style="padding:0.85rem 1.25rem;background:#F9FAFB;border-top:1px solid #E5E7EB;display:flex;justify-content:flex-end;gap:0.5rem;">
+          <button type="button" onclick="closeAddActivityModal()" style="padding:0.55rem 1rem;background:#fff;border:1px solid #D1D5DB;border-radius:6px;cursor:pointer;font-weight:600;font-size:0.82rem;">Cancel</button>
+          <button type="submit" style="padding:0.55rem 1.25rem;background:linear-gradient(135deg,#8B1A1A,#6B0000);color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700;font-size:0.82rem;">
+            <i class="fas fa-save" style="margin-right:0.3rem;"></i> Save Activity
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       MODAL 2: UPDATE ACTIVITY STATUS (Coordinator & Proponent)
+       ══════════════════════════════════════════════════════ -->
+  <div id="modal-update-activity" class="act-modal-overlay">
+    <div class="act-modal-box">
+      <div class="act-modal-head" style="background:linear-gradient(135deg, #064E3B 0%, #059669 100%);">
+        <h4><i class="fas fa-edit"></i> <span id="update-modal-title">Activity Status &amp; Progress Monitoring</span></h4>
+        <button type="button" onclick="closeUpdateActivityModal()">&times;</button>
+      </div>
+      <form id="form-activity-update" onsubmit="handleSaveActivityStatus(event)">
+        <input type="hidden" id="update-act-id">
+        <div class="act-modal-body">
+          <div style="background:#F9FAFB;padding:0.85rem;border-radius:8px;border:1px solid #E5E7EB;margin-bottom:1rem;">
+            <div style="font-weight:700;font-size:0.92rem;color:#111827;" id="update-act-name-display">—</div>
+            <div style="font-size:0.78rem;color:#6B7280;margin-top:0.25rem;" id="update-act-meta-display">—</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.85rem;">
+            <div>
+              <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#374151;margin-bottom:0.3rem;">Update Status <span style="color:#DC2626;">*</span></label>
+              <select id="update-act-status" style="width:100%;padding:0.55rem;border:1.5px solid #D1D5DB;border-radius:6px;font-size:0.83rem;" required>
+                <option value="Scheduled">Scheduled</option>
+                <option value="Ongoing">Ongoing / In Progress</option>
+                <option value="Completed">Completed</option>
+                <option value="Verified">Verified by Extension Office</option>
+              </select>
+            </div>
+            <div>
+              <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#374151;margin-bottom:0.3rem;">Completion Progress</label>
+              <select id="update-act-progress" style="width:100%;padding:0.55rem;border:1.5px solid #D1D5DB;border-radius:6px;font-size:0.83rem;">
+                <option value="25">25% — Initial Sessions</option>
+                <option value="50">50% — Mid-term Delivery</option>
+                <option value="75">75% — Hands-on Final Phase</option>
+                <option value="100">100% — Fully Delivered</option>
+              </select>
+            </div>
+          </div>
+          <div style="margin-bottom:0.85rem;">
+            <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#374151;margin-bottom:0.3rem;">Monitoring Remarks / Verification Notes <span style="color:#DC2626;">*</span></label>
+            <textarea id="update-act-remarks" rows="3" placeholder="Record implementation status, attendance observations, and coordinator verification remarks..." style="width:100%;padding:0.55rem;border:1.5px solid #D1D5DB;border-radius:6px;font-size:0.82rem;font-family:inherit;" required></textarea>
+          </div>
+          <div style="margin-bottom:0.85rem;">
+            <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#374151;margin-bottom:0.3rem;">Recorded &amp; Updated by</label>
+            <input type="text" id="update-act-by" readonly style="width:100%;padding:0.55rem;background:#F3F4F6;border:1px solid #D1D5DB;border-radius:6px;font-size:0.82rem;color:#4B5563;">
+          </div>
+          <div style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem;background:#EFF6FF;border-radius:6px;font-size:0.78rem;color:#1E40AF;">
+            <input type="checkbox" id="update-act-post-timeline" checked style="cursor:pointer;">
+            <label for="update-act-post-timeline" style="cursor:pointer;margin:0;">Post this progress update to the project's central status timeline</label>
+          </div>
+        </div>
+        <div style="padding:0.85rem 1.25rem;background:#F9FAFB;border-top:1px solid #E5E7EB;display:flex;justify-content:flex-end;gap:0.5rem;">
+          <button type="button" onclick="closeUpdateActivityModal()" style="padding:0.55rem 1rem;background:#fff;border:1px solid #D1D5DB;border-radius:6px;cursor:pointer;font-weight:600;font-size:0.82rem;">Cancel</button>
+          <button type="submit" style="padding:0.55rem 1.25rem;background:#059669;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700;font-size:0.82rem;">
+            <i class="fas fa-check" style="margin-right:0.3rem;"></i> Save Status Update
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       MODAL 3: ACTIVITY DETAILS
+       ══════════════════════════════════════════════════════ -->
+  <div id="modal-act-details" class="act-modal-overlay">
+    <div class="act-modal-box" style="max-width:680px;">
+      <div class="act-modal-head">
+        <h4><i class="fas fa-info-circle"></i> Activity Implementation Details</h4>
+        <button type="button" onclick="closeActivityDetailsModal()">&times;</button>
+      </div>
+      <div class="act-modal-body" id="act-details-content">
+        <!-- Injected by JS -->
+      </div>
+      <div style="padding:0.85rem 1.25rem;background:#F9FAFB;border-top:1px solid #E5E7EB;display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:0.75rem;color:#6B7280;">CCMS Extension Services Monitoring System</span>
+        <button type="button" onclick="closeActivityDetailsModal()" style="padding:0.45rem 1rem;background:#8B1A1A;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700;font-size:0.8rem;">Close</button>
       </div>
     </div>
   </div>
-</div>
 
-<script src="js/data.js"></script>
-<script src="js/main.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  if (!window.GRACE) return;
+  <!-- Toast Notification -->
+  <div class="act-toast" id="act-toast"></div>
 
-  const statusBadge = (s) => {
-    const map = { 'Completed': 'badge-completed', 'Ongoing': 'badge-progress', 'Scheduled': 'badge-pending' };
-    return `<span class="badge ${map[s]||'badge-pending'}">${s}</span>`;
-  };
+  <!-- SCRIPTS -->
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+  (function () {
+    const ACT_STORAGE_KEY = 'grace_activities_custom_v1';
+    const SU_KEY = 'grace_status_updates_v4';
 
-  // ACTIVITY table
-  const tbody = document.getElementById('activities-tbody');
-  const info  = document.getElementById('act-info');
-  const actSelect = document.getElementById('filter-activity-participants');
+    const role = localStorage.getItem('graceRole') || 'proponent';
+    const isProponent = role === 'proponent';
+    const isCoordinator = role === 'coordinator';
 
-  GRACE.activities.forEach(a => {
-    const proj = GRACE.getProjectById(a.project_id);
-    const typeColors = { Training:'#7c3aed', Workshop:'#2563eb', Seminar:'#0369a1', Assessment:'#b45309', Testing:'#15803d', Development:'#be185d', Consultancy:'#d97706', Meeting:'#6b7280' };
-    const color = typeColors[a.activity_type] || 'var(--maroon)';
-    tbody.innerHTML += `<tr>
-      <td><code style="font-size:0.77rem;background:var(--gray-100);padding:2px 5px;border-radius:3px;">${a.activity_id}</code></td>
-      <td>
-        <div style="font-weight:600;font-size:0.83rem;">${a.activity_name}</div>
-        <div style="font-size:0.76rem;color:var(--gray-500);">${a.description.substring(0,60)}...</div>
-      </td>
-      <td><span style="font-size:0.8rem;font-weight:600;">${a.project_id}</span></td>
-      <td><span class="badge" style="background:${color}18;color:${color};border:1px solid ${color}30;font-size:0.73rem;">${a.activity_type}</span></td>
-      <td style="font-size:0.8rem;">${a.schedule_start}</td>
-      <td style="font-size:0.8rem;">${a.schedule_end}</td>
-      <td style="font-size:0.8rem;color:var(--gray-600);">${a.venue}</td>
-      <td>${statusBadge(a.activity_status)}</td>
-    </tr>`;
-    actSelect.innerHTML += `<option value="${a.activity_id}">${a.activity_id} — ${a.activity_name}</option>`;
-  });
-  info.textContent = `Showing ${GRACE.activities.length} activity records`;
+    let currentMode = 'compiled';     // 'compiled' (per-project) or 'all' (master table)
+    let currentScope = isProponent ? 'my' : 'all'; // 'my' (user-based) or 'all'
+    let activeCardFilter = 'all';    // 'all' | 'completed' | 'ongoing' | 'scheduled'
 
-  // ACTIVITY_PARTICIPANT table
-  const renderParticipants = (filter='', atFilter='') => {
-    const ptbody = document.getElementById('participants-tbody');
-    const pinfo  = document.getElementById('part-info');
-    let list = GRACE.activityParticipants;
-    if (filter)   list = list.filter(p => p.activity_id === filter);
-    if (atFilter) list = list.filter(p => p.attendance_status === atFilter);
-    ptbody.innerHTML = '';
-    list.forEach(p => {
-      const act = GRACE.activities.find(a => a.activity_id === p.activity_id);
-      const isPresent = p.attendance_status === 'Present';
-      ptbody.innerHTML += `<tr>
-        <td><code style="font-size:0.77rem;background:var(--gray-100);padding:2px 5px;border-radius:3px;">${p.activity_participant_id}</code></td>
-        <td>
-          <div style="font-weight:600;font-size:0.8rem;">${p.activity_id}</div>
-          <div style="font-size:0.75rem;color:var(--gray-500);">${act ? act.activity_name.substring(0,40) : ''}</div>
-        </td>
-        <td style="font-weight:600;font-size:0.83rem;">${p.participant_name}</td>
-        <td><span class="badge badge-review" style="font-size:0.73rem;">${p.participant_role}</span></td>
-        <td style="font-size:0.81rem;color:var(--gray-600);">${p.affiliation}</td>
-        <td style="font-size:0.81rem;">${p.contact_no}</td>
-        <td><span class="badge ${isPresent?'badge-approved':'badge-danger'}" style="font-size:0.73rem;">
-          <i class="fas ${isPresent?'fa-check':'fa-times'}" style="margin-right:3px;"></i>${p.attendance_status}
-        </span></td>
-      </tr>`;
+    const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+    // Load activities from seed + localStorage
+    function loadAllActivities() {
+      const seed = (window.GRACE && GRACE.activities) ? GRACE.activities.slice() : [];
+      try {
+        const custom = JSON.parse(localStorage.getItem(ACT_STORAGE_KEY));
+        if (Array.isArray(custom)) {
+          const map = new Map();
+          seed.forEach(a => map.set(a.activity_id, { ...a }));
+          custom.forEach(a => map.set(a.activity_id, { ...(map.get(a.activity_id) || {}), ...a }));
+          return Array.from(map.values());
+        }
+      } catch (e) {}
+      return seed;
+    }
+
+    function saveCustomActivities(list) {
+      try {
+        localStorage.setItem(ACT_STORAGE_KEY, JSON.stringify(list));
+      } catch (e) {}
+    }
+
+    // Determine if project belongs to Prince Jheck Juan (PER001)
+    function isProponentProject(proj) {
+      if (!proj) return false;
+      if (proj.created_by === 'PER001') return true;
+      if (window.GRACE && GRACE.getTeamByProject) {
+        const team = GRACE.getTeamByProject(proj.project_id);
+        if (team && team.some(t => t.person_id === 'PER001')) return true;
+      }
+      return false;
+    }
+
+    // Filter projects according to scope
+    function getScopedProjects() {
+      const allProjects = (window.GRACE && GRACE.projects) ? GRACE.projects : [];
+      if (currentScope === 'my') {
+        return allProjects.filter(isProponentProject);
+      }
+      return allProjects;
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('act-toast');
+      if (!t) return;
+      t.textContent = msg;
+      t.style.display = 'block';
+      setTimeout(() => { t.style.display = 'none'; }, 3200);
+    }
+
+    // Badge styling helpers
+    function statusBadge(s) {
+      if (s === 'Completed' || s === 'Verified') {
+        return `<span class="badge badge-completed"><i class="fas fa-check" style="margin-right:3px;"></i>${esc(s)}</span>`;
+      }
+      if (s === 'Ongoing' || s === 'In Progress') {
+        return `<span class="badge badge-progress"><i class="fas fa-spinner fa-spin" style="margin-right:3px;"></i>Ongoing</span>`;
+      }
+      return `<span class="badge badge-pending"><i class="fas fa-clock" style="margin-right:3px;"></i>Scheduled</span>`;
+    }
+
+    function typeBadge(type) {
+      const colors = {
+        Training: '#7c3aed', Workshop: '#2563eb', Seminar: '#0369a1',
+        Assessment: '#b45309', Testing: '#15803d', Development: '#be185d',
+        Consultancy: '#d97706', Meeting: '#6b7280'
+      };
+      const col = colors[type] || 'var(--maroon)';
+      return `<span class="badge" style="background:${col}14;color:${col};border:1px solid ${col}33;font-size:0.72rem;font-weight:700;">${esc(type)}</span>`;
+    }
+
+    // Update Summary Metric Cards
+    function updateSummaryMetrics(activities) {
+      const total = activities.length;
+      const comp = activities.filter(a => a.activity_status === 'Completed' || a.activity_status === 'Verified').length;
+      const ongo = activities.filter(a => a.activity_status === 'Ongoing' || a.activity_status === 'In Progress').length;
+      const sched = activities.filter(a => a.activity_status === 'Scheduled').length;
+
+      document.getElementById('stat-total').textContent = total;
+      document.getElementById('stat-completed').textContent = comp;
+      document.getElementById('stat-ongoing').textContent = ongo;
+      document.getElementById('stat-scheduled').textContent = sched;
+
+      const labelTotal = document.getElementById('label-stat-total');
+      if (labelTotal) {
+        labelTotal.textContent = currentScope === 'my' ? 'My Activities' : 'Total Activities';
+      }
+    }
+
+    // Populate dropdowns
+    function initDropdowns() {
+      const projSelect = document.getElementById('filter-project');
+      const modalProjSelect = document.getElementById('modal-act-project-id');
+      const allProjects = (window.GRACE && GRACE.projects) ? GRACE.projects : [];
+
+      projSelect.innerHTML = '<option value="">All Projects</option>' +
+        allProjects.map(p => `<option value="${esc(p.project_id)}">${esc(p.project_id)} — ${esc(p.title)}</option>`).join('');
+
+      modalProjSelect.innerHTML = allProjects.map(p => `<option value="${esc(p.project_id)}">${esc(p.project_id)} — ${esc(p.title)}</option>`).join('');
+    }
+
+    // Main Render Function
+    function render() {
+      const allActivities = loadAllActivities();
+      const scopedProjects = getScopedProjects();
+      const scopedProjectIds = new Set(scopedProjects.map(p => p.project_id));
+
+      // Filter activities by scope (proponent's projects or all projects)
+      let list = allActivities.filter(a => scopedProjectIds.has(a.project_id));
+
+      // Update interactive metric cards
+      updateSummaryMetrics(list);
+
+      // Apply Filter Bar filters
+      const filterProj = document.getElementById('filter-project').value;
+      const filterStat = document.getElementById('filter-status').value;
+      const filterType = document.getElementById('filter-type').value;
+      const query = document.getElementById('search-activities').value.trim().toLowerCase();
+
+      // Card filter
+      if (activeCardFilter === 'completed') {
+        list = list.filter(a => a.activity_status === 'Completed' || a.activity_status === 'Verified');
+      } else if (activeCardFilter === 'ongoing') {
+        list = list.filter(a => a.activity_status === 'Ongoing' || a.activity_status === 'In Progress');
+      } else if (activeCardFilter === 'scheduled') {
+        list = list.filter(a => a.activity_status === 'Scheduled');
+      }
+
+      // Dropdown filters
+      if (filterProj) list = list.filter(a => a.project_id === filterProj);
+      if (filterStat) {
+        if (filterStat === 'Ongoing') {
+          list = list.filter(a => a.activity_status === 'Ongoing' || a.activity_status === 'In Progress');
+        } else {
+          list = list.filter(a => a.activity_status === filterStat);
+        }
+      }
+      if (filterType) list = list.filter(a => a.activity_type === filterType);
+      if (query) {
+        list = list.filter(a =>
+          a.activity_name.toLowerCase().includes(query) ||
+          a.activity_id.toLowerCase().includes(query) ||
+          (a.venue || '').toLowerCase().includes(query) ||
+          (a.description || '').toLowerCase().includes(query)
+        );
+      }
+
+      // Show/hide Reset filter button
+      const hasFilter = activeCardFilter !== 'all' || filterProj || filterStat || filterType || query;
+      document.getElementById('filter-reset-wrap').style.display = hasFilter ? 'flex' : 'none';
+
+      // 1. RENDER COMPILED PER-PROJECT DOSSIERS
+      const compiledContainer = document.getElementById('compiled-projects-container');
+      const targetProjects = scopedProjects.filter(p => !filterProj || p.project_id === filterProj);
+
+      if (!targetProjects.length) {
+        compiledContainer.innerHTML = `
+          <div style="text-align:center;padding:3rem 1rem;background:#fff;border-radius:12px;border:1px solid #E5E7EB;color:#6B7280;">
+            <div style="font-size:2.5rem;color:#D1D5DB;margin-bottom:0.5rem;"><i class="fas fa-folder-open"></i></div>
+            <div style="font-weight:700;font-size:1rem;color:#374151;">No projects found</div>
+            <p style="font-size:0.8rem;color:#9CA3AF;margin-top:0.3rem;">There are no projects matching the active filters or scope.</p>
+          </div>
+        `;
+      } else {
+        compiledContainer.innerHTML = targetProjects.map(proj => {
+          const projActs = list.filter(a => a.project_id === proj.project_id);
+          const isMine = isProponentProject(proj);
+          const leaderName = proj.created_by ? GRACE.getPersonName(proj.created_by) : 'Prince Jheck T. Juan';
+
+          let statusCls = 'ongoing';
+          if (proj.project_status === 'Completed') statusCls = 'completed';
+          if (proj.project_status === 'Pending') statusCls = 'pending';
+
+          const rowsHtml = projActs.length ? projActs.map(a => {
+            const parts = GRACE.getParticipantsByActivity ? GRACE.getParticipantsByActivity(a.activity_id) : [];
+            const partCount = parts.length ? `${parts.length} Enrolled` : 'Open Enrollment';
+
+            return `
+              <tr>
+                <td style="width:90px;">
+                  <code style="font-size:0.77rem;background:var(--gray-100);padding:2px 6px;border-radius:4px;font-weight:700;">${esc(a.activity_id)}</code>
+                </td>
+                <td style="min-width:240px;">
+                  <div style="font-weight:700;font-size:0.86rem;color:#111827;">${esc(a.activity_name)}</div>
+                  <div style="font-size:0.75rem;color:#6B7280;margin-top:2px;">${esc(a.description || 'Implementation activity for project delivery')}</div>
+                </td>
+                <td style="width:110px;">${typeBadge(a.activity_type)}</td>
+                <td style="width:170px;">
+                  <div style="font-size:0.78rem;font-weight:600;color:#1F2937;"><i class="fas fa-play" style="font-size:0.65rem;color:#10B981;margin-right:4px;"></i>${esc(a.schedule_start)}</div>
+                  <div style="font-size:0.74rem;color:#6B7280;margin-top:2px;"><i class="fas fa-flag-checkered" style="font-size:0.65rem;color:#EF4444;margin-right:4px;"></i>${esc(a.schedule_end)}</div>
+                </td>
+                <td style="width:160px;font-size:0.8rem;color:#4B5563;">
+                  <i class="fas fa-map-marker-alt" style="color:#DC2626;margin-right:4px;"></i>${esc(a.venue)}
+                </td>
+                <td style="width:120px;font-size:0.78rem;color:#4B5563;">
+                  <i class="fas fa-users" style="color:#6366F1;margin-right:4px;"></i>${partCount}
+                </td>
+                <td style="width:120px;">${statusBadge(a.activity_status)}</td>
+                <td style="width:200px;text-align:right;white-space:nowrap;">
+                  <div style="display:flex;gap:0.35rem;justify-content:flex-end;align-items:center;">
+                    <button class="btn-act-details" onclick="openActivityDetails('${esc(a.activity_id)}')">
+                      <i class="fas fa-eye"></i> Details
+                    </button>
+                    <button class="btn-act-update ${isCoordinator ? 'coordinator' : 'proponent'}" onclick="openUpdateActivityModal('${esc(a.activity_id)}')">
+                      <i class="fas ${isCoordinator ? 'fa-user-check' : 'fa-edit'}"></i> ${isCoordinator ? 'Coordinator Update' : 'Update Status'}
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            `;
+          }).join('') : `
+            <tr>
+              <td colspan="8" style="text-align:center;padding:2rem 1rem;color:#9CA3AF;font-size:0.82rem;">
+                <i class="fas fa-calendar-times" style="margin-right:0.4rem;font-size:1.1rem;color:#D1D5DB;"></i>
+                No activities recorded for this project yet.
+                <button class="btn btn-sm btn-outline" style="margin-left:0.75rem;font-size:0.75rem;" onclick="openAddActivityModal('${esc(proj.project_id)}')">
+                  <i class="fas fa-plus"></i> Add First Activity
+                </button>
+              </td>
+            </tr>
+          `;
+
+          return `
+            <div class="project-dossier" id="dossier-${esc(proj.project_id)}">
+              <div class="dossier-head">
+                <div class="dossier-title-group">
+                  <h3>
+                    <span style="font-family:ui-monospace,monospace;font-size:0.85rem;background:rgba(139,26,26,0.08);color:#8B1A1A;padding:2px 8px;border-radius:4px;border:1px solid rgba(139,26,26,0.15);">
+                      ${esc(proj.project_id)}
+                    </span>
+                    <span>${esc(proj.title)}</span>
+                  </h3>
+                  <p>
+                    <i class="fas fa-user-tie"></i> Leader / Proponent: <strong>${esc(leaderName)}</strong> &nbsp;•&nbsp;
+                    <i class="fas fa-layer-group"></i> Type: ${esc(proj.service_type || 'Extension Service')} &nbsp;•&nbsp;
+                    <i class="fas fa-calendar-alt"></i> Schedule: ${esc(proj.start_date || '2026-08-28')} to ${esc(proj.end_date || '2026-10-15')}
+                  </p>
+                </div>
+                <div class="dossier-badges">
+                  <span class="dossier-status-pill ${statusCls}">${esc(proj.project_status || 'Ongoing')}</span>
+                  <span class="dossier-count-badge">
+                    <i class="fas fa-calendar-alt"></i> ${projActs.length} Activities
+                  </span>
+                  <button class="btn-add-act-proj" onclick="openAddActivityModal('${esc(proj.project_id)}')" title="Add new activity to ${esc(proj.project_id)}">
+                    <i class="fas fa-plus"></i> Add Activity
+                  </button>
+                </div>
+              </div>
+              <div class="dossier-table-wrap">
+                <table class="dossier-table">
+                  <thead>
+                    <tr>
+                      <th>Activity ID</th>
+                      <th>Activity Name &amp; Deliverables</th>
+                      <th>Type</th>
+                      <th>Schedule Dates</th>
+                      <th>Venue</th>
+                      <th>Participants</th>
+                      <th>Status</th>
+                      <th style="text-align:right;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>${rowsHtml}</tbody>
+                </table>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // 2. RENDER MASTER TABLE VIEW
+      const masterTbody = document.getElementById('master-activities-tbody');
+      const masterInfo = document.getElementById('master-act-info');
+
+      if (!list.length) {
+        masterTbody.innerHTML = `
+          <tr>
+            <td colspan="9" style="text-align:center;padding:3rem 1rem;color:#9CA3AF;">
+              <div style="font-size:2rem;color:#D1D5DB;margin-bottom:0.4rem;"><i class="fas fa-filter"></i></div>
+              <div style="font-weight:700;color:#374151;">No activity records match the selected filters.</div>
+              <button class="btn btn-sm btn-outline" style="margin-top:0.75rem;" onclick="resetAllFilters()">Clear Filters</button>
+            </td>
+          </tr>
+        `;
+      } else {
+        masterTbody.innerHTML = list.map(a => {
+          const proj = GRACE.getProjectById(a.project_id);
+          const projTitle = proj ? proj.title : a.project_id;
+          return `
+            <tr>
+              <td style="padding:0.75rem 0.8rem;"><code style="font-size:0.77rem;background:var(--gray-100);padding:2px 5px;border-radius:4px;font-weight:700;">${esc(a.activity_id)}</code></td>
+              <td style="padding:0.75rem 0.8rem;">
+                <div style="font-weight:700;font-size:0.83rem;color:#111827;">${esc(a.activity_name)}</div>
+                <div style="font-size:0.75rem;color:#6B7280;">${esc((a.description||'').substring(0, 50))}...</div>
+              </td>
+              <td style="padding:0.75rem 0.8rem;">
+                <span style="font-size:0.75rem;font-weight:700;color:#8B1A1A;">${esc(a.project_id)}</span>
+                <div style="font-size:0.73rem;color:#4B5563;">${esc(projTitle)}</div>
+              </td>
+              <td style="padding:0.75rem 0.8rem;">${typeBadge(a.activity_type)}</td>
+              <td style="padding:0.75rem 0.8rem;font-size:0.78rem;">${esc(a.schedule_start)}</td>
+              <td style="padding:0.75rem 0.8rem;font-size:0.78rem;">${esc(a.schedule_end)}</td>
+              <td style="padding:0.75rem 0.8rem;font-size:0.78rem;color:#4B5563;">${esc(a.venue)}</td>
+              <td style="padding:0.75rem 0.8rem;">${statusBadge(a.activity_status)}</td>
+              <td style="padding:0.75rem 0.8rem;white-space:nowrap;">
+                <div style="display:flex;gap:0.3rem;">
+                  <button class="btn-act-details" onclick="openActivityDetails('${esc(a.activity_id)}')">Details</button>
+                  <button class="btn-act-update ${isCoordinator ? 'coordinator' : 'proponent'}" onclick="openUpdateActivityModal('${esc(a.activity_id)}')">
+                    ${isCoordinator ? 'Coordinator Update' : 'Update Status'}
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+      masterInfo.textContent = `Showing ${list.length} of ${allActivities.length} activity records`;
+
+      // 3. Populate Participant Activity Filter
+      const actSelect = document.getElementById('filter-activity-participants');
+      const curActVal = actSelect.value;
+      actSelect.innerHTML = '<option value="">All Activities</option>' +
+        allActivities.map(a => `<option value="${esc(a.activity_id)}">${esc(a.activity_id)} — ${esc(a.activity_name)}</option>`).join('');
+      actSelect.value = curActVal;
+    }
+
+    // Participants Table rendering
+    function renderParticipants() {
+      const ptbody = document.getElementById('participants-tbody');
+      const pinfo = document.getElementById('part-info');
+      const actFilter = document.getElementById('filter-activity-participants').value;
+      const atFilter = document.getElementById('filter-attendance').value;
+
+      let list = (window.GRACE && GRACE.activityParticipants) ? GRACE.activityParticipants.slice() : [];
+      if (actFilter) list = list.filter(p => p.activity_id === actFilter);
+      if (atFilter) list = list.filter(p => p.attendance_status === atFilter);
+
+      if (!list.length) {
+        ptbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:2rem;color:#9CA3AF;">No participant records found.</td></tr>`;
+      } else {
+        ptbody.innerHTML = list.map(p => {
+          const act = GRACE.activities ? GRACE.activities.find(a => a.activity_id === p.activity_id) : null;
+          const isPresent = p.attendance_status === 'Present';
+          return `
+            <tr>
+              <td style="padding:0.75rem;"><code style="font-size:0.77rem;background:var(--gray-100);padding:2px 5px;border-radius:3px;">${esc(p.activity_participant_id)}</code></td>
+              <td style="padding:0.75rem;">
+                <div style="font-weight:700;font-size:0.8rem;color:#8B1A1A;">${esc(p.activity_id)}</div>
+                <div style="font-size:0.74rem;color:var(--gray-500);">${act ? esc(act.activity_name.substring(0,40)) : ''}</div>
+              </td>
+              <td style="padding:0.75rem;font-weight:700;font-size:0.83rem;">${esc(p.participant_name)}</td>
+              <td style="padding:0.75rem;"><span class="badge badge-review" style="font-size:0.72rem;">${esc(p.participant_role)}</span></td>
+              <td style="padding:0.75rem;font-size:0.81rem;color:var(--gray-600);">${esc(p.affiliation)}</td>
+              <td style="padding:0.75rem;font-size:0.81rem;">${esc(p.contact_no)}</td>
+              <td style="padding:0.75rem;"><span class="badge ${isPresent?'badge-approved':'badge-danger'}" style="font-size:0.73rem;">
+                <i class="fas ${isPresent?'fa-check':'fa-times'}" style="margin-right:3px;"></i>${esc(p.attendance_status)}
+              </span></td>
+            </tr>
+          `;
+        }).join('');
+      }
+      pinfo.textContent = `Showing ${list.length} participant records`;
+    }
+
+    // Modal Operations
+    window.openAddActivityModal = function (preselectedProjectId) {
+      const modal = document.getElementById('modal-add-activity');
+      const selProj = document.getElementById('modal-act-project-id');
+      if (preselectedProjectId && selProj) {
+        selProj.value = preselectedProjectId;
+      }
+      document.getElementById('modal-act-start').value = new Date().toISOString().slice(0, 10);
+      const nextWeek = new Date();
+      nextWeek.setDate(nextWeek.getDate() + 7);
+      document.getElementById('modal-act-end').value = nextWeek.toISOString().slice(0, 10);
+      modal.classList.add('open');
+    };
+
+    window.closeAddActivityModal = function () {
+      document.getElementById('modal-add-activity').classList.remove('open');
+    };
+
+    window.handleSaveNewActivity = function (e) {
+      e.preventDefault();
+      const projId = document.getElementById('modal-act-project-id').value;
+      const name = document.getElementById('modal-act-name').value.trim();
+      const type = document.getElementById('modal-act-type').value;
+      const venue = document.getElementById('modal-act-venue').value.trim();
+      const start = document.getElementById('modal-act-start').value;
+      const end = document.getElementById('modal-act-end').value;
+      const desc = document.getElementById('modal-act-desc').value.trim();
+      const status = document.getElementById('modal-act-initial-status').value;
+      const trainer = document.getElementById('modal-act-trainer').value.trim();
+
+      const newId = 'ACT' + String(Math.floor(20 + Math.random() * 80)).padStart(3, '0');
+      const newAct = {
+        activity_id: newId,
+        project_id: projId,
+        activity_name: name,
+        activity_type: type,
+        description: desc || `Extension activity conducted at ${venue}`,
+        schedule_start: `${start} 08:00`,
+        schedule_end: `${end} 17:00`,
+        venue: venue,
+        activity_status: status,
+        facilitator: trainer
+      };
+
+      const all = loadAllActivities();
+      all.unshift(newAct);
+      saveCustomActivities(all);
+
+      // Post notification to status updates for the Extension Coordinator
+      try {
+        const suList = JSON.parse(localStorage.getItem(SU_KEY)) || [];
+        suList.unshift({
+          id: Date.now(),
+          project_id: projId,
+          stage: 'Implementation Phase',
+          status: status,
+          next_action: 'Coordinator: monitor activity execution and verify completion',
+          message: `Project Proponent ${trainer} scheduled activity "${name}" (${type}) at ${venue}.`,
+          posted_by: trainer,
+          by: trainer,
+          at: new Date().toISOString(),
+          role_label: 'Project Proponent',
+          date: new Date().toISOString().slice(0, 10),
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        });
+        localStorage.setItem(SU_KEY, JSON.stringify(suList));
+      } catch (err) {}
+
+      closeAddActivityModal();
+      document.getElementById('form-activity-add').reset();
+      render();
+      showToast(`Activity ${newId} scheduled for ${projId} and recorded!`);
+    };
+
+    // Update Activity Status Modal
+    window.openUpdateActivityModal = function (activityId) {
+      const all = loadAllActivities();
+      const act = all.find(a => a.activity_id === activityId);
+      if (!act) return;
+
+      document.getElementById('update-act-id').value = act.activity_id;
+      document.getElementById('update-act-name-display').textContent = `${act.activity_id} — ${act.activity_name}`;
+      document.getElementById('update-act-meta-display').textContent = `Project: ${act.project_id} · Type: ${act.activity_type} · Venue: ${act.venue}`;
+      document.getElementById('update-act-status').value = act.activity_status === 'Verified' ? 'Verified' : act.activity_status;
+
+      const userName = isCoordinator ? 'Dr. Mary Grace Bolos (Extension Coordinator)' : 'Prince Jheck T. Juan (Project Proponent)';
+      document.getElementById('update-act-by').value = userName;
+      document.getElementById('update-act-remarks').value = isCoordinator
+        ? `Implementation milestone audited. All activity training requirements and attendance verified satisfactory.`
+        : `Activity session delivered as planned. Participant modules and attendance documentation recorded.`;
+
+      document.getElementById('modal-update-activity').classList.add('open');
+    };
+
+    window.closeUpdateActivityModal = function () {
+      document.getElementById('modal-update-activity').classList.remove('open');
+    };
+
+    window.handleSaveActivityStatus = function (e) {
+      e.preventDefault();
+      const actId = document.getElementById('update-act-id').value;
+      const newStatus = document.getElementById('update-act-status').value;
+      const remarks = document.getElementById('update-act-remarks').value.trim();
+      const postTimeline = document.getElementById('update-act-post-timeline').checked;
+      const updatedBy = document.getElementById('update-act-by').value;
+
+      const all = loadAllActivities();
+      const act = all.find(a => a.activity_id === actId);
+      if (act) {
+        act.activity_status = newStatus;
+        act.monitoring_remarks = remarks;
+        act.updated_by = updatedBy;
+        act.updated_at = new Date().toISOString();
+        saveCustomActivities(all);
+
+        if (postTimeline) {
+          try {
+            const suList = JSON.parse(localStorage.getItem(SU_KEY)) || [];
+            suList.unshift({
+              id: Date.now(),
+              project_id: act.project_id,
+              stage: 'Implementation Phase',
+              status: newStatus,
+              next_action: newStatus === 'Completed' || newStatus === 'Verified' ? 'Coordinator: compile completion records and post-implementation evaluation' : 'Proponent: continue planned training sessions',
+              message: `${updatedBy} updated activity ${act.activity_id} ("${act.activity_name}") to ${newStatus}. Remarks: "${remarks}"`,
+              posted_by: isCoordinator ? 'Dr. Mary Grace Bolos' : 'Prince Jheck T. Juan',
+              by: isCoordinator ? 'Dr. Mary Grace Bolos' : 'Prince Jheck T. Juan',
+              at: new Date().toISOString(),
+              role_label: isCoordinator ? 'Extension Coordinator' : 'Project Proponent',
+              date: new Date().toISOString().slice(0, 10),
+              time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            });
+            localStorage.setItem(SU_KEY, JSON.stringify(suList));
+          } catch (err) {}
+        }
+
+        closeUpdateActivityModal();
+        render();
+        showToast(`Activity ${actId} status updated to "${newStatus}"!`);
+      }
+    };
+
+    // Activity Details Modal
+    window.openActivityDetails = function (activityId) {
+      const all = loadAllActivities();
+      const act = all.find(a => a.activity_id === activityId);
+      if (!act) return;
+
+      const proj = GRACE.getProjectById(act.project_id);
+      const parts = GRACE.getParticipantsByActivity ? GRACE.getParticipantsByActivity(activityId) : [];
+
+      const modalContent = document.getElementById('act-details-content');
+      modalContent.innerHTML = `
+        <div style="background:#F9FAFB;padding:1rem;border-radius:8px;border:1px solid #E5E7EB;margin-bottom:1rem;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;">
+            <div>
+              <span style="font-family:ui-monospace,monospace;font-size:0.8rem;background:#8B1A1A;color:#fff;font-weight:700;padding:2px 8px;border-radius:4px;">
+                ${esc(act.activity_id)}
+              </span>
+              <h3 style="margin:0.4rem 0 0.2rem;font-size:1.15rem;color:#111827;">${esc(act.activity_name)}</h3>
+              <p style="margin:0;font-size:0.8rem;color:#4B5563;">
+                Project: <strong>${esc(act.project_id)} — ${esc(proj ? proj.title : '')}</strong>
+              </p>
+            </div>
+            <div>${statusBadge(act.activity_status)}</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1rem;">
+          <div style="background:#fff;border:1px solid #E5E7EB;padding:0.75rem;border-radius:8px;">
+            <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:#6B7280;">Activity Type</div>
+            <div style="font-weight:700;font-size:0.9rem;margin-top:2px;">${esc(act.activity_type)}</div>
+          </div>
+          <div style="background:#fff;border:1px solid #E5E7EB;padding:0.75rem;border-radius:8px;">
+            <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:#6B7280;">Venue</div>
+            <div style="font-weight:700;font-size:0.9rem;margin-top:2px;color:#111827;">${esc(act.venue)}</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1rem;">
+          <div style="background:#fff;border:1px solid #E5E7EB;padding:0.75rem;border-radius:8px;">
+            <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:#6B7280;">Schedule Start</div>
+            <div style="font-weight:700;font-size:0.85rem;color:#047857;">${esc(act.schedule_start)}</div>
+          </div>
+          <div style="background:#fff;border:1px solid #E5E7EB;padding:0.75rem;border-radius:8px;">
+            <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:#6B7280;">Schedule End</div>
+            <div style="font-weight:700;font-size:0.85rem;color:#B91C1C;">${esc(act.schedule_end)}</div>
+          </div>
+        </div>
+
+        <div style="margin-bottom:1rem;">
+          <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#6B7280;margin-bottom:0.3rem;">Deliverables &amp; Objectives</div>
+          <div style="background:#fff;border:1px solid #E5E7EB;padding:0.85rem;border-radius:8px;font-size:0.82rem;line-height:1.5;color:#374151;">
+            ${esc(act.description)}
+          </div>
+        </div>
+
+        ${act.monitoring_remarks ? `
+          <div style="margin-bottom:1rem;">
+            <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#059669;margin-bottom:0.3rem;">Verification &amp; Monitoring Notes</div>
+            <div style="background:#F0FDF4;border:1px solid #BBF7D0;padding:0.85rem;border-radius:8px;font-size:0.8rem;color:#065F46;">
+              <i class="fas fa-clipboard-check" style="margin-right:0.3rem;"></i> "${esc(act.monitoring_remarks)}"
+              <div style="font-size:0.7rem;color:#047857;margin-top:0.3rem;">Recorded by: ${esc(act.updated_by || 'Extension Office')}</div>
+            </div>
+          </div>
+        ` : ''}
+
+        <div style="margin-top:1.25rem;">
+          <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;color:#374151;margin-bottom:0.5rem;display:flex;justify-content:space-between;">
+            <span>Enrolled Participants (${parts.length})</span>
+            <span style="font-weight:400;color:#6B7280;">Registered in attendance log</span>
+          </div>
+          ${parts.length ? `
+            <table style="width:100%;border-collapse:collapse;font-size:0.78rem;border:1px solid #E5E7EB;">
+              <thead>
+                <tr style="background:#F9FAFB;text-align:left;">
+                  <th style="padding:0.4rem 0.6rem;border-bottom:1px solid #E5E7EB;">Participant</th>
+                  <th style="padding:0.4rem 0.6rem;border-bottom:1px solid #E5E7EB;">Department</th>
+                  <th style="padding:0.4rem 0.6rem;border-bottom:1px solid #E5E7EB;">Role</th>
+                  <th style="padding:0.4rem 0.6rem;border-bottom:1px solid #E5E7EB;">Attendance</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${parts.map(p => `
+                  <tr>
+                    <td style="padding:0.45rem 0.6rem;border-bottom:1px solid #F3F4F6;font-weight:600;">${esc(p.participant_name)}</td>
+                    <td style="padding:0.45rem 0.6rem;border-bottom:1px solid #F3F4F6;color:#6B7280;">${esc(p.affiliation)}</td>
+                    <td style="padding:0.45rem 0.6rem;border-bottom:1px solid #F3F4F6;">${esc(p.participant_role)}</td>
+                    <td style="padding:0.45rem 0.6rem;border-bottom:1px solid #F3F4F6;">
+                      <span class="badge ${p.attendance_status==='Present'?'badge-approved':'badge-danger'}" style="font-size:0.68rem;">
+                        ${esc(p.attendance_status)}
+                      </span>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          ` : '<div style="font-size:0.78rem;color:#9CA3AF;padding:0.5rem 0;">No individual participants registered yet for this activity.</div>'}
+        </div>
+      `;
+
+      document.getElementById('modal-act-details').classList.add('open');
+    };
+
+    window.closeActivityDetailsModal = function () {
+      document.getElementById('modal-act-details').classList.remove('open');
+    };
+
+    // Filter controls
+    window.applyCardFilter = function (type) {
+      if (activeCardFilter === type && type !== 'all') {
+        activeCardFilter = 'all';
+      } else {
+        activeCardFilter = type;
+      }
+
+      ['all', 'completed', 'ongoing', 'scheduled'].forEach(k => {
+        const card = document.getElementById(`card-filter-${k}`);
+        if (card) {
+          if (k === activeCardFilter && activeCardFilter !== 'all') {
+            card.classList.add('active-filter');
+          } else if (k === 'all' && activeCardFilter === 'all') {
+            card.classList.add('active-filter');
+          } else {
+            card.classList.remove('active-filter');
+          }
+        }
+      });
+
+      render();
+    };
+
+    window.handleFilterChange = function () {
+      render();
+    };
+
+    window.resetAllFilters = function () {
+      activeCardFilter = 'all';
+      document.getElementById('filter-project').value = '';
+      document.getElementById('filter-status').value = '';
+      document.getElementById('filter-type').value = '';
+      document.getElementById('search-activities').value = '';
+
+      ['all', 'completed', 'ongoing', 'scheduled'].forEach(k => {
+        const card = document.getElementById(`card-filter-${k}`);
+        if (card) {
+          if (k === 'all') card.classList.add('active-filter');
+          else card.classList.remove('active-filter');
+        }
+      });
+
+      render();
+    };
+
+    // View Mode Switcher
+    window.switchViewMode = function (mode) {
+      currentMode = mode;
+      const btnCompiled = document.getElementById('btn-mode-compiled');
+      const btnAll = document.getElementById('btn-mode-all');
+      const compiledWrap = document.getElementById('compiled-projects-container');
+      const masterWrap = document.getElementById('master-table-container');
+
+      if (mode === 'compiled') {
+        btnCompiled.className = 'dm-nav-btn active';
+        btnAll.className = 'dm-nav-btn inactive';
+        compiledWrap.style.display = 'block';
+        masterWrap.style.display = 'none';
+      } else {
+        btnCompiled.className = 'dm-nav-btn inactive';
+        btnAll.className = 'dm-nav-btn active';
+        compiledWrap.style.display = 'none';
+        masterWrap.style.display = 'block';
+      }
+      render();
+    };
+
+    // Scope Switcher
+    window.setScope = function (scope) {
+      currentScope = scope;
+      const btnMy = document.getElementById('btn-scope-my');
+      const btnAll = document.getElementById('btn-scope-all');
+      if (btnMy && btnAll) {
+        if (scope === 'my') {
+          btnMy.classList.add('active');
+          btnAll.classList.remove('active');
+        } else {
+          btnAll.classList.add('active');
+          btnMy.classList.remove('active');
+        }
+      }
+      render();
+    };
+
+    // Export CSV
+    window.exportActivitiesCSV = function () {
+      const all = loadAllActivities();
+      if (!all.length) return alert('No activities to export.');
+      let csv = 'Activity ID,Project ID,Activity Name,Type,Start,End,Venue,Status\n';
+      all.forEach(a => {
+        csv += `${a.activity_id},${a.project_id},"${(a.activity_name||'').replace(/"/g,'""')}",${a.activity_type},${a.schedule_start},${a.schedule_end},"${(a.venue||'').replace(/"/g,'""')}",${a.activity_status}\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `activities_export_${new Date().toISOString().slice(0,10)}.csv`;
+      link.click();
+      URL.revokeObjectURL(url);
+    };
+
+    // Initialization on Page Load
+    document.addEventListener('DOMContentLoaded', () => {
+      initDropdowns();
+
+      // Configure based on role
+      const pageTitle = document.getElementById('page-act-title');
+      const pageSubtitle = document.getElementById('page-act-subtitle');
+      const roleBadge = document.getElementById('role-act-badge');
+      const scopeWrap = document.getElementById('proponent-scope-wrap');
+      const roleNoticeText = document.getElementById('role-notice-text');
+
+      if (isProponent) {
+        currentScope = 'my';
+        if (pageTitle) pageTitle.textContent = 'My Project Activities & Training';
+        if (pageSubtitle) pageSubtitle.textContent = 'Plan, schedule, and deliver training activities per project — Extension Coordinator is updated on progress';
+        if (roleBadge) {
+          roleBadge.style.display = 'inline-flex';
+          roleBadge.innerHTML = '<i class="fas fa-user-circle" style="margin-right:0.35rem;"></i>Proponent: Prince Jheck T. Juan';
+        }
+        if (scopeWrap) scopeWrap.style.display = 'inline-flex';
+        if (roleNoticeText) {
+          roleNoticeText.innerHTML = `You are logged in as <strong>Project Proponent (Prince Jheck T. Juan)</strong>. Activities are organized <strong>per project</strong>. You can schedule activities for your projects; the <strong>Extension Coordinator</strong> monitors your progress and verifies completion.`;
+        }
+      } else if (isCoordinator) {
+        currentScope = 'all';
+        if (pageTitle) pageTitle.textContent = 'Activities & Implementation Monitoring';
+        if (pageSubtitle) pageSubtitle.textContent = 'Monitor training sessions, verify milestones per project, and update activity progress status';
+        if (roleBadge) {
+          roleBadge.style.display = 'inline-flex';
+          roleBadge.innerHTML = '<i class="fas fa-user-tie" style="margin-right:0.35rem;"></i>Extension Coordinator: Dr. Mary Grace Bolos';
+        }
+        if (scopeWrap) scopeWrap.style.display = 'none';
+        if (roleNoticeText) {
+          roleNoticeText.innerHTML = `You are logged in as <strong>Extension Coordinator (Dr. Mary Grace Bolos)</strong>. Review activities organized <strong>per project</strong>, audit implementation milestones, and click <strong>"Coordinator Update"</strong> to verify and update activity progress.`;
+        }
+      }
+
+      // Check URL for initial project filter
+      const urlParams = new URLSearchParams(window.location.search);
+      const initProj = urlParams.get('project');
+      if (initProj) {
+        document.getElementById('filter-project').value = initProj;
+      }
+
+      const cardAll = document.getElementById('card-filter-all');
+      if (cardAll) cardAll.classList.add('active-filter');
+
+      render();
+      renderParticipants();
+
+      document.getElementById('filter-activity-participants').addEventListener('change', renderParticipants);
+      document.getElementById('filter-attendance').addEventListener('change', renderParticipants);
     });
-    pinfo.textContent = `Showing ${list.length} participant records`;
-  };
-
-  renderParticipants();
-  document.getElementById('filter-activity-participants').addEventListener('change', e => renderParticipants(e.target.value, document.getElementById('filter-attendance').value));
-  document.getElementById('filter-attendance').addEventListener('change', e => renderParticipants(document.getElementById('filter-activity-participants').value, e.target.value));
-});
-</script>
+  })();
+  </script>
 </body>
 </html>

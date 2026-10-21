@@ -127,6 +127,13 @@
 <script src="js/data.js"></script>
 <script src="js/main.js"></script>
 <script>
+(function() {
+  const role = localStorage.getItem('graceRole') || 'proponent';
+  if (role === 'proponent') {
+    window.location.replace('dashboard.html');
+    return;
+  }
+})();
 document.addEventListener('DOMContentLoaded', () => {
   if (!window.GRACE) return;
   const tbody = document.getElementById('beneficiaries-tbody');

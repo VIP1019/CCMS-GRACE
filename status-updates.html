@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="G.R.A.C.E PORTAL - Project status updates posted by the Extension Coordinator">
+  <title>Project Status Updates | G.R.A.C.E PORTAL</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .su-wrap { display: grid; grid-template-columns: 360px 1fr; gap: 1.25rem; align-items: start; }
+    .su-wrap.single { grid-template-columns: 1fr; }
+    @media (max-width: 1000px) { .su-wrap { grid-template-columns: 1fr; } }
+
+    .su-card { background: #fff; border: 1px solid #E5E7EB; border-radius: 12px; padding: 1.25rem; box-shadow: 0 1px 4px rgba(0,0,0,.04); }
+    .su-card h3 { font-size: .95rem; font-weight: 800; color: #111827; margin-bottom: 1rem; display: flex; gap: .5rem; align-items: center; }
+    .su-card h3 i { color: #8B1A1A; }
+
+    .su-field { margin-bottom: .85rem; }
+    .su-field label { display: block; font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #374151; margin-bottom: .35rem; }
+    .su-field select, .su-field textarea { width: 100%; padding: .6rem .75rem; border: 1.5px solid #D1D5DB; border-radius: 8px; font: inherit; font-size: .85rem; }
+    .su-field select:focus, .su-field textarea:focus { outline: none; border-color: #8B1A1A; box-shadow: 0 0 0 3px rgba(139,26,26,.1); }
+
+    .su-submit { width: 100%; padding: .75rem; border: none; border-radius: 8px; color: #fff; font-weight: 700; cursor: pointer; background: linear-gradient(135deg,#8B1A1A,#6B0000); display: flex; gap: .5rem; justify-content: center; align-items: center; }
+    .su-submit:hover { opacity: .92; }
+
+    .su-notice { background: #EFF6FF; border: 1px solid #BFDBFE; color: #1E40AF; border-radius: 8px; padding: .7rem .9rem; font-size: .78rem; margin-bottom: 1rem; display: flex; gap: .5rem; }
+    .su-filter { display: flex; gap: .5rem; margin-bottom: 1rem; flex-wrap: wrap; align-items: center; }
+    .su-filter select { padding: .45rem .7rem; border: 1.5px solid #D1D5DB; border-radius: 8px; font-size: .8rem; }
+
+    /* Timeline styling */
+    .su-timeline { position: relative; padding-left: 1.5rem; }
+    .su-timeline::before { content: ''; position: absolute; left: 6px; top: 6px; bottom: 6px; width: 2px; background: #E5E7EB; }
+
+    .su-item {
+      position: relative; background: #F9FAFB; border: 1.5px solid #E5E7EB; border-radius: 10px;
+      padding: 1rem 1.15rem; margin-bottom: 1rem; cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .su-item:hover {
+      background: #fff; border-color: #8B1A1A; transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(139, 26, 26, 0.08);
+    }
+    .su-item::before {
+      content: ''; position: absolute; left: -1.5rem; top: 1.25rem; width: 14px; height: 14px;
+      border-radius: 50%; background: #8B1A1A; border: 3px solid #fff; box-shadow: 0 0 0 1px #E5E7EB;
+    }
+
+    .su-item-head { display: flex; justify-content: space-between; gap: .75rem; flex-wrap: wrap; margin-bottom: .35rem; align-items: center; }
+    .su-item-title { font-weight: 800; font-size: .92rem; color: #111827; }
+    .su-item-code { font-size: .72rem; color: #8B1A1A; font-weight: 700; font-family: ui-monospace, monospace; }
+
+    .su-pill { font-size: .68rem; font-weight: 700; padding: .22rem .65rem; border-radius: 999px; background: #FEF3C7; color: #92400E; white-space: nowrap; }
+    .su-pill.green { background: #D1FAE5; color: #065F46; }
+    .su-pill.red { background: #FEE2E2; color: #991B1B; }
+    .su-pill.blue { background: #DBEAFE; color: #1E40AF; }
+
+    .su-stage { font-size: .76rem; color: #4B5563; margin-bottom: .45rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem; }
+    .su-msg { font-size: .84rem; color: #374151; line-height: 1.5; background: #fff; padding: 0.65rem 0.8rem; border-radius: 6px; border: 1px solid #E5E7EB; }
+    .su-meta { font-size: .72rem; color: #6B7280; margin-top: .6rem; display: flex; gap: 1.2rem; flex-wrap: wrap; align-items: center; }
+
+    .btn-su-progress {
+      display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.72rem; font-weight: 700;
+      color: #8B1A1A; background: rgba(139, 26, 26, 0.08); border: 1px solid rgba(139, 26, 26, 0.2);
+      padding: 0.25rem 0.65rem; border-radius: 6px; cursor: pointer; transition: all 0.15s;
+    }
+    .btn-su-progress:hover { background: #8B1A1A; color: #fff; }
+
+    .su-empty { text-align: center; color: #9CA3AF; padding: 2.5rem 0; font-size: .85rem; }
+    .su-toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: #059669; color: #fff; padding: .75rem 1.1rem; border-radius: 8px; font-size: .85rem; font-weight: 600; display: none; z-index: 9999; box-shadow: 0 6px 16px rgba(0,0,0,0.2); }
+
+    /* Progress Status Modal */
+    .su-modal-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+      z-index: 9999; align-items: flex-start; justify-content: center;
+      padding: 2rem 1rem; overflow-y: auto;
+    }
+    .su-modal-overlay.open { display: flex; }
+    .su-modal-box {
+      background: #fff; border-radius: 14px; width: 100%; max-width: 800px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.25); overflow: hidden; margin: auto;
+      animation: suModalFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes suModalFadeIn {
+      from { opacity: 0; transform: translateY(-12px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .su-modal-head {
+      background: linear-gradient(135deg, #5a0e0e 0%, #8B1A1A 60%, #a01d1d 100%);
+      padding: 1.1rem 1.4rem; color: #fff; display: flex; align-items: center; justify-content: space-between;
+    }
+    .su-modal-head h4 { margin: 0; font-size: 1.05rem; font-weight: 800; display: flex; align-items: center; gap: 0.5rem; }
+    .su-modal-head button { background: none; border: none; color: #fff; font-size: 1.3rem; cursor: pointer; opacity: 0.85; line-height: 1; }
+    .su-modal-head button:hover { opacity: 1; }
+    .su-modal-body { padding: 1.4rem; font-size: 0.85rem; max-height: calc(85vh - 120px); overflow-y: auto; }
+
+    /* Stepper */
+    .su-stepper { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.65rem; margin-bottom: 1.25rem; }
+    @media (max-width: 760px) { .su-stepper { grid-template-columns: repeat(2, 1fr); } }
+    .su-step-card {
+      border-radius: 8px; border: 1.5px solid #E5E7EB; background: #F9FAFB; padding: 0.65rem 0.75rem;
+      font-size: 0.72rem; position: relative; transition: all 0.15s;
+    }
+    .su-step-card.done {
+      border-color: #A7F3D0; background: #ECFDF5; color: #065F46;
+    }
+    .su-step-card.active {
+      border-color: #8B1A1A; background: #FEF2F2; color: #8B1A1A;
+      box-shadow: 0 0 0 2px rgba(139,26,26,0.15);
+    }
+    .su-step-card.pending {
+      opacity: 0.7; color: #6B7280;
+    }
+    .su-step-num {
+      font-size: 0.65rem; font-weight: 800; text-transform: uppercase; margin-bottom: 0.25rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .su-step-name { font-weight: 700; line-height: 1.25; }
+  </style>
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <div class="main-content">
+      <header class="topbar" id="topbar"></header>
+
+      <div class="dashboard-content">
+        <div class="page-header">
+          <div>
+            <h2 id="su-title">Project Status Updates</h2>
+            <p class="page-subtitle" id="su-subtitle">Where each project currently stands, as posted by the Extension Coordinator</p>
+          </div>
+        </div>
+
+        <div class="su-wrap" id="su-wrap">
+          <!-- Coordinator only: post an update -->
+          <section class="su-card" id="su-form-card" style="display:none;">
+            <h3><i class="fas fa-bullhorn"></i> Post Status Update</h3>
+            <div class="su-notice"><i class="fas fa-info-circle"></i><span>The Project Proponent is notified of every update you post here.</span></div>
+            <form id="su-form">
+              <div class="su-field">
+                <label for="su-project">Project</label>
+                <select id="su-project" required></select>
+              </div>
+              <div class="su-field">
+                <label for="su-stage">Current Process Stage</label>
+                <select id="su-stage" required>
+                  <optgroup label="Phase A — Proposal Preparation & Submission">
+                    <option>Proposal Submitted</option>
+                    <option>Completeness Check</option>
+                  </optgroup>
+                  <optgroup label="Phase B — College Dean Review">
+                    <option>Dean/Director Review &amp; Endorsement</option>
+                    <option>Revision &amp; Resubmission</option>
+                  </optgroup>
+                  <optgroup label="Phase C — Subsequent Institutional Processing (Recorded by Coordinator)">
+                    <option>OVPRE Processing</option>
+                    <option>Eligibility Check</option>
+                    <option>Compliance and Revision</option>
+                    <option>Technical Evaluation</option>
+                    <option>Subsequent Institutional Processing</option>
+                    <option>Board-Related Processing</option>
+                    <option>Distribution of Board-Approved Proposal</option>
+                    <option>Notice to Proceed (NTP)</option>
+                    <option>Authorization Confirmed</option>
+                  </optgroup>
+                  <optgroup label="Phase D, E, F, G — Implementation & Completion">
+                    <option>Project Implementation &amp; Monitoring</option>
+                    <option>Narrative &amp; Progress Report Submission</option>
+                    <option>Project Completion Documentation</option>
+                    <option>Post-Implementation Reporting &amp; Evaluation</option>
+                    <option>Project Record Complete</option>
+                  </optgroup>
+                </select>
+              </div>
+              <div class="su-field">
+                <label for="su-status">Status</label>
+                <select id="su-status" required>
+                  <option value="Submitted">Submitted</option>
+                  <option value="Under Review">Under Review</option>
+                  <option value="Needs Revision">Needs Revision</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Completed">Completed</option>
+                </select>
+              </div>
+              <div class="su-field">
+                <label for="su-message">Message to Proponent</label>
+                <textarea id="su-message" rows="4" required placeholder="e.g. Your proposal has been reviewed. Please upload the required attachments."></textarea>
+              </div>
+              <button type="submit" class="su-submit" id="su-submit-btn"><i class="fas fa-paper-plane"></i> Post Update &amp; Notify Proponent</button>
+            </form>
+          </section>
+
+          <!-- Everyone: timeline -->
+          <section class="su-card">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.75rem;margin-bottom:0.75rem;">
+              <h3 style="margin:0;"><i class="fas fa-route"></i> Status Timeline</h3>
+              <div class="su-filter" style="margin:0;">
+                <label for="su-filter-project" style="font-size:.78rem;color:#6B7280;">Project:</label>
+                <select id="su-filter-project"></select>
+              </div>
+            </div>
+
+            <!-- Proponent Helper Tip -->
+            <div id="su-proponent-tip" style="background:#EFF6FF;border:1px solid #BFDBFE;color:#1E40AF;padding:0.65rem 0.9rem;border-radius:8px;font-size:0.78rem;margin-bottom:1.15rem;display:flex;align-items:center;gap:0.6rem;">
+              <i class="fas fa-hand-pointer" style="font-size:0.95rem;flex-shrink:0;color:#2563EB;"></i>
+              <span><strong>Interactive Timeline:</strong> Click any project update card below to view its complete <strong>8-stage workflow progress</strong>, current milestone, activities, and communication history.</span>
+            </div>
+
+            <div class="su-timeline" id="su-list"></div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       PROJECT PROGRESS STATUS MODAL (Interactive for Proponent & Coordinator)
+       ══════════════════════════════════════════════════════ -->
+  <div id="modal-progress-status" class="su-modal-overlay">
+    <div class="su-modal-box">
+      <div class="su-modal-head">
+        <h4><i class="fas fa-chart-line"></i> Project Progress &amp; Workflow Status</h4>
+        <button type="button" onclick="closeProgressModal()">&times;</button>
+      </div>
+      <div class="su-modal-body" id="modal-progress-body">
+        <!-- Injected via JavaScript -->
+      </div>
+      <div style="padding:0.85rem 1.4rem;background:#F9FAFB;border-top:1px solid #E5E7EB;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
+        <div id="modal-progress-actions-left" style="display:flex;gap:0.5rem;flex-wrap:wrap;"></div>
+        <button type="button" onclick="closeProgressModal()" class="btn btn-sm btn-outline">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="su-toast" id="su-toast"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    (function () {
+      const KEY = 'grace_status_updates_v4';
+      const ACT_KEY = 'grace_activities_custom_v1';
+      const role = localStorage.getItem('graceRole') || 'proponent';
+      const isCoordinator = role === 'coordinator';
+      const isProponent = role === 'proponent';
+      const projects = (window.GRACE && GRACE.projects) ? GRACE.projects : [];
+
+      const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+      const seed = [
+        { id: 3, project_id: 'EXT-2026-048', stage: 'Implementation & Monitoring', status: 'In Progress',
+          message: 'Module 3 is now underway. Please upload the Module 2 attendance records before Sep 25.',
+          by: 'Dr. Mary Grace Bolos', posted_by: 'Dr. Mary Grace Bolos', role_label: 'Extension Coordinator', at: '2026-09-18T09:30:00' },
+        { id: 2, project_id: 'EXT-2026-045', stage: 'Dean/Director Review & Endorsement', status: 'Under Review',
+          message: 'Your proposal is with the College Dean for endorsement. Signed MOA copy is still required.',
+          by: 'Dr. Mary Grace Bolos', posted_by: 'Dr. Mary Grace Bolos', role_label: 'Extension Coordinator', at: '2026-09-10T14:05:00' },
+        { id: 1, project_id: 'EXT-2026-041', stage: 'Notice to Proceed (NTP)', status: 'In Progress',
+          message: 'Project approved. Notice to Proceed has been issued; you may start scheduling activities.',
+          by: 'Dr. Mary Grace Bolos', posted_by: 'Dr. Mary Grace Bolos', role_label: 'Extension Coordinator', at: '2026-07-12T10:00:00' }
+      ];
+
+      function load() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(KEY));
+          if (Array.isArray(saved) && saved.length) return saved;
+        } catch (e) {}
+        localStorage.setItem(KEY, JSON.stringify(seed));
+        return seed.slice();
+      }
+      const save = list => localStorage.setItem(KEY, JSON.stringify(list));
+
+      function titleOf(id, u) {
+        const p = projects.find(x => x.project_id === id);
+        if (p) return p.title;
+        if (u && u.message) {
+          const match = u.message.match(/"([^"]+)"/);
+          if (match) return match[1];
+        }
+        return id;
+      }
+
+      function pillClass(status) {
+        if (/Completed|Verified/.test(status)) return 'green';
+        if (/Needs Revision|Incomplete|Returned/.test(status)) return 'red';
+        if (/Under Review|Checking|Pending/.test(status)) return '';
+        if (/In Progress|Ongoing|Submitted/.test(status)) return 'blue';
+        return '';
+      }
+
+      function fmt(iso) {
+        if (!iso) return 'Recent';
+        const d = new Date(iso);
+        if (isNaN(d.getTime())) return String(iso);
+        return d.toLocaleString('en-PH', { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+      }
+
+      function getAuthor(u) {
+        return u.by || u.posted_by || 'Dr. Mary Grace Bolos';
+      }
+
+      function getRoleLabel(u) {
+        if (u.role_label) return u.role_label;
+        const author = getAuthor(u);
+        if (author && author.includes('Bolos')) return 'Extension Coordinator';
+        if (author && (author.includes('Juan') || author.includes('Prince'))) return 'Project Proponent';
+        if (author && author.includes('Maligat')) return 'College Dean';
+        return 'Extension Coordinator';
+      }
+
+      function getDateDisplay(u) {
+        if (u.at) {
+          const d = new Date(u.at);
+          if (!isNaN(d.getTime())) return fmt(u.at);
+        }
+        if (u.date) {
+          return `${u.date}${u.time ? ' · ' + u.time : ''}`;
+        }
+        return 'Recently updated';
+      }
+
+      function loadAllActivities() {
+        const base = (window.GRACE && GRACE.activities) ? GRACE.activities.slice() : [];
+        try {
+          const custom = JSON.parse(localStorage.getItem(ACT_KEY));
+          if (Array.isArray(custom)) {
+            const map = new Map();
+            base.forEach(a => map.set(a.activity_id, { ...a }));
+            custom.forEach(a => map.set(a.activity_id, { ...(map.get(a.activity_id) || {}), ...a }));
+            return Array.from(map.values());
+          }
+        } catch (e) {}
+        return base;
+      }
+
+      const filterSel = document.getElementById('su-filter-project');
+      const projectSel = document.getElementById('su-project');
+
+      filterSel.innerHTML = '<option value="">All projects</option>' +
+        projects.map(p => `<option value="${esc(p.project_id)}">${esc(p.project_id)} — ${esc(p.title)}</option>`).join('');
+      projectSel.innerHTML = projects.map(p => `<option value="${esc(p.project_id)}">${esc(p.project_id)} — ${esc(p.title)}</option>`).join('');
+
+      function render() {
+        const f = filterSel.value;
+        const rawList = load();
+        const list = rawList.filter(u => !f || u.project_id === f).sort((a, b) => {
+          const ta = a.at ? new Date(a.at).getTime() : (a.id || 0);
+          const tb = b.at ? new Date(b.at).getTime() : (b.id || 0);
+          return tb - ta;
+        });
+
+        document.getElementById('su-list').innerHTML = list.length ? list.map(u => {
+          const author = getAuthor(u);
+          const roleLbl = getRoleLabel(u);
+          const dateStr = getDateDisplay(u);
+          const title = titleOf(u.project_id, u);
+
+          return `
+            <article class="su-item" onclick="openProjectProgressModal('${esc(u.project_id)}', ${u.id})" title="Click to view detailed project progress status">
+              <div class="su-item-head">
+                <div>
+                  <div class="su-item-title">${esc(title)}</div>
+                  <div class="su-item-code">${esc(u.project_id)}</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:0.4rem;">
+                  <span class="su-pill ${pillClass(u.status)}">${esc(u.status)}</span>
+                  <button type="button" class="btn-su-progress" onclick="event.stopPropagation(); openProjectProgressModal('${esc(u.project_id)}', ${u.id})">
+                    <i class="fas fa-chart-line"></i> View Progress Status &rarr;
+                  </button>
+                </div>
+              </div>
+              <div class="su-stage"><i class="fas fa-layer-group" style="color:#8B1A1A;"></i> Stage: <strong>${esc(u.stage)}</strong></div>
+              <div class="su-msg">${esc(u.message)}</div>
+              <div class="su-meta">
+                <span><i class="fas fa-user-circle" style="color:#4B5563;"></i> <strong>${esc(author)}</strong>, ${esc(roleLbl)}</span>
+                <span><i class="fas fa-clock" style="color:#9CA3AF;"></i> ${esc(dateStr)}</span>
+                <span style="color:#2563EB;margin-left:auto;font-weight:600;"><i class="fas fa-mouse-pointer"></i> Click for full workflow</span>
+              </div>
+            </article>`;
+        }).join('') : '<div class="su-empty">No status updates yet.</div>';
+      }
+
+      // 8-Stage Institutional Workflow Definition
+      const WORKFLOW_STAGES = [
+        { num: 1, name: 'Completeness Check', desc: 'Coordinator checks documents & attachments' },
+        { num: 2, name: 'Dean Endorsement', desc: 'College Dean review and endorsement' },
+        { num: 3, name: 'Eligibility Check', desc: 'Institutional qualification check [E]' },
+        { num: 4, name: 'Compliance & Revision', desc: 'Proponent fulfills revisions, if needed' },
+        { num: 5, name: 'Technical Evaluation', desc: 'Technical Evaluation Committee review [TE]' },
+        { num: 6, name: 'Inst. Endorsement', desc: 'University President / Board endorsement' },
+        { num: 7, name: 'BOT Approval', desc: 'Board of Trustees official confirmation' },
+        { num: 8, name: 'Implementation (NTP)', desc: 'Notice to Proceed & activity rollout' }
+      ];
+
+      function determineStageIndex(stageName, status) {
+        if (!stageName) return 1;
+        const s = stageName.toLowerCase();
+        if (s.includes('completeness') || s.includes('submitted')) return 1;
+        if (s.includes('dean') || s.includes('director')) return 2;
+        if (s.includes('eligibility')) return 3;
+        if (s.includes('compliance') || s.includes('revision')) return 4;
+        if (s.includes('technical') || s.includes('evaluation')) return 5;
+        if (s.includes('institutional') || s.includes('endorsement')) return 6;
+        if (s.includes('board') || s.includes('bot')) return 7;
+        if (s.includes('implementation') || s.includes('proceed') || s.includes('ntp') || s.includes('ongoing') || s.includes('progress') || s.includes('completed')) return 8;
+        return 1;
+      }
+
+      // Modal: Project Progress Status
+      window.openProjectProgressModal = function (projectId, specificUpdateId) {
+        const rawList = load();
+        const projectUpdates = rawList.filter(u => u.project_id === projectId);
+        const latestUpdate = projectUpdates[0] || (specificUpdateId ? rawList.find(x => x.id === specificUpdateId) : null);
+
+        let proj = projects.find(x => x.project_id === projectId);
+        if (!proj) {
+          proj = {
+            project_id: projectId,
+            title: titleOf(projectId, latestUpdate),
+            service_type: 'Community Extension Service',
+            project_status: latestUpdate ? latestUpdate.status : 'Submitted',
+            start_date: '2026-09-15',
+            end_date: '2026-11-20',
+            created_by: 'PER001'
+          };
+        }
+
+        const currentStageName = latestUpdate ? latestUpdate.stage : (proj.project_status === 'Ongoing' ? 'Implementation Phase' : 'Completeness Check');
+        const currentStatus = latestUpdate ? latestUpdate.status : (proj.project_status || 'Submitted');
+        const activeStageIndex = determineStageIndex(currentStageName, currentStatus);
+
+        // Calculate progress percentage
+        let progressPct = 12;
+        if (currentStatus === 'Completed') {
+          progressPct = 100;
+        } else if (activeStageIndex === 1) progressPct = 15;
+        else if (activeStageIndex === 2) progressPct = 28;
+        else if (activeStageIndex === 3) progressPct = 40;
+        else if (activeStageIndex === 4) progressPct = 50;
+        else if (activeStageIndex === 5) progressPct = 62;
+        else if (activeStageIndex === 6) progressPct = 74;
+        else if (activeStageIndex === 7) progressPct = 85;
+        else if (activeStageIndex === 8) {
+          progressPct = 88;
+        }
+
+        // Activities for this project
+        const allActs = loadAllActivities();
+        const projActs = allActs.filter(a => a.project_id === projectId);
+        const compActs = projActs.filter(a => a.activity_status === 'Completed' || a.activity_status === 'Verified').length;
+        if (activeStageIndex === 8 && projActs.length) {
+          progressPct = Math.round(50 + (compActs / projActs.length) * 50);
+          if (progressPct > 100) progressPct = 100;
+        }
+
+        // Stepper HTML
+        const stepperHtml = WORKFLOW_STAGES.map(st => {
+          let stateClass = 'pending';
+          let iconHtml = '<i class="fas fa-clock"></i>';
+          let statusText = 'Pending';
+
+          if (currentStatus === 'Completed' || st.num < activeStageIndex) {
+            stateClass = 'done';
+            iconHtml = '<i class="fas fa-check-circle" style="color:#059669;"></i>';
+            statusText = 'Completed';
+          } else if (st.num === activeStageIndex) {
+            stateClass = 'active';
+            iconHtml = '<i class="fas fa-spinner fa-spin" style="color:#8B1A1A;"></i>';
+            statusText = 'ACTIVE STAGE';
+          }
+
+          return `
+            <div class="su-step-card ${stateClass}">
+              <div class="su-step-num">
+                <span>Stage ${st.num}</span>
+                <span>${iconHtml}</span>
+              </div>
+              <div class="su-step-name">${esc(st.name)}</div>
+              <div style="font-size:0.65rem;margin-top:0.25rem;color:inherit;opacity:0.85;">${esc(statusText)}</div>
+            </div>
+          `;
+        }).join('');
+
+        // Activities Section HTML
+        let activitiesSectionHtml = '';
+        if (projActs.length) {
+          activitiesSectionHtml = `
+            <div style="margin-top:1.25rem;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;padding:1rem;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.65rem;flex-wrap:wrap;gap:0.5rem;">
+                <h5 style="margin:0;font-size:0.88rem;color:#111827;font-weight:800;">
+                  <i class="fas fa-calendar-check" style="color:#8B1A1A;margin-right:0.35rem;"></i> Implementation Activities (${compActs}/${projActs.length} Completed)
+                </h5>
+                <a href="activities.html?project=${esc(projectId)}" class="btn-su-progress" style="text-decoration:none;">
+                  Manage Activities in Module &rarr;
+                </a>
+              </div>
+              <table style="width:100%;border-collapse:collapse;font-size:0.78rem;background:#fff;border:1px solid #E5E7EB;border-radius:6px;overflow:hidden;">
+                <thead>
+                  <tr style="background:#F3F4F6;text-align:left;color:#4B5563;">
+                    <th style="padding:0.45rem 0.65rem;border-bottom:1px solid #E5E7EB;">Code</th>
+                    <th style="padding:0.45rem 0.65rem;border-bottom:1px solid #E5E7EB;">Activity Name</th>
+                    <th style="padding:0.45rem 0.65rem;border-bottom:1px solid #E5E7EB;">Schedule</th>
+                    <th style="padding:0.45rem 0.65rem;border-bottom:1px solid #E5E7EB;">Venue</th>
+                    <th style="padding:0.45rem 0.65rem;border-bottom:1px solid #E5E7EB;">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${projActs.map(a => `
+                    <tr>
+                      <td style="padding:0.5rem 0.65rem;border-bottom:1px solid #F3F4F6;font-family:ui-monospace,monospace;font-weight:700;">${esc(a.activity_id)}</td>
+                      <td style="padding:0.5rem 0.65rem;border-bottom:1px solid #F3F4F6;font-weight:600;color:#111827;">${esc(a.activity_name)}</td>
+                      <td style="padding:0.5rem 0.65rem;border-bottom:1px solid #F3F4F6;color:#4B5563;">${esc(a.schedule_start)}</td>
+                      <td style="padding:0.5rem 0.65rem;border-bottom:1px solid #F3F4F6;color:#6B7280;">${esc(a.venue)}</td>
+                      <td style="padding:0.5rem 0.65rem;border-bottom:1px solid #F3F4F6;">
+                        <span class="su-pill ${pillClass(a.activity_status)}">${esc(a.activity_status)}</span>
+                      </td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          `;
+        } else {
+          activitiesSectionHtml = `
+            <div style="margin-top:1.25rem;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:0.85rem 1rem;font-size:0.78rem;color:#6B7280;">
+              <i class="fas fa-info-circle" style="color:#3B82F6;margin-right:0.35rem;"></i>
+              <strong>Proposal Review &amp; Processing Phase:</strong> Official implementation activities and training sessions will be registered and scheduled once the Notice to Proceed (NTP) has been issued.
+            </div>
+          `;
+        }
+
+        // Timeline Feed HTML for this specific project
+        const historyHtml = projectUpdates.length ? projectUpdates.map(u => {
+          const auth = getAuthor(u);
+          const roleL = getRoleLabel(u);
+          const dt = getDateDisplay(u);
+          return `
+            <div style="background:#fff;border:1px solid #E5E7EB;border-radius:8px;padding:0.75rem 0.9rem;margin-bottom:0.6rem;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.25rem;flex-wrap:wrap;gap:0.4rem;">
+                <span style="font-weight:700;font-size:0.78rem;color:#111827;"><i class="fas fa-comment-dots" style="color:#8B1A1A;margin-right:0.3rem;"></i>${esc(u.stage)}</span>
+                <span class="su-pill ${pillClass(u.status)}">${esc(u.status)}</span>
+              </div>
+              <div style="font-size:0.82rem;color:#374151;line-height:1.45;">${esc(u.message)}</div>
+              <div style="font-size:0.7rem;color:#9CA3AF;margin-top:0.35rem;display:flex;gap:0.75rem;">
+                <span><i class="fas fa-user-check"></i> <strong>${esc(auth)}</strong> (${esc(roleL)})</span>
+                <span><i class="fas fa-clock"></i> ${esc(dt)}</span>
+              </div>
+            </div>
+          `;
+        }).join('') : '<div style="font-size:0.8rem;color:#9CA3AF;">No specific timeline logs recorded yet for this project.</div>';
+
+        const modalBody = document.getElementById('modal-progress-body');
+        modalBody.innerHTML = `
+          <!-- HERO STATUS CARD -->
+          <div style="background:#F9FAFB;border:1.5px solid #E5E7EB;border-radius:12px;padding:1.15rem;margin-bottom:1.25rem;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;">
+              <div>
+                <span style="font-family:ui-monospace,monospace;font-size:0.82rem;font-weight:800;background:rgba(139,26,26,0.08);color:#8B1A1A;padding:3px 8px;border-radius:4px;border:1px solid rgba(139,26,26,0.18);">
+                  ${esc(proj.project_id)}
+                </span>
+                <h3 style="margin:0.45rem 0 0.25rem;font-size:1.12rem;color:#111827;font-weight:800;">
+                  ${esc(proj.title)}
+                </h3>
+                <p style="margin:0;font-size:0.78rem;color:#6B7280;">
+                  <i class="fas fa-user-tie"></i> Leader / Proponent: <strong>Prince Jheck T. Juan</strong> &nbsp;•&nbsp;
+                  <i class="fas fa-tag"></i> Type: ${esc(proj.service_type || 'Extension Service')} &nbsp;•&nbsp;
+                  <i class="fas fa-calendar-alt"></i> Timeline: ${esc(proj.start_date || '2026-09-15')} to ${esc(proj.end_date || '2026-11-20')}
+                </p>
+              </div>
+              <div>
+                <span class="su-pill ${pillClass(currentStatus)}" style="font-size:0.8rem;padding:0.3rem 0.8rem;">${esc(currentStatus)}</span>
+              </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div style="margin-top:1rem;">
+              <div style="display:flex;justify-content:space-between;font-size:0.75rem;font-weight:700;color:#374151;margin-bottom:0.35rem;">
+                <span>Overall Project Progress: Stage ${activeStageIndex} of 8 (${esc(currentStageName)})</span>
+                <span style="color:#8B1A1A;">${progressPct}% Completed</span>
+              </div>
+              <div style="width:100%;height:10px;background:#E5E7EB;border-radius:999px;overflow:hidden;">
+                <div style="width:${progressPct}%;height:100%;background:linear-gradient(90deg, #8B1A1A, #059669);border-radius:999px;transition:width 0.4s ease;"></div>
+              </div>
+            </div>
+
+            <!-- Current Action Highlight -->
+            <div style="margin-top:0.85rem;background:#FEF2F2;border:1px solid #FCA5A5;border-radius:8px;padding:0.65rem 0.85rem;font-size:0.78rem;color:#991B1B;display:flex;align-items:center;gap:0.5rem;">
+              <i class="fas fa-bell" style="font-size:0.9rem;flex-shrink:0;"></i>
+              <div>
+                <strong>Current Stage:</strong> ${esc(currentStageName)}. ${latestUpdate && latestUpdate.next_action ? esc(latestUpdate.next_action) : 'Coordinator is processing the active submission stage.'}
+              </div>
+            </div>
+          </div>
+
+          <!-- 8-STAGE WORKFLOW STEPPER -->
+          <div style="margin-bottom:0.5rem;">
+            <div style="font-size:0.75rem;font-weight:800;text-transform:uppercase;color:#4B5563;letter-spacing:0.05em;margin-bottom:0.5rem;display:flex;justify-content:space-between;">
+              <span>8-Stage Institutional Approval &amp; Implementation Flow</span>
+              <span style="font-weight:500;color:#6B7280;">ERD / SOP Aligned</span>
+            </div>
+            <div class="su-stepper">
+              ${stepperHtml}
+            </div>
+          </div>
+
+          <!-- ACTIVITIES BREAKDOWN -->
+          ${activitiesSectionHtml}
+
+          <!-- PROJECT AUDIT TRAIL / REMARKS LOG -->
+          <div style="margin-top:1.25rem;">
+            <div style="font-size:0.75rem;font-weight:800;text-transform:uppercase;color:#4B5563;letter-spacing:0.05em;margin-bottom:0.5rem;">
+              <i class="fas fa-history" style="margin-right:0.3rem;"></i> Communication &amp; Monitoring Trail (${projectUpdates.length} Updates)
+            </div>
+            <div style="max-height:220px;overflow-y:auto;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:0.75rem;">
+              ${historyHtml}
+            </div>
+          </div>
+        `;
+
+        // Action links in footer
+        const leftActions = document.getElementById('modal-progress-actions-left');
+        leftActions.innerHTML = `
+          <a href="proposals.html" class="btn btn-sm btn-outline" style="text-decoration:none;">
+            <i class="fas fa-file-alt"></i> View in Proposals
+          </a>
+          <a href="activities.html?project=${esc(projectId)}" class="btn btn-sm btn-outline" style="text-decoration:none;">
+            <i class="fas fa-calendar-alt"></i> View Activities
+          </a>
+        `;
+
+        document.getElementById('modal-progress-status').classList.add('open');
+      };
+
+      window.closeProgressModal = function () {
+        document.getElementById('modal-progress-status').classList.remove('open');
+      };
+
+      // Role-specific view configurations
+      if (isCoordinator) {
+        document.getElementById('su-form-card').style.display = 'block';
+        document.getElementById('su-title').textContent = 'Project Status Updates';
+        document.getElementById('su-subtitle').textContent = 'Record where each project stands and inform the Project Proponent';
+        const tip = document.getElementById('su-proponent-tip');
+        if (tip) {
+          tip.innerHTML = '<i class="fas fa-info-circle" style="color:#2563EB;"></i><span><strong>Extension Coordinator View:</strong> Review all ongoing project updates below. Click any card to inspect the 8-stage progress tracker and audit log.</span>';
+        }
+      } else {
+        document.getElementById('su-wrap').classList.add('single');
+        if (role === 'proponent') {
+          document.getElementById('su-title').textContent = 'My Project Status';
+          document.getElementById('su-subtitle').textContent = 'Latest updates from the Extension Coordinator about your projects — click any card to view detailed progress status';
+        }
+      }
+
+      document.getElementById('su-form').addEventListener('submit', e => {
+        e.preventDefault();
+        const list = load();
+        const pid = projectSel.value;
+        const stage = document.getElementById('su-stage').value;
+        const status = document.getElementById('su-status').value;
+        const msg = document.getElementById('su-message').value.trim();
+
+        list.unshift({
+          id: Date.now(),
+          project_id: pid,
+          stage: stage,
+          status: status,
+          message: msg,
+          by: 'Dr. Mary Grace Bolos',
+          posted_by: 'Dr. Mary Grace Bolos',
+          role_label: 'Extension Coordinator',
+          at: new Date().toISOString(),
+          date: new Date().toISOString().slice(0, 10),
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        });
+        save(list);
+        e.target.reset();
+        render();
+        const t = document.getElementById('su-toast');
+        t.textContent = 'Status update posted. Project Proponent notified.';
+        t.style.display = 'block';
+        setTimeout(() => t.style.display = 'none', 2800);
+      });
+
+      filterSel.addEventListener('change', render);
+
+      // Check if project parameter is passed in URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const initProj = urlParams.get('project');
+      if (initProj) {
+        filterSel.value = initProj;
+      }
+
+      render();
+    })();
+  </script>
+</body>
+</html>

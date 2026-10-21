@@ -1,0 +1,2078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="G.R.A.C.E PORTAL — Faculty Extension Service Engagement Requests">
+  <title>Faculty Requests | G.R.A.C.E PORTAL</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    /* ── Role Switcher Bar ────────────────────────────────────────── */
+    .role-switcher-bar {
+      background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12px;
+      padding: 0.75rem 1.25rem; margin-bottom: 1.25rem;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.03); flex-wrap: wrap;
+    }
+    .rsb-left { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+    .rsb-tag {
+      font-size: 0.72rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.06em; color: #6B7280; display: flex; align-items: center; gap: 0.4rem;
+    }
+    .rsb-tag i { color: #8B1A1A; }
+    .rsb-indicator {
+      display: inline-flex; align-items: center; gap: 0.45rem;
+      background: #FDF2F2; color: #8B1A1A; border: 1px solid #FCDEDE;
+      padding: 0.3rem 0.75rem; border-radius: 20px; font-size: 0.78rem; font-weight: 700;
+    }
+    .rsb-tabs { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+    .rsb-btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.45rem 0.85rem; border-radius: 8px; font-size: 0.78rem; font-weight: 700;
+      border: 1px solid #E5E7EB; background: #F9FAFB; color: #4B5563;
+      cursor: pointer; transition: all 0.2s ease;
+    }
+    .rsb-btn:hover { background: #F3F4F6; color: #111827; border-color: #D1D5DB; }
+    .rsb-btn.active {
+      background: #8B1A1A; color: white; border-color: #8B1A1A;
+      box-shadow: 0 2px 6px rgba(139,26,26,0.25);
+    }
+    .rsb-btn.active i { color: #F59E0B; }
+    .rsb-btn small { font-size: 0.68rem; font-weight: 500; opacity: 0.85; margin-left: 0.2rem; }
+
+    /* ── Summary KPI Cards ────────────────────────────────────────── */
+    .freq-kpi-grid {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; margin-bottom: 1.25rem;
+    }
+    .freq-kpi-card {
+      background: #fff; border: 1px solid #E5E7EB; border-radius: 12px;
+      padding: 1rem 1.15rem; display: flex; align-items: center; justify-content: space-between;
+      cursor: pointer; transition: all 0.2s ease; text-decoration: none; color: inherit;
+    }
+    .freq-kpi-card:hover, .freq-kpi-card.active {
+      transform: translateY(-2px); border-color: #8B1A1A;
+      box-shadow: 0 6px 14px rgba(139,26,26,0.08);
+    }
+    .freq-kpi-card.active { border-left: 4px solid #8B1A1A; background: #FFFDFD; }
+    .freq-kpi-info h4 { font-size: 1.35rem; font-weight: 800; margin: 0; color: #111827; }
+    .freq-kpi-info p { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; color: #6B7280; margin: 0.2rem 0 0; }
+    .freq-kpi-icon {
+      width: 40px; height: 40px; border-radius: 10px; display: flex;
+      align-items: center; justify-content: center; font-size: 1.05rem;
+    }
+
+    /* ── Filter Toolbar ───────────────────────────────────────────── */
+    .freq-toolbar {
+      background: #fff; border: 1px solid #E5E7EB; border-radius: 12px;
+      padding: 0.85rem 1.25rem; margin-bottom: 1.25rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+    }
+    .freq-toolbar-left { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; flex: 1; }
+    .freq-search-wrap { position: relative; min-width: 250px; flex: 1; max-width: 360px; }
+    .freq-search-wrap i {
+      position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%);
+      color: #9CA3AF; font-size: 0.82rem;
+    }
+    .freq-search-input {
+      width: 100%; padding: 0.5rem 0.75rem 0.5rem 2.25rem; border: 1px solid #D1D5DB;
+      border-radius: 8px; font-size: 0.82rem; font-family: inherit; outline: none;
+    }
+    .freq-search-input:focus { border-color: #8B1A1A; box-shadow: 0 0 0 3px rgba(139,26,26,0.1); }
+    .freq-filter-select {
+      padding: 0.5rem 0.85rem; border: 1px solid #D1D5DB; border-radius: 8px;
+      font-size: 0.82rem; background: #fff; font-family: inherit; color: #374151; font-weight: 600;
+    }
+
+    /* ── Table & Badges ───────────────────────────────────────────── */
+    .freq-table-wrap {
+      background: #fff; border: 1px solid #E5E7EB; border-radius: 12px; overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02); margin-bottom: 2rem;
+    }
+    .freq-table { width: 100%; border-collapse: collapse; text-align: left; }
+    .freq-table th {
+      background: #F9FAFB; padding: 0.85rem 1rem; font-size: 0.72rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.06em; color: #4B5563; border-bottom: 1px solid #E5E7EB;
+    }
+    .freq-table td {
+      padding: 1rem; font-size: 0.82rem; color: #1F2937; border-bottom: 1px solid #F3F4F6;
+      vertical-align: middle;
+    }
+    .freq-table tr:hover { background: #FAFAFA; }
+    .freq-table tr:last-child td { border-bottom: none; }
+
+    .freq-badge {
+      display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.25rem 0.65rem;
+      border-radius: 20px; font-size: 0.72rem; font-weight: 700; border: 1px solid transparent;
+      white-space: nowrap;
+    }
+    .freq-b-pending-coord { background: #EFF6FF; color: #1E40AF; border-color: #BFDBFE; }
+    .freq-b-pending-dean  { background: #FEF3C7; color: #92400E; border-color: #FDE68A; }
+    .freq-b-approved      { background: #ECFDF5; color: #065F46; border-color: #A7F3D0; }
+    .freq-b-awaiting-post { background: #FFFBEB; color: #B45309; border-color: #FCD34D; }
+    .freq-b-completed     { background: #F0FDF4; color: #15803D; border-color: #86EFAC; }
+    .freq-b-revision      { background: #FFF7ED; color: #C2410C; border-color: #FFEDD5; }
+    .freq-b-rejected      { background: #FEF2F2; color: #991B1B; border-color: #FECACA; }
+
+    .freq-role-tag {
+      font-size: 0.72rem; font-weight: 700; color: #4B5563; background: #F3F4F6;
+      padding: 0.2rem 0.5rem; border-radius: 6px; display: inline-block;
+    }
+    .freq-role-tag.speaker   { background: #FDF2F2; color: #8B1A1A; border: 1px solid #FCDEDE; }
+    .freq-role-tag.trainer   { background: #EFF6FF; color: #2563EB; border: 1px solid #DBEAFE; }
+    .freq-role-tag.focal     { background: #F5F3FF; color: #7C3AED; border: 1px solid #EDE9FE; }
+    .freq-role-tag.coach     { background: #ECFDF5; color: #059669; border: 1px solid #D1FAE5; }
+
+    .doc-pill {
+      display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.2rem 0.45rem;
+      border-radius: 4px; font-size: 0.68rem; font-weight: 600; text-decoration: none;
+      background: #F3F4F6; color: #4B5563; border: 1px solid #E5E7EB; margin-right: 0.25rem;
+      margin-bottom: 0.25rem; cursor: pointer; transition: all 0.15s ease;
+    }
+    .doc-pill:hover { background: #8B1A1A; color: white; border-color: #8B1A1A; }
+    .doc-pill i { font-size: 0.7rem; }
+
+    /* ── Action Buttons ───────────────────────────────────────────── */
+    .btn-freq-action {
+      display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.38rem 0.75rem;
+      border-radius: 6px; font-size: 0.74rem; font-weight: 700; cursor: pointer;
+      border: 1px solid #D1D5DB; background: #fff; color: #374151; transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+    .btn-freq-action:hover { background: #F3F4F6; color: #111827; }
+    .btn-freq-action.primary { background: #8B1A1A; color: #fff; border-color: #8B1A1A; }
+    .btn-freq-action.primary:hover { background: #6F1414; }
+    .btn-freq-action.gold { background: #DAA520; color: #fff; border-color: #DAA520; }
+    .btn-freq-action.gold:hover { background: #B8860B; }
+    .btn-freq-action.success { background: #059669; color: #fff; border-color: #059669; }
+    .btn-freq-action.success:hover { background: #047857; }
+    .btn-freq-action.blue { background: #2563EB; color: #fff; border-color: #2563EB; }
+    .btn-freq-action.blue:hover { background: #1D4ED8; }
+
+    /* ── Row Quick Status Select (Side of Table) ─────────────────── */
+    .row-quick-select {
+      padding: 0.38rem 0.55rem;
+      font-size: 0.73rem;
+      font-weight: 700;
+      border-radius: 6px;
+      border: 1.5px solid #D1D5DB;
+      background: #FFFFFF;
+      color: #1F2937;
+      cursor: pointer;
+      outline: none;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+    .row-quick-select:hover { border-color: #8B1A1A; background: #FFFDFD; }
+    .row-quick-select.coord-select {
+      border-color: #BFDBFE;
+      color: #1E40AF;
+      background: #EFF6FF;
+    }
+    .row-quick-select.coord-select:hover {
+      border-color: #2563EB;
+      background: #DBEAFE;
+    }
+    .row-quick-select.dean-select {
+      border-color: #FDE68A;
+      color: #92400E;
+      background: #FEF3C7;
+    }
+    .row-quick-select.dean-select:hover {
+      border-color: #D97706;
+      background: #FDE68A;
+    }
+
+    /* ── Status Option Choice Cards (In Action Modals) ───────────── */
+    .status-options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(115px, 1fr));
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .status-option-card {
+      border: 1.5px solid #E5E7EB;
+      border-radius: 8px;
+      padding: 0.65rem 0.6rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-align: center;
+      background: #FAFAFA;
+      user-select: none;
+    }
+    .status-option-card:hover {
+      border-color: #9CA3AF;
+      background: #F3F4F6;
+    }
+    .status-option-card.active {
+      border-color: #2563EB;
+      background: #EFF6FF;
+      color: #1D4ED8;
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    }
+    .status-option-card.active.dean-active {
+      border-color: #D97706;
+      background: #FEF3C7;
+      color: #92400E;
+      box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.2);
+    }
+
+
+    /* ── Modals & Drag-and-Drop Zones ─────────────────────────────── */
+    .freq-modal-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+      z-index: 2000; align-items: flex-start; justify-content: center;
+      padding: 2rem 1rem; overflow-y: auto;
+    }
+    .freq-modal-overlay.open { display: flex; }
+    .freq-modal {
+      background: #fff; border-radius: 14px; width: 100%; max-width: 820px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2); overflow: hidden; margin: auto;
+    }
+    .freq-modal-header {
+      background: linear-gradient(120deg, #5A0E0E 0%, #8B1A1A 60%, #A82020 100%);
+      padding: 1.25rem 1.5rem; color: #fff; display: flex; align-items: center; justify-content: space-between;
+    }
+    .freq-modal-header h3 { margin: 0; font-size: 1.15rem; font-weight: 800; font-family: 'Poppins', sans-serif; }
+    .freq-modal-header p { margin: 0.2rem 0 0; font-size: 0.78rem; opacity: 0.85; }
+    .freq-modal-close {
+      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+      color: #fff; width: 32px; height: 32px; border-radius: 8px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; font-size: 1rem;
+    }
+    .freq-modal-body { padding: 1.5rem; max-height: calc(85vh - 120px); overflow-y: auto; }
+
+    /* Drag & Drop Upload Zone */
+    .dropzone-box {
+      border: 2px dashed #D1D5DB; border-radius: 10px; background: #F9FAFB;
+      padding: 1.25rem 1rem; text-align: center; cursor: pointer;
+      transition: all 0.2s ease; position: relative; margin-top: 0.35rem;
+    }
+    .dropzone-box:hover, .dropzone-box.dragover {
+      border-color: #8B1A1A; background: #FFF8F8; transform: translateY(-1px);
+    }
+    .dropzone-box i.dz-icon {
+      font-size: 1.8rem; color: #9CA3AF; margin-bottom: 0.5rem; display: block;
+      transition: color 0.2s ease;
+    }
+    .dropzone-box:hover i.dz-icon, .dropzone-box.dragover i.dz-icon { color: #8B1A1A; }
+    .dropzone-title { font-size: 0.82rem; font-weight: 700; color: #374151; margin-bottom: 0.15rem; }
+    .dropzone-sub { font-size: 0.7rem; color: #6B7280; }
+    .dropzone-file-input { display: none; }
+
+    /* Dropped File Preview Card */
+    .file-preview-card {
+      display: flex; align-items: center; justify-content: space-between;
+      background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px;
+      padding: 0.65rem 0.85rem; margin-top: 0.5rem; text-align: left;
+    }
+    .fpc-left { display: flex; align-items: center; gap: 0.65rem; min-width: 0; }
+    .fpc-badge {
+      background: #FEE2E2; color: #8B1A1A; font-size: 0.68rem; font-weight: 800;
+      padding: 0.25rem 0.5rem; border-radius: 4px; text-transform: uppercase;
+    }
+    .fpc-details { min-width: 0; }
+    .fpc-name { font-size: 0.8rem; font-weight: 700; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .fpc-size { font-size: 0.68rem; color: #6B7280; }
+    .fpc-actions { display: flex; align-items: center; gap: 0.35rem; }
+    .fpc-btn {
+      background: none; border: none; cursor: pointer; color: #6B7280;
+      font-size: 0.85rem; padding: 0.25rem; border-radius: 4px;
+    }
+    .fpc-btn:hover { color: #DC2626; background: #FEE2E2; }
+
+    .sample-gen-btn {
+      display: inline-flex; align-items: center; gap: 0.3rem; margin-top: 0.4rem;
+      font-size: 0.72rem; color: #8B1A1A; background: none; border: none;
+      cursor: pointer; font-weight: 700; text-decoration: underline;
+    }
+    .sample-gen-btn:hover { color: #6F1414; }
+
+    /* Timeline Stepper in Details Modal */
+    .freq-timeline {
+      display: flex; align-items: center; justify-content: space-between;
+      margin: 1.25rem 0; padding: 0.85rem 1rem; background: #F9FAFB;
+      border: 1px solid #E5E7EB; border-radius: 10px; overflow-x: auto;
+    }
+    .ftl-step { display: flex; flex-direction: column; align-items: center; text-align: center; min-width: 100px; position: relative; }
+    .ftl-step-circle {
+      width: 28px; height: 28px; border-radius: 50%; background: #E5E7EB;
+      color: #6B7280; font-size: 0.75rem; font-weight: 700; display: flex;
+      align-items: center; justify-content: center; margin-bottom: 0.3rem;
+    }
+    .ftl-step.done .ftl-step-circle { background: #059669; color: #fff; }
+    .ftl-step.active .ftl-step-circle { background: #8B1A1A; color: #fff; box-shadow: 0 0 0 4px rgba(139,26,26,0.15); }
+    .ftl-step.returned .ftl-step-circle { background: #EA580C; color: #fff; }
+    .ftl-step.rejected .ftl-step-circle { background: #DC2626; color: #fff; }
+    .ftl-step-label { font-size: 0.68rem; font-weight: 700; color: #4B5563; }
+    .ftl-line { flex: 1; height: 2px; background: #E5E7EB; margin: 0 0.4rem 1rem; }
+    .ftl-line.done { background: #059669; }
+
+    /* Floating Toast */
+    #freq-toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+      background: #111827; color: white; padding: 0.85rem 1.25rem;
+      border-radius: 8px; font-size: 0.82rem; font-weight: 500;
+      display: flex; align-items: center; gap: 0.6rem;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.18); transform: translateY(100px);
+      opacity: 0; transition: all 0.25s ease; pointer-events: none;
+    }
+    #freq-toast.show { transform: translateY(0); opacity: 1; pointer-events: auto; }
+    #freq-toast i { color: #10B981; font-size: 1rem; }
+
+    @media (max-width: 1024px) {
+      .freq-kpi-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .freq-kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .freq-toolbar { flex-direction: column; align-items: stretch; }
+      .freq-search-wrap { max-width: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <div class="main-content">
+      <header class="topbar" id="topbar"></header>
+
+      <div class="dashboard-content">
+        
+        <!-- Role Switcher Banner (Proponent, Coordinator, Dean) -->
+        <div class="role-switcher-bar">
+          <div class="rsb-left">
+            <span class="rsb-tag"><i class="fas fa-chalkboard-teacher"></i> Current User Role:</span>
+            <div class="rsb-indicator" id="role-indicator">
+              <i class="fas fa-user-circle"></i>
+              <span id="role-indicator-text">Loading profile...</span>
+            </div>
+          </div>
+          <div class="rsb-tabs">
+            <button class="rsb-btn" id="btn-role-proponent" onclick="switchFacultyRequestRole('proponent')">
+              <i class="fas fa-user-edit"></i>
+              <span>Proponent</span>
+              <small>Prince Jheck</small>
+            </button>
+            <button class="rsb-btn" id="btn-role-coordinator" onclick="switchFacultyRequestRole('coordinator')">
+              <i class="fas fa-clipboard-check"></i>
+              <span>Coordinator</span>
+              <small>Dr. Mary Grace</small>
+            </button>
+            <button class="rsb-btn" id="btn-role-dean" onclick="switchFacultyRequestRole('dean')">
+              <i class="fas fa-user-graduate"></i>
+              <span>College Dean</span>
+              <small>Dr. Daniel</small>
+            </button>
+          </div>
+        </div>
+
+        <!-- Page Header -->
+        <div class="page-header" style="margin-bottom:1.25rem;">
+          <div>
+            <h2>Faculty Extension Service Requests</h2>
+            <p class="page-subtitle" id="page-role-sub">Request CCMS faculty members as Resource Speakers, Trainers, Coaches, or Focal Persons with multi-stage Dean Special Order endorsement.</p>
+          </div>
+          <div class="page-header-actions" id="freq-header-actions">
+            <button class="btn btn-sm btn-primary" id="btn-open-request-modal" onclick="openNewRequestModal()">
+              <i class="fas fa-plus"></i> New Faculty Request
+            </button>
+          </div>
+        </div>
+
+        <!-- KPI Metric Cards (Interactive Filters) -->
+        <div class="freq-kpi-grid">
+          <div class="freq-kpi-card active" id="kpi-card-all" onclick="filterByCard('all')">
+            <div class="freq-kpi-info">
+              <h4 id="kpi-count-all">0</h4>
+              <p>Total Requests</p>
+            </div>
+            <div class="freq-kpi-icon" style="background:#F3F4F6;color:#374151;">
+              <i class="fas fa-chalkboard-teacher"></i>
+            </div>
+          </div>
+
+          <div class="freq-kpi-card" id="kpi-card-pending-coord" onclick="filterByCard('pending-coord')">
+            <div class="freq-kpi-info">
+              <h4 id="kpi-count-pending-coord" style="color:#2563EB;">0</h4>
+              <p>Coord. Review</p>
+            </div>
+            <div class="freq-kpi-icon" style="background:#EFF6FF;color:#2563EB;">
+              <i class="fas fa-clipboard-check"></i>
+            </div>
+          </div>
+
+          <div class="freq-kpi-card" id="kpi-card-pending-dean" onclick="filterByCard('pending-dean')">
+            <div class="freq-kpi-info">
+              <h4 id="kpi-count-pending-dean" style="color:#D97706;">0</h4>
+              <p>Dean Endorsement</p>
+            </div>
+            <div class="freq-kpi-icon" style="background:#FEF3C7;color:#D97706;">
+              <i class="fas fa-stamp"></i>
+            </div>
+          </div>
+
+          <div class="freq-kpi-card" id="kpi-card-awaiting-post" onclick="filterByCard('awaiting-post')">
+            <div class="freq-kpi-info">
+              <h4 id="kpi-count-awaiting-post" style="color:#B45309;">0</h4>
+              <p>Needs Narrative/Cert</p>
+            </div>
+            <div class="freq-kpi-icon" style="background:#FFFBEB;color:#B45309;">
+              <i class="fas fa-file-invoice"></i>
+            </div>
+          </div>
+
+          <div class="freq-kpi-card" id="kpi-card-completed" onclick="filterByCard('completed')">
+            <div class="freq-kpi-info">
+              <h4 id="kpi-count-completed" style="color:#059669;">0</h4>
+              <p>Completed &amp; Cleared</p>
+            </div>
+            <div class="freq-kpi-icon" style="background:#ECFDF5;color:#059669;">
+              <i class="fas fa-check-circle"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <div class="freq-toolbar">
+          <div class="freq-toolbar-left">
+            <div class="freq-search-wrap">
+              <i class="fas fa-search"></i>
+              <input type="text" id="freq-search-input" class="freq-search-input" placeholder="Search faculty name, project title, or request code..." oninput="handleSearch()">
+            </div>
+            <select id="freq-status-filter" class="freq-filter-select" onchange="handleStatusFilter(this.value)">
+              <option value="all">All Request Statuses</option>
+              <option value="pending-coord">Pending Coordinator Review</option>
+              <option value="pending-dean">Pending Dean Approval</option>
+              <option value="approved">Approved / Special Order Issued</option>
+              <option value="awaiting-post">Awaiting Post-Event Compliance</option>
+              <option value="completed">Completed &amp; Cleared</option>
+              <option value="revision">Returned for Revision</option>
+              <option value="rejected">Rejected</option>
+            </select>
+            <select id="freq-role-filter" class="freq-filter-select" onchange="handleRoleFilter(this.value)">
+              <option value="all">All Roles Requested</option>
+              <option value="speaker">Resource Speaker</option>
+              <option value="trainer">Trainer / Coach</option>
+              <option value="focal">Focal Person</option>
+              <option value="facilitator">Module Facilitator</option>
+              <option value="consultant">Technical Consultant</option>
+            </select>
+          </div>
+          <div>
+            <button class="btn btn-sm btn-outline" onclick="resetFacultyFilter()"><i class="fas fa-sync-alt"></i> Reset Filters</button>
+          </div>
+        </div>
+
+        <!-- Faculty Requests Table -->
+        <div class="freq-table-wrap">
+          <table class="freq-table">
+            <thead>
+              <tr>
+                <th style="width:140px;">Request Code</th>
+                <th>Target CCMS Faculty</th>
+                <th>Role Requested</th>
+                <th>Associated Project &amp; Activity</th>
+                <th>Event Date &amp; Venue</th>
+                <th>Documents Attached</th>
+                <th>Approval Status</th>
+                <th style="text-align:right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="freq-table-body">
+              <!-- Rendered dynamically by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       MODAL 1: NEW FACULTY REQUEST (With Drag & Drop Files)
+       ══════════════════════════════════════════════════════ -->
+  <div id="modal-new-request" class="freq-modal-overlay" onclick="if(event.target===this)closeNewRequestModal();">
+    <div class="freq-modal">
+      <div class="freq-modal-header">
+        <div>
+          <h3><i class="fas fa-chalkboard-teacher" style="margin-right:0.4rem;"></i> File Faculty Engagement Request</h3>
+          <p>Request CCMS Faculty as Resource Speaker, Trainer, Coach, or Focal Person</p>
+        </div>
+        <button class="freq-modal-close" onclick="closeNewRequestModal()">&times;</button>
+      </div>
+      <div class="freq-modal-body">
+        <form id="form-new-freq" onsubmit="submitFacultyRequest(event)">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+            <div>
+              <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#374151;margin-bottom:0.35rem;">Associated Extension Project *</label>
+              <select id="nfr-project" style="width:100%;padding:0.6rem;border:1px solid #D1D5DB;border-radius:8px;font-size:0.82rem;" required onchange="populateProjectActivities(this.value)">
+                <!-- Populated by JS -->
+              </select>
+            </div>
+            <div>
+              <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#374151;margin-bottom:0.35rem;">Target CCMS Faculty Member *</label>
+              <select id="nfr-faculty" style="width:100%;padding:0.6rem;border:1px solid #D1D5DB;border-radius:8px;font-size:0.82rem;" required>
+                <!-- Populated by JS -->
+              </select>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+            <div>
+              <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#374151;margin-bottom:0.35rem;">Requested Faculty Role *</label>
+              <select id="nfr-role" style="width:100%;padding:0.6rem;border:1px solid #D1D5DB;border-radius:8px;font-size:0.82rem;" required>
+                <option value="Resource Speaker">Resource Speaker</option>
+                <option value="Technical Trainer / Coach">Technical Trainer / Coach</option>
+                <option value="Module Facilitator">Module Facilitator</option>
+                <option value="Focal Person / Extension Representative">Focal Person / Extension Representative</option>
+                <option value="Technical Consultant / Evaluator">Technical Consultant / Evaluator</option>
+              </select>
+            </div>
+            <div>
+              <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#374151;margin-bottom:0.35rem;">Activity / Topic Title *</label>
+              <input type="text" id="nfr-activity-title" style="width:100%;padding:0.6rem;border:1px solid #D1D5DB;border-radius:8px;font-size:0.82rem;" placeholder="e.g. Practical Web Development & Database Session" required>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1rem;">
+            <div>
+              <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#374151;margin-bottom:0.35rem;">Event Date *</label>
+              <input type="date" id="nfr-date" style="width:100%;padding:0.6rem;border:1px solid #D1D5DB;border-radius:8px;font-size:0.82rem;" required>
+            </div>
+            <div>
+              <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#374151;margin-bottom:0.35rem;">Time &amp; Expected Duration *</label>
+              <input type="text" id="nfr-time" style="width:100%;padding:0.6rem;border:1px solid #D1D5DB;border-radius:8px;font-size:0.82rem;" placeholder="e.g. 08:30 AM – 12:30 PM (4.0 hrs)" required>
+            </div>
+            <div>
+              <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#374151;margin-bottom:0.35rem;">Venue / Platform *</label>
+              <input type="text" id="nfr-venue" style="width:100%;padding:0.6rem;border:1px solid #D1D5DB;border-radius:8px;font-size:0.82rem;" placeholder="e.g. CCMS Lab 2 / Daet Hall" required>
+            </div>
+          </div>
+
+          <div style="margin-bottom:1.25rem;">
+            <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#374151;margin-bottom:0.35rem;">Justification &amp; Purpose of Engagement *</label>
+            <textarea id="nfr-justification" rows="2" style="width:100%;padding:0.6rem;border:1px solid #D1D5DB;border-radius:8px;font-size:0.82rem;font-family:inherit;" placeholder="Describe why this specific faculty member is requested and their expected deliverable..." required></textarea>
+          </div>
+
+          <!-- DRAG AND DROP FILE UPLOAD SECTION -->
+          <div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;padding:1.25rem;margin-bottom:1.5rem;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
+              <div>
+                <h4 style="margin:0;font-size:0.86rem;font-weight:800;color:#111827;text-transform:uppercase;letter-spacing:0.04em;">
+                  <i class="fas fa-file-upload" style="color:#8B1A1A;margin-right:0.35rem;"></i> Required Mandatory Documents (Drag &amp; Drop)
+                </h4>
+                <p style="margin:0.2rem 0 0;font-size:0.74rem;color:#6B7280;">Please attach the 3 required documents for Extension Coordinator checking and Dean Endorsement.</p>
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;">
+              <!-- Document 1: Letter of Intent -->
+              <div>
+                <label style="font-size:0.72rem;font-weight:700;color:#374151;display:block;">1. Letter of Intent *</label>
+                <div class="dropzone-box" id="dz-loi" onclick="triggerFileInput('input-loi')">
+                  <i class="fas fa-file-signature dz-icon"></i>
+                  <div class="dropzone-title">Drop Letter of Intent</div>
+                  <div class="dropzone-sub">or click to browse PDF/DOCX</div>
+                  <input type="file" id="input-loi" class="dropzone-file-input" accept=".pdf,.doc,.docx" onchange="handleFileSelect(this, 'loi')">
+                </div>
+                <div id="preview-loi"></div>
+                <button type="button" class="sample-gen-btn" onclick="generateSampleFile('loi')"><i class="fas fa-magic"></i> Use Official Sample</button>
+              </div>
+
+              <!-- Document 2: Invitation Letter -->
+              <div>
+                <label style="font-size:0.72rem;font-weight:700;color:#374151;display:block;">2. Official Invitation *</label>
+                <div class="dropzone-box" id="dz-invitation" onclick="triggerFileInput('input-invitation')">
+                  <i class="fas fa-envelope-open-text dz-icon"></i>
+                  <div class="dropzone-title">Drop Invitation Letter</div>
+                  <div class="dropzone-sub">from partner/beneficiary</div>
+                  <input type="file" id="input-invitation" class="dropzone-file-input" accept=".pdf,.doc,.docx" onchange="handleFileSelect(this, 'invitation')">
+                </div>
+                <div id="preview-invitation"></div>
+                <button type="button" class="sample-gen-btn" onclick="generateSampleFile('invitation')"><i class="fas fa-magic"></i> Use Official Sample</button>
+              </div>
+
+              <!-- Document 3: Activity Program Matrix -->
+              <div>
+                <label style="font-size:0.72rem;font-weight:700;color:#374151;display:block;">3. Activity Program *</label>
+                <div class="dropzone-box" id="dz-program" onclick="triggerFileInput('input-program')">
+                  <i class="fas fa-calendar-alt dz-icon"></i>
+                  <div class="dropzone-title">Drop Program Matrix</div>
+                  <div class="dropzone-sub">schedule of session</div>
+                  <input type="file" id="input-program" class="dropzone-file-input" accept=".pdf,.doc,.docx" onchange="handleFileSelect(this, 'program')">
+                </div>
+                <div id="preview-program"></div>
+                <button type="button" class="sample-gen-btn" onclick="generateSampleFile('program')"><i class="fas fa-magic"></i> Use Official Sample</button>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;justify-content:flex-end;gap:0.75rem;">
+            <button type="button" class="btn btn-sm btn-outline" onclick="closeNewRequestModal()">Cancel</button>
+            <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-paper-plane"></i> Submit Request to Coordinator</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       MODAL 2: REQUEST DOSSIER & WORKFLOW AUDIT
+       ══════════════════════════════════════════════════════ -->
+  <div id="modal-view-dossier" class="freq-modal-overlay" onclick="if(event.target===this)closeDossierModal();">
+    <div class="freq-modal" style="max-width:860px;">
+      <div class="freq-modal-header">
+        <div>
+          <h3 id="dossier-modal-title">Faculty Engagement Dossier</h3>
+          <p id="dossier-modal-sub">Official Request &amp; Endorsement Trail</p>
+        </div>
+        <button class="freq-modal-close" onclick="closeDossierModal()">&times;</button>
+      </div>
+      <div class="freq-modal-body" id="dossier-modal-content">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       MODAL 3: COORDINATOR REVIEW / STATUS UPDATE & REASSIGN
+       ══════════════════════════════════════════════════════ -->
+  <div id="modal-coord-review" class="freq-modal-overlay" onclick="if(event.target===this)closeCoordReviewModal();">
+    <div class="freq-modal" style="max-width:720px;">
+      <div class="freq-modal-header" style="background:linear-gradient(120deg, #1E3A8A 0%, #2563EB 100%);">
+        <div>
+          <h3><i class="fas fa-tasks" style="margin-right:0.4rem;"></i> Extension Coordinator Review &amp; Status Desk</h3>
+          <p id="cr-modal-sub">Endorse to Dean, Approve, Return for Revision, Reject, or Choose Another Faculty</p>
+        </div>
+        <button class="freq-modal-close" onclick="closeCoordReviewModal()">&times;</button>
+      </div>
+      <div class="freq-modal-body">
+        <input type="hidden" id="cr-req-id">
+        <div id="cr-summary-card" style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:1rem;margin-bottom:1rem;font-size:0.82rem;"></div>
+
+        <!-- Status Action Selector Cards -->
+        <div style="margin-bottom:1rem;">
+          <label style="display:block;font-size:0.74rem;font-weight:700;text-transform:uppercase;color:#374151;margin-bottom:0.45rem;">Coordinator Status Action *</label>
+          <div class="status-options-grid" id="cr-status-cards">
+            <div class="status-option-card active" data-action="endorse" onclick="selectCoordAction('endorse')">
+              <i class="fas fa-crown" style="font-size:1.15rem;color:#D97706;display:block;margin-bottom:0.25rem;"></i>
+              <div style="font-size:0.76rem;font-weight:800;">Endorse to Dean</div>
+              <div style="font-size:0.65rem;color:#6B7280;">Route to College Dean</div>
+            </div>
+            <div class="status-option-card" data-action="approve" onclick="selectCoordAction('approve')">
+              <i class="fas fa-check-circle" style="font-size:1.15rem;color:#059669;display:block;margin-bottom:0.25rem;"></i>
+              <div style="font-size:0.76rem;font-weight:800;">Approved</div>
+              <div style="font-size:0.65rem;color:#6B7280;">Coordinator Sign-off</div>
+            </div>
+            <div class="status-option-card" data-action="revise" onclick="selectCoordAction('revise')">
+              <i class="fas fa-undo" style="font-size:1.15rem;color:#EA580C;display:block;margin-bottom:0.25rem;"></i>
+              <div style="font-size:0.76rem;font-weight:800;">Return Revision</div>
+              <div style="font-size:0.65rem;color:#6B7280;">Require Corrections</div>
+            </div>
+            <div class="status-option-card" data-action="reject" onclick="selectCoordAction('reject')">
+              <i class="fas fa-times-circle" style="font-size:1.15rem;color:#DC2626;display:block;margin-bottom:0.25rem;"></i>
+              <div style="font-size:0.76rem;font-weight:800;">Rejected</div>
+              <div style="font-size:0.65rem;color:#6B7280;">Disapprove Request</div>
+            </div>
+            <div class="status-option-card" data-action="reassign" onclick="selectCoordAction('reassign')">
+              <i class="fas fa-user-edit" style="font-size:1.15rem;color:#2563EB;display:block;margin-bottom:0.25rem;"></i>
+              <div style="font-size:0.76rem;font-weight:800;">Choose Faculty</div>
+              <div style="font-size:0.65rem;color:#6B7280;">Reassign Specialist</div>
+            </div>
+          </div>
+          <input type="hidden" id="cr-selected-action" value="endorse">
+        </div>
+
+        <!-- Conditional Reassignment Section -->
+        <div id="cr-reassign-container" style="display:none;background:#F0FDF4;border:1.5px dashed #10B981;border-radius:8px;padding:0.9rem 1rem;margin-bottom:1rem;">
+          <div style="display:flex;align-items:center;gap:0.4rem;font-weight:800;font-size:0.8rem;color:#065F46;margin-bottom:0.6rem;">
+            <i class="fas fa-exchange-alt"></i> Reassign Faculty Member (CCMS Pool)
+          </div>
+          <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:0.75rem;margin-bottom:0.5rem;">
+            <div>
+              <label style="display:block;font-size:0.7rem;font-weight:700;color:#374151;margin-bottom:0.25rem;">Select Replacement CCMS Faculty Member *</label>
+              <select id="cr-new-faculty" style="width:100%;padding:0.55rem;border:1.5px solid #10B981;border-radius:6px;font-size:0.8rem;font-weight:700;background:#fff;" onchange="updateReassignInfo(this.value)">
+                <!-- populated by JS -->
+              </select>
+            </div>
+            <div>
+              <label style="display:block;font-size:0.7rem;font-weight:700;color:#374151;margin-bottom:0.25rem;">Department / Specialization</label>
+              <div id="cr-new-faculty-info" style="padding:0.55rem 0.75rem;background:#fff;border:1px solid #D1D5DB;border-radius:6px;font-size:0.75rem;color:#374151;min-height:38px;display:flex;align-items:center;font-weight:600;">
+                CCMS Faculty
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:0.35rem;font-size:0.72rem;color:#047857;display:flex;align-items:center;gap:0.35rem;">
+            <i class="fas fa-info-circle"></i> Retains all uploaded compliance documents while reassigning the lead technical resource person.
+          </div>
+        </div>
+
+        <div style="margin-bottom:1.25rem;">
+          <label style="display:block;font-size:0.74rem;font-weight:700;text-transform:uppercase;color:#374151;margin-bottom:0.35rem;" id="cr-remarks-label">Coordinator Remarks / Notes *</label>
+          <textarea id="cr-remarks" rows="3" style="width:100%;padding:0.6rem;border:1px solid #D1D5DB;border-radius:8px;font-size:0.82rem;font-family:inherit;" placeholder="Enter endorsement recommendation or revision notes..."></textarea>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;gap:0.75rem;">
+          <button type="button" class="btn btn-sm btn-outline" onclick="closeCoordReviewModal()">Cancel</button>
+          <button type="button" class="btn btn-sm btn-primary" id="cr-submit-btn" onclick="submitCoordDecision()"><i class="fas fa-crown"></i> Endorse to College Dean</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       MODAL 4: DEAN SPECIAL ORDER ENDORSEMENT (NO ISO)
+       ══════════════════════════════════════════════════════ -->
+  <div id="modal-dean-review" class="freq-modal-overlay" onclick="if(event.target===this)closeDeanReviewModal();">
+    <div class="freq-modal" style="max-width:680px;">
+      <div class="freq-modal-header" style="background:linear-gradient(120deg, #78350F 0%, #B45309 60%, #D97706 100%);">
+        <div>
+          <h3><i class="fas fa-stamp" style="margin-right:0.4rem;"></i> College Dean Special Order Desk</h3>
+          <p id="dr-modal-sub">Executive Decision: Approved, Return for Revision, or Disapproved (College Special Order)</p>
+        </div>
+        <button class="freq-modal-close" onclick="closeDeanReviewModal()">&times;</button>
+      </div>
+      <div class="freq-modal-body">
+        <input type="hidden" id="dr-req-id">
+        <div id="dr-summary-card" style="background:#FFFDF7;border:1px solid #FDE68A;border-radius:8px;padding:1rem;margin-bottom:1rem;font-size:0.82rem;"></div>
+
+        <!-- Dean Action Choice Cards -->
+        <div style="margin-bottom:1rem;">
+          <label style="display:block;font-size:0.74rem;font-weight:700;text-transform:uppercase;color:#374151;margin-bottom:0.45rem;">Executive Decision *</label>
+          <div class="status-options-grid" id="dr-status-cards" style="grid-template-columns: repeat(3, 1fr);">
+            <div class="status-option-card active dean-active" data-action="approve" onclick="selectDeanAction('approve')">
+              <i class="fas fa-award" style="font-size:1.15rem;color:#059669;display:block;margin-bottom:0.25rem;"></i>
+              <div style="font-size:0.76rem;font-weight:800;">Approve &amp; Issue SO</div>
+              <div style="font-size:0.65rem;color:#6B7280;">Sign College Special Order</div>
+            </div>
+            <div class="status-option-card" data-action="revise" onclick="selectDeanAction('revise')">
+              <i class="fas fa-undo" style="font-size:1.15rem;color:#EA580C;display:block;margin-bottom:0.25rem;"></i>
+              <div style="font-size:0.76rem;font-weight:800;">Return for Revision</div>
+              <div style="font-size:0.65rem;color:#6B7280;">Request Proponent Edits</div>
+            </div>
+            <div class="status-option-card" data-action="reject" onclick="selectDeanAction('reject')">
+              <i class="fas fa-times-circle" style="font-size:1.15rem;color:#DC2626;display:block;margin-bottom:0.25rem;"></i>
+              <div style="font-size:0.76rem;font-weight:800;">Disapprove / Reject</div>
+              <div style="font-size:0.65rem;color:#6B7280;">Decline Engagement</div>
+            </div>
+          </div>
+          <input type="hidden" id="dr-selected-action" value="approve">
+        </div>
+
+        <div id="dr-so-group" style="margin-bottom:1rem;">
+          <label style="display:block;font-size:0.74rem;font-weight:700;text-transform:uppercase;color:#374151;margin-bottom:0.35rem;">College Special Order (SO) Reference Number *</label>
+          <input type="text" id="dr-so-ref" style="width:100%;padding:0.6rem;border:1px solid #D1D5DB;border-radius:8px;font-size:0.82rem;font-family:monospace;font-weight:bold;">
+          <small style="color:#6B7280;font-size:0.7rem;display:block;margin-top:0.25rem;"><i class="fas fa-shield-alt" style="color:#8B1A1A;"></i> Authorizes official faculty extension service engagement under College Dean authority (no ISO routing).</small>
+        </div>
+
+        <div style="margin-bottom:1.25rem;">
+          <label style="display:block;font-size:0.74rem;font-weight:700;text-transform:uppercase;color:#374151;margin-bottom:0.35rem;" id="dr-remarks-label">Dean Executive Remarks</label>
+          <textarea id="dr-remarks" rows="3" style="width:100%;padding:0.6rem;border:1px solid #D1D5DB;border-radius:8px;font-size:0.82rem;font-family:inherit;" placeholder="Approved as official faculty extension service engagement."></textarea>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;gap:0.75rem;">
+          <button type="button" class="btn btn-sm btn-outline" onclick="closeDeanReviewModal()">Cancel</button>
+          <button type="button" class="btn btn-sm" id="dr-submit-btn" style="background:#B45309;color:#fff;" onclick="submitDeanDecision()"><i class="fas fa-stamp"></i> Execute Dean Approval &amp; Issue SO</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       MODAL 5: POST-EVENT COMPLIANCE SUBMISSION (Narrative & Certificate)
+       ══════════════════════════════════════════════════════ -->
+  <div id="modal-post-event" class="freq-modal-overlay" onclick="if(event.target===this)closePostEventModal();">
+    <div class="freq-modal" style="max-width:720px;">
+      <div class="freq-modal-header" style="background:linear-gradient(120deg, #064E3B 0%, #059669 100%);">
+        <div>
+          <h3><i class="fas fa-file-invoice" style="margin-right:0.4rem;"></i> Post-Event Compliance Submission</h3>
+          <p id="pe-modal-sub">Submit Narrative Accomplishment Report &amp; Certificate Copy</p>
+        </div>
+        <button class="freq-modal-close" onclick="closePostEventModal()">&times;</button>
+      </div>
+      <div class="freq-modal-body">
+        <input type="hidden" id="pe-req-id">
+        <div style="background:#F0FDF4;border:1px solid #A7F3D0;border-radius:8px;padding:0.85rem 1rem;margin-bottom:1.25rem;font-size:0.8rem;color:#065F46;">
+          <i class="fas fa-check-circle" style="margin-right:0.35rem;"></i>
+          The extension engagement has been approved and conducted. To finalize institutional clearance and record service credits / honoraria, the proponent must file the <strong>Narrative Activity Report</strong> and <strong>Certificate of Appreciation</strong>.
+        </div>
+
+        <form id="form-post-event" onsubmit="submitPostEventFiles(event)">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;">
+            <!-- File 1: Narrative Report -->
+            <div>
+              <label style="font-size:0.74rem;font-weight:700;color:#374151;display:block;">1. Terminal / Narrative Report *</label>
+              <div class="dropzone-box" id="dz-narrative" onclick="triggerFileInput('input-narrative')">
+                <i class="fas fa-file-alt dz-icon"></i>
+                <div class="dropzone-title">Drop Narrative Report</div>
+                <div class="dropzone-sub">Activity accomplishments &amp; photos</div>
+                <input type="file" id="input-narrative" class="dropzone-file-input" accept=".pdf,.doc,.docx" onchange="handleFileSelect(this, 'narrative')">
+              </div>
+              <div id="preview-narrative"></div>
+              <button type="button" class="sample-gen-btn" onclick="generateSampleFile('narrative')"><i class="fas fa-magic"></i> Use Official Sample</button>
+            </div>
+
+            <!-- File 2: Certificate of Appreciation -->
+            <div>
+              <label style="font-size:0.74rem;font-weight:700;color:#374151;display:block;">2. Certificate Copy *</label>
+              <div class="dropzone-box" id="dz-certificate" onclick="triggerFileInput('input-certificate')">
+                <i class="fas fa-award dz-icon"></i>
+                <div class="dropzone-title">Drop Certificate Copy</div>
+                <div class="dropzone-sub">Signed certificate copy</div>
+                <input type="file" id="input-certificate" class="dropzone-file-input" accept=".pdf,.png,.jpg,.jpeg" onchange="handleFileSelect(this, 'certificate')">
+              </div>
+              <div id="preview-certificate"></div>
+              <button type="button" class="sample-gen-btn" onclick="generateSampleFile('certificate')"><i class="fas fa-magic"></i> Use Official Sample</button>
+            </div>
+          </div>
+
+          <div style="margin-bottom:1.25rem;">
+            <label style="display:block;font-size:0.74rem;font-weight:700;text-transform:uppercase;color:#374151;margin-bottom:0.35rem;">Summary of Accomplishment / Highlights</label>
+            <textarea id="pe-notes" rows="2" style="width:100%;padding:0.6rem;border:1px solid #D1D5DB;border-radius:8px;font-size:0.82rem;font-family:inherit;" placeholder="e.g. Session concluded with 45 local participants; hands-on web training delivered successfully."></textarea>
+          </div>
+
+          <div style="display:flex;justify-content:flex-end;gap:0.75rem;">
+            <button type="button" class="btn btn-sm btn-outline" onclick="closePostEventModal()">Cancel</button>
+            <button type="submit" class="btn btn-sm btn-primary" style="background:#059669;border-color:#059669;"><i class="fas fa-upload"></i> Submit Compliance &amp; Request Clearance</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       MODAL 6: IN-PORTAL DOCUMENT VIEWER (No Forced Download)
+       ══════════════════════════════════════════════════════ -->
+  <div id="modal-doc-viewer" class="freq-modal-overlay" onclick="if(event.target===this)closeDocViewerModal();">
+    <div class="freq-modal" style="max-width:840px;">
+      <div class="freq-modal-header" style="background:#1F2937;">
+        <div>
+          <h3 id="dv-title">Document Preview</h3>
+          <p id="dv-sub">Official On-File Institutional Attachment</p>
+        </div>
+        <button class="freq-modal-close" onclick="closeDocViewerModal()">&times;</button>
+      </div>
+      <div class="freq-modal-body" id="dv-body" style="padding:1.5rem;background:#F9FAFB;">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="freq-toast">
+    <i class="fas fa-check-circle"></i>
+    <span id="freq-toast-text">Action completed successfully</span>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    /* ============================================================
+       FACULTY EXTENSION SERVICE REQUESTS — Interactive Engine
+       Handles:
+         1. Proponent files request with Drag & Drop files (LOI, Invitation, Program)
+         2. Coordinator reviews, approves & endorses to Dean, returns or rejects
+         3. Dean reviews & issues official Special Order (SO), returns or rejects
+         4. Proponent passes Narrative Report & Certificate after event concludes
+       ============================================================ */
+
+    let currentRole = localStorage.getItem('graceRole') || 'proponent';
+    let currentStatusFilter = 'all';
+    let currentRoleFilter = 'all';
+    let currentSearchQuery = '';
+
+    // In-memory files uploaded in active modal
+    let activeFiles = {
+      loi: null,
+      invitation: null,
+      program: null,
+      narrative: null,
+      certificate: null
+    };
+
+    function showToast(msg, icon = 'fa-check-circle') {
+      const toast = document.getElementById('freq-toast');
+      const text = document.getElementById('freq-toast-text');
+      if (!toast || !text) return;
+      toast.querySelector('i').className = `fas ${icon}`;
+      text.innerHTML = msg;
+      toast.classList.add('show');
+      setTimeout(() => { toast.classList.remove('show'); }, 3500);
+    }
+
+    function switchFacultyRequestRole(newRole) {
+      currentRole = newRole;
+      localStorage.setItem('graceRole', newRole);
+
+      // Clear any residual single-status filter so table displays all requests across roles
+      currentStatusFilter = 'all';
+      currentRoleFilter = 'all';
+      currentSearchQuery = '';
+      const s = document.getElementById('freq-status-filter');
+      if (s) s.value = 'all';
+      const r = document.getElementById('freq-role-filter');
+      if (r) r.value = 'all';
+      const q = document.getElementById('freq-search-input');
+      if (q) q.value = '';
+      document.querySelectorAll('.freq-kpi-card').forEach(c => c.classList.remove('active'));
+      const allCard = document.getElementById('kpi-card-all');
+      if (allCard) allCard.classList.add('active');
+
+      if (typeof injectSidebar === 'function') injectSidebar();
+      if (typeof injectTopbar === 'function') injectTopbar();
+
+      updateRoleUI();
+      renderFacultyRequests();
+      showToast(`Switched view to <strong>${getRoleTitle(newRole)}</strong>`, 'fa-user-check');
+    }
+
+    function getRoleTitle(role) {
+      if (role === 'coordinator') return 'Extension Coordinator (Dr. Mary Grace Bolos)';
+      if (role === 'dean') return 'College Dean (Dr. Daniel Maligat)';
+      return 'Project Proponent (Prince Jheck T. Juan)';
+    }
+
+    function updateRoleUI() {
+      const btnProp = document.getElementById('btn-role-proponent');
+      const btnCoord = document.getElementById('btn-role-coordinator');
+      const btnDean = document.getElementById('btn-role-dean');
+      if (btnProp) btnProp.classList.toggle('active', currentRole === 'proponent');
+      if (btnCoord) btnCoord.classList.toggle('active', currentRole === 'coordinator');
+      if (btnDean) btnDean.classList.toggle('active', currentRole === 'dean');
+
+      const ind = document.getElementById('role-indicator-text');
+      if (ind) ind.innerHTML = `<strong>${getRoleTitle(currentRole)}</strong>`;
+
+      const sub = document.getElementById('page-role-sub');
+      const actions = document.getElementById('freq-header-actions');
+
+      if (currentRole === 'proponent') {
+        if (sub) sub.textContent = 'Request CCMS faculty members as Resource Speakers, Trainers, Coaches, or Focal Persons. Upload required documents and submit post-event reports.';
+        if (actions) actions.innerHTML = `
+          <button class="btn btn-sm btn-primary" onclick="openNewRequestModal()"><i class="fas fa-plus"></i> New Faculty Request</button>
+        `;
+      } else if (currentRole === 'coordinator') {
+        if (sub) sub.textContent = 'Extension Office Operational Desk: Review faculty service requests, verify teaching workload, inspect uploaded invitation/program, and endorse to Dean for Special Order.';
+        if (actions) actions.innerHTML = `
+          <button class="btn btn-sm btn-outline" onclick="filterByCard('pending-coord')"><i class="fas fa-filter"></i> View Pending My Review</button>
+          <button class="btn btn-sm btn-primary" onclick="openNewRequestModal()"><i class="fas fa-plus"></i> File on Behalf of Faculty</button>
+        `;
+      } else if (currentRole === 'dean') {
+        if (sub) sub.textContent = 'College Dean Governance Desk: Review endorsed faculty extension requests and issue College Special Orders (SO) authorizing official extension engagement.';
+        if (actions) actions.innerHTML = `
+          <button class="btn btn-sm btn-outline" onclick="filterByCard('pending-dean')"><i class="fas fa-stamp"></i> Awaiting Dean SO Endorsement</button>
+        `;
+      }
+    }
+
+    function getStatusBadge(status) {
+      const map = {
+        'Pending Coordinator Review': { cls: 'freq-b-pending-coord', icon: 'fa-hourglass-start', label: 'Pending Coord. Review' },
+        'Pending Dean Approval':     { cls: 'freq-b-pending-dean',  icon: 'fa-crown',           label: 'Pending Dean Approval' },
+        'Approved / Special Order Issued': { cls: 'freq-b-approved', icon: 'fa-check-circle',    label: 'Approved / SO Issued' },
+        'Awaiting Post-Event Compliance':  { cls: 'freq-b-awaiting-post', icon: 'fa-file-invoice', label: 'Needs Narrative/Cert' },
+        'Completed & Cleared':       { cls: 'freq-b-completed',     icon: 'fa-check-circle',    label: 'Completed & Cleared' },
+        'Returned for Revision':     { cls: 'freq-b-revision',      icon: 'fa-undo',            label: 'Returned for Revision' },
+        'Rejected':                  { cls: 'freq-b-rejected',      icon: 'fa-times-circle',    label: 'Disapproved / Rejected' }
+      };
+      const b = map[status] || { cls: 'freq-b-pending-coord', icon: 'fa-clock', label: status };
+      return `<span class="freq-badge ${b.cls}"><i class="fas ${b.icon}"></i> ${b.label}</span>`;
+    }
+
+    function getRoleTag(role) {
+      let cls = 'speaker';
+      if (role.includes('Trainer') || role.includes('Coach')) cls = 'trainer';
+      if (role.includes('Focal')) cls = 'focal';
+      if (role.includes('Facilitator')) cls = 'coach';
+      return `<span class="freq-role-tag ${cls}">${role}</span>`;
+    }
+
+    function renderFacultyRequests() {
+      updateRoleUI();
+
+      if (!window.GRACE || typeof window.GRACE.getFacultyRequests !== 'function') {
+        console.error('GRACE data layer unavailable');
+        return;
+      }
+
+      const all = window.GRACE.getFacultyRequests();
+
+      // Update KPI counters
+      document.getElementById('kpi-count-all').textContent = all.length;
+      document.getElementById('kpi-count-pending-coord').textContent = all.filter(r => r.status === 'Pending Coordinator Review').length;
+      document.getElementById('kpi-count-pending-dean').textContent = all.filter(r => r.status === 'Pending Dean Approval').length;
+      document.getElementById('kpi-count-awaiting-post').textContent = all.filter(r => r.status === 'Awaiting Post-Event Compliance').length;
+      document.getElementById('kpi-count-completed').textContent = all.filter(r => r.status === 'Completed & Cleared').length;
+
+      // Filter list
+      let filtered = all;
+
+      if (currentStatusFilter !== 'all') {
+        if (currentStatusFilter === 'pending-coord') filtered = filtered.filter(r => r.status === 'Pending Coordinator Review');
+        else if (currentStatusFilter === 'pending-dean') filtered = filtered.filter(r => r.status === 'Pending Dean Approval');
+        else if (currentStatusFilter === 'approved') filtered = filtered.filter(r => r.status === 'Approved / Special Order Issued');
+        else if (currentStatusFilter === 'awaiting-post') filtered = filtered.filter(r => r.status === 'Awaiting Post-Event Compliance');
+        else if (currentStatusFilter === 'completed') filtered = filtered.filter(r => r.status === 'Completed & Cleared');
+        else if (currentStatusFilter === 'revision') filtered = filtered.filter(r => r.status === 'Returned for Revision');
+        else if (currentStatusFilter === 'rejected') filtered = filtered.filter(r => r.status === 'Rejected');
+      }
+
+      if (currentRoleFilter !== 'all') {
+        filtered = filtered.filter(r => r.requested_role.toLowerCase().includes(currentRoleFilter.toLowerCase()));
+      }
+
+      if (currentSearchQuery.trim()) {
+        const q = currentSearchQuery.toLowerCase();
+        filtered = filtered.filter(r =>
+          (r.faculty_name && r.faculty_name.toLowerCase().includes(q)) ||
+          (r.project_id && r.project_id.toLowerCase().includes(q)) ||
+          (r.activity_title && r.activity_title.toLowerCase().includes(q)) ||
+          (r.request_code && r.request_code.toLowerCase().includes(q)) ||
+          (r.requested_role && r.requested_role.toLowerCase().includes(q)) ||
+          (r.venue && r.venue.toLowerCase().includes(q))
+        );
+      }
+
+      const tbody = document.getElementById('freq-table-body');
+      if (!tbody) return;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" style="text-align:center;padding:3rem 1rem;color:#6B7280;">
+              <i class="fas fa-inbox" style="font-size:2rem;color:#D1D5DB;margin-bottom:0.75rem;display:block;"></i>
+              <div style="font-size:0.95rem;font-weight:700;color:#111827;">No Faculty Requests Found</div>
+              <p style="font-size:0.8rem;margin:0.25rem 0 1rem;">No service requests match the selected filters or search terms.</p>
+              <button class="btn btn-sm btn-outline" onclick="resetFacultyFilter()">Clear Filters</button>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(item => {
+        const p = GRACE.getProjectById(item.project_id) || {};
+        const pTitle = p.title || item.project_id;
+
+        // Render document pills
+        let docPills = '';
+        if (item.documents) {
+          if (item.documents.letter_of_intent) {
+            docPills += `<span class="doc-pill" onclick="previewDoc('${item.request_id}', 'loi')"><i class="fas fa-file-pdf" style="color:#DC2626;"></i> LOI</span>`;
+          }
+          if (item.documents.invitation_letter) {
+            docPills += `<span class="doc-pill" onclick="previewDoc('${item.request_id}', 'invitation')"><i class="fas fa-envelope-open-text" style="color:#2563EB;"></i> Invite</span>`;
+          }
+          if (item.documents.activity_program) {
+            docPills += `<span class="doc-pill" onclick="previewDoc('${item.request_id}', 'program')"><i class="fas fa-calendar-alt" style="color:#059669;"></i> Program</span>`;
+          }
+        }
+        if (item.post_event && item.post_event.is_submitted) {
+          docPills += `<span class="doc-pill" style="border-color:#10B981;background:#ECFDF5;color:#065F46;" onclick="previewDoc('${item.request_id}', 'narrative')"><i class="fas fa-file-invoice"></i> Narrative</span>`;
+          docPills += `<span class="doc-pill" style="border-color:#10B981;background:#ECFDF5;color:#065F46;" onclick="previewDoc('${item.request_id}', 'certificate')"><i class="fas fa-award"></i> Certificate</span>`;
+        }
+
+        // Contextual buttons based on role on the side of the table
+        let actionButtons = `
+          <button class="btn-freq-action" onclick="openDossierModal('${item.request_id}')" title="View Full Dossier"><i class="fas fa-eye"></i> View</button>
+        `;
+
+        if (currentRole === 'coordinator') {
+          // Extension Coordinator can change status right on the side of the table:
+          // Approved, Rejected, Revised, Choose Another Faculty, Endorsement to Dean
+          actionButtons = `
+            <div style="display:inline-flex;align-items:center;gap:0.35rem;justify-content:flex-end;">
+              <select class="row-quick-select coord-select" onchange="handleCoordQuickAction('${item.request_id}', this.value); this.value='';" title="Change Status / Action">
+                <option value="" disabled selected>⚡ Status / Action ▾</option>
+                <option value="endorse">👑 Endorse to Dean</option>
+                <option value="approve">✔ Approved</option>
+                <option value="revise">↩ Return for Revision</option>
+                <option value="reject">✖ Rejected</option>
+                <option value="reassign">🔄 Choose Another Faculty</option>
+              </select>
+              <button class="btn-freq-action primary" onclick="openCoordReviewModal('${item.request_id}')" title="Review & Update Status">
+                <i class="fas fa-edit"></i> Review
+              </button>
+              <button class="btn-freq-action" onclick="openDossierModal('${item.request_id}')" title="View Dossier">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          `;
+        } else if (currentRole === 'dean') {
+          // College Dean can change status: Approved, Rejected, Revised (strictly no ISO endorsement)
+          actionButtons = `
+            <div style="display:inline-flex;align-items:center;gap:0.35rem;justify-content:flex-end;">
+              <select class="row-quick-select dean-select" onchange="handleDeanQuickAction('${item.request_id}', this.value); this.value='';" title="Dean Decision">
+                <option value="" disabled selected>⚡ Dean Decision ▾</option>
+                <option value="approve">✔ Approved (Issue SO)</option>
+                <option value="revise">↩ Return for Revision</option>
+                <option value="reject">✖ Rejected / Disapprove</option>
+              </select>
+              <button class="btn-freq-action gold" onclick="openDeanReviewModal('${item.request_id}')" title="Dean Special Order Desk">
+                <i class="fas fa-stamp"></i> Review / SO
+              </button>
+              <button class="btn-freq-action" onclick="openDossierModal('${item.request_id}')" title="View Dossier">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          `;
+        } else if (currentRole === 'proponent') {
+          if (item.status === 'Awaiting Post-Event Compliance') {
+            actionButtons = `
+              <button class="btn-freq-action gold" onclick="openPostEventModal('${item.request_id}')" title="Submit Narrative Report & Certificate">
+                <i class="fas fa-upload"></i> Narrative &amp; Cert
+              </button>
+              <button class="btn-freq-action" onclick="openDossierModal('${item.request_id}')" title="View Dossier"><i class="fas fa-eye"></i></button>
+            `;
+          } else if (item.status === 'Returned for Revision') {
+            actionButtons = `
+              <button class="btn-freq-action primary" onclick="openReviseModal('${item.request_id}')" title="Revise Request">
+                <i class="fas fa-edit"></i> Revise
+              </button>
+              <button class="btn-freq-action" onclick="openDossierModal('${item.request_id}')" title="View Dossier"><i class="fas fa-eye"></i></button>
+            `;
+          }
+        }
+
+        return `
+          <tr>
+            <td>
+              <div style="font-weight:800;color:#111827;font-family:monospace;font-size:0.8rem;">${item.request_code}</div>
+              <div style="font-size:0.7rem;color:#9CA3AF;"><i class="fas fa-clock"></i> ${item.documents?.letter_of_intent?.uploaded_at || 'Recently'}</div>
+            </td>
+            <td>
+              <div style="font-weight:700;color:#111827;">${item.faculty_name}</div>
+              <div style="font-size:0.72rem;color:#6B7280;">${item.faculty_dept || 'CCMS Faculty'}</div>
+            </td>
+            <td>
+              ${getRoleTag(item.requested_role)}
+            </td>
+            <td>
+              <div style="font-weight:700;font-size:0.82rem;color:#111827;">${item.activity_title}</div>
+              <div style="font-size:0.72rem;color:#6B7280;"><span style="font-family:monospace;font-weight:600;">${item.project_id}</span> · ${pTitle.substring(0, 36)}...</div>
+            </td>
+            <td>
+              <div style="font-weight:600;font-size:0.8rem;color:#111827;"><i class="fas fa-calendar-day" style="color:#8B1A1A;margin-right:0.25rem;"></i> ${item.event_date}</div>
+              <div style="font-size:0.72rem;color:#6B7280;"><i class="fas fa-map-marker-alt" style="margin-right:0.25rem;"></i> ${item.venue}</div>
+            </td>
+            <td>
+              <div style="display:flex;flex-wrap:wrap;">
+                ${docPills}
+              </div>
+            </td>
+            <td>
+              ${getStatusBadge(item.status)}
+            </td>
+            <td style="text-align:right;">
+              <div style="display:inline-flex;gap:0.35rem;align-items:center;">
+                ${actionButtons}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    /* ── Filter Handlers ─────────────────────────────────────────── */
+    function filterByCard(filterType) {
+      currentStatusFilter = filterType;
+      document.querySelectorAll('.freq-kpi-card').forEach(c => c.classList.remove('active'));
+      const card = document.getElementById(`kpi-card-${filterType}`);
+      if (card) card.classList.add('active');
+
+      const select = document.getElementById('freq-status-filter');
+      if (select) select.value = filterType;
+
+      renderFacultyRequests();
+    }
+
+    function handleStatusFilter(val) {
+      currentStatusFilter = val;
+      document.querySelectorAll('.freq-kpi-card').forEach(c => c.classList.remove('active'));
+      const card = document.getElementById(`kpi-card-${val}`);
+      if (card) card.classList.add('active');
+      renderFacultyRequests();
+    }
+
+    function handleRoleFilter(val) {
+      currentRoleFilter = val;
+      renderFacultyRequests();
+    }
+
+    function handleSearch() {
+      const q = document.getElementById('freq-search-input');
+      currentSearchQuery = q ? q.value : '';
+      renderFacultyRequests();
+    }
+
+    function resetFacultyFilter() {
+      currentStatusFilter = 'all';
+      currentRoleFilter = 'all';
+      currentSearchQuery = '';
+      const s = document.getElementById('freq-status-filter');
+      if (s) s.value = 'all';
+      const r = document.getElementById('freq-role-filter');
+      if (r) r.value = 'all';
+      const q = document.getElementById('freq-search-input');
+      if (q) q.value = '';
+      document.querySelectorAll('.freq-kpi-card').forEach(c => c.classList.remove('active'));
+      const allCard = document.getElementById('kpi-card-all');
+      if (allCard) allCard.classList.add('active');
+      renderFacultyRequests();
+      showToast('Filters reset', 'fa-sync-alt');
+    }
+
+    /* ── Drag & Drop Engine ──────────────────────────────────────── */
+    function triggerFileInput(id) {
+      const input = document.getElementById(id);
+      if (input) input.click();
+    }
+
+    function handleFileSelect(input, docType) {
+      if (input.files && input.files[0]) {
+        const file = input.files[0];
+        setUploadedFile(docType, {
+          name: file.name,
+          size: (file.size / 1024).toFixed(1) + ' KB',
+          file_type: file.name.split('.').pop().toUpperCase(),
+          uploaded_at: new Date().toISOString().slice(0, 10)
+        });
+      }
+    }
+
+    function setupDragAndDrop(zoneId, inputId, docType) {
+      const zone = document.getElementById(zoneId);
+      if (!zone) return;
+
+      ['dragenter', 'dragover'].forEach(eventName => {
+        zone.addEventListener(eventName, (e) => {
+          e.preventDefault(); e.stopPropagation();
+          zone.classList.add('dragover');
+        }, false);
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        zone.addEventListener(eventName, (e) => {
+          e.preventDefault(); e.stopPropagation();
+          zone.classList.remove('dragover');
+        }, false);
+      });
+
+      zone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if (files && files.length > 0) {
+          const file = files[0];
+          setUploadedFile(docType, {
+            name: file.name,
+            size: (file.size / 1024).toFixed(1) + ' KB',
+            file_type: file.name.split('.').pop().toUpperCase(),
+            uploaded_at: new Date().toISOString().slice(0, 10)
+          });
+          showToast(`File attached: <strong>${file.name}</strong>`, 'fa-paperclip');
+        }
+      }, false);
+    }
+
+    function setUploadedFile(docType, fileData) {
+      activeFiles[docType] = fileData;
+      const previewEl = document.getElementById(`preview-${docType}`);
+      const dz = document.getElementById(`dz-${docType}`);
+
+      if (previewEl) {
+        previewEl.innerHTML = `
+          <div class="file-preview-card">
+            <div class="fpc-left">
+              <span class="fpc-badge">${fileData.file_type || 'PDF'}</span>
+              <div class="fpc-details">
+                <div class="fpc-name" title="${fileData.name}">${fileData.name}</div>
+                <div class="fpc-size">${fileData.size} · Attached</div>
+              </div>
+            </div>
+            <div class="fpc-actions">
+              <button type="button" class="fpc-btn" onclick="removeUploadedFile('${docType}')" title="Remove File"><i class="fas fa-trash-alt"></i></button>
+            </div>
+          </div>
+        `;
+      }
+      if (dz) {
+        dz.style.display = 'none';
+      }
+    }
+
+    function removeUploadedFile(docType) {
+      activeFiles[docType] = null;
+      const previewEl = document.getElementById(`preview-${docType}`);
+      const dz = document.getElementById(`dz-${docType}`);
+      if (previewEl) previewEl.innerHTML = '';
+      if (dz) dz.style.display = 'block';
+    }
+
+    function generateSampleFile(docType) {
+      const facultySelect = document.getElementById('nfr-faculty');
+      const facultyName = facultySelect && facultySelect.options[facultySelect.selectedIndex] ? facultySelect.options[facultySelect.selectedIndex].text.split('(')[0].trim() : 'Faculty';
+      const cleanName = facultyName.replace(/[^a-zA-Z]/g, '_');
+
+      const samples = {
+        loi: {
+          name: `LOI_${cleanName}_ExtensionService.pdf`,
+          size: '235.4 KB',
+          file_type: 'PDF',
+          uploaded_at: new Date().toISOString().slice(0, 10)
+        },
+        invitation: {
+          name: `Official_Invite_HostAgency_${cleanName}.pdf`,
+          size: '318.0 KB',
+          file_type: 'PDF',
+          uploaded_at: new Date().toISOString().slice(0, 10)
+        },
+        program: {
+          name: `Activity_Schedule_Matrix_${cleanName}.pdf`,
+          size: '412.5 KB',
+          file_type: 'PDF',
+          uploaded_at: new Date().toISOString().slice(0, 10)
+        },
+        narrative: {
+          name: `Terminal_Accomplishment_Report_${cleanName}.pdf`,
+          size: '1.4 MB',
+          file_type: 'PDF',
+          uploaded_at: new Date().toISOString().slice(0, 10)
+        },
+        certificate: {
+          name: `Certificate_of_Appreciation_${cleanName}.pdf`,
+          size: '780.2 KB',
+          file_type: 'PDF',
+          uploaded_at: new Date().toISOString().slice(0, 10)
+        }
+      };
+
+      if (samples[docType]) {
+        setUploadedFile(docType, samples[docType]);
+        showToast(`Official template generated for <strong>${docType.toUpperCase()}</strong>`, 'fa-magic');
+      }
+    }
+
+    /* ── Modal Opening & Form Submissions ────────────────────────── */
+    function populateFormSelects() {
+      // Projects
+      const projSelect = document.getElementById('nfr-project');
+      if (projSelect && window.GRACE) {
+        projSelect.innerHTML = GRACE.projects.map(p => `
+          <option value="${p.project_id}">${p.project_id} — ${p.title.substring(0, 48)}...</option>
+        `).join('');
+      }
+
+      // Faculty
+      const facSelect = document.getElementById('nfr-faculty');
+      if (facSelect && window.GRACE) {
+        facSelect.innerHTML = GRACE.persons
+          .filter(p => p.person_id !== 'PER001' && p.person_id !== 'PER002') // Exclude proponent self and coordinator
+          .map(p => `
+            <option value="${p.person_id}" data-name="${p.first_name} ${p.last_name}" data-dept="${p.affiliation}">${p.first_name} ${p.last_name} (${p.affiliation.split('—')[1]?.trim() || p.affiliation})</option>
+          `).join('');
+      }
+    }
+
+    function openNewRequestModal() {
+      populateFormSelects();
+      activeFiles = { loi: null, invitation: null, program: null, narrative: null, certificate: null };
+      ['loi', 'invitation', 'program'].forEach(dt => removeUploadedFile(dt));
+
+      // Set default date tomorrow
+      const d = new Date(); d.setDate(d.getDate() + 7);
+      const dateInp = document.getElementById('nfr-date');
+      if (dateInp) dateInp.value = d.toISOString().slice(0, 10);
+
+      document.getElementById('modal-new-request').classList.add('open');
+
+      // Hook drag & drop listeners
+      setupDragAndDrop('dz-loi', 'input-loi', 'loi');
+      setupDragAndDrop('dz-invitation', 'input-invitation', 'invitation');
+      setupDragAndDrop('dz-program', 'input-program', 'program');
+    }
+
+    function closeNewRequestModal() {
+      document.getElementById('modal-new-request').classList.remove('open');
+      document.getElementById('form-new-freq').reset();
+    }
+
+    function submitFacultyRequest(e) {
+      e.preventDefault();
+
+      // Check that all 3 files are attached
+      if (!activeFiles.loi || !activeFiles.invitation || !activeFiles.program) {
+        alert('Please attach all 3 required files (Letter of Intent, Invitation Letter, and Activity Program). You may also click "Use Official Sample" to auto-attach the university templates.');
+        return;
+      }
+
+      const projId = document.getElementById('nfr-project').value;
+      const facSelect = document.getElementById('nfr-faculty');
+      const facOption = facSelect.options[facSelect.selectedIndex];
+      const facId = facSelect.value;
+      const facName = facOption.getAttribute('data-name') || facOption.text.split('(')[0].trim();
+      const facDept = facOption.getAttribute('data-dept') || 'CCMS Faculty';
+      const role = document.getElementById('nfr-role').value;
+      const actTitle = document.getElementById('nfr-activity-title').value.trim();
+      const date = document.getElementById('nfr-date').value;
+      const time = document.getElementById('nfr-time').value.trim();
+      const venue = document.getElementById('nfr-venue').value.trim();
+      const just = document.getElementById('nfr-justification').value.trim();
+
+      const num = Math.floor(100 + Math.random() * 900);
+      const reqId = `FREQ-2026-${num}`;
+
+      const newRequest = {
+        request_id: reqId,
+        request_code: `CCMS-${reqId}`,
+        project_id: projId,
+        activity_id: `ACT-${num}`,
+        activity_title: actTitle,
+        faculty_id: facId,
+        faculty_name: facName,
+        faculty_dept: facDept,
+        proponent_id: 'PER001',
+        proponent_name: 'Prince Jheck T. Juan',
+        requested_role: role,
+        event_date: date,
+        event_time: time,
+        venue: venue,
+        modality: 'Face-to-Face',
+        inclusions: ['Certificate of Appreciation', 'Official Service Credits'],
+        justification: just,
+        documents: {
+          letter_of_intent: activeFiles.loi,
+          invitation_letter: activeFiles.invitation,
+          activity_program: activeFiles.program
+        },
+        current_stage: 'Coordinator Completeness Review',
+        status: 'Pending Coordinator Review',
+        coordinator_review: null,
+        dean_approval: null,
+        post_event: {
+          required: true,
+          is_submitted: false,
+          narrative_report: null,
+          certificate_copy: null,
+          submission_date: null,
+          clearance_status: 'Awaiting Event Execution'
+        }
+      };
+
+      if (window.GRACE && typeof window.GRACE.saveFacultyRequest === 'function') {
+        window.GRACE.saveFacultyRequest(newRequest);
+
+        // Notify Coordinator
+        if (typeof window.GRACE.addDynamicNotification === 'function') {
+          window.GRACE.addDynamicNotification({
+            role: 'coordinator',
+            type: 'submission',
+            title: `New Faculty Request: ${reqId}`,
+            message: `Proponent Prince Jheck requested ${facName} as ${role} for project ${projId}. Completeness check required.`,
+            actionUrl: 'faculty-requests.html',
+            actionLabel: 'Review Request'
+          });
+        }
+      }
+
+      closeNewRequestModal();
+      renderFacultyRequests();
+      showToast(`Faculty service request <strong>${reqId}</strong> successfully submitted to Extension Coordinator!`, 'fa-paper-plane');
+    }
+
+    /* ── Coordinator Actions (Approved, Rejected, Revised, Choose Another Faculty, Endorse to Dean) ── */
+    function handleCoordQuickAction(reqId, action) {
+      openCoordReviewModal(reqId, action);
+    }
+
+    function selectCoordAction(action) {
+      const actInput = document.getElementById('cr-selected-action');
+      if (actInput) actInput.value = action;
+
+      document.querySelectorAll('#cr-status-cards .status-option-card').forEach(c => {
+        c.classList.toggle('active', c.getAttribute('data-action') === action);
+      });
+
+      const reassignBox = document.getElementById('cr-reassign-container');
+      const remarks = document.getElementById('cr-remarks');
+      const submitBtn = document.getElementById('cr-submit-btn');
+      const remarksLabel = document.getElementById('cr-remarks-label');
+
+      if (action === 'reassign') {
+        if (reassignBox) reassignBox.style.display = 'block';
+        if (remarksLabel) remarksLabel.textContent = 'Reassignment Justification & Schedule Notes *';
+        if (remarks) remarks.value = 'Reassigned to another CCMS faculty specialist to align with expertise requirements and prevent teaching schedule conflicts.';
+        if (submitBtn) {
+          submitBtn.innerHTML = '<i class="fas fa-user-edit"></i> Confirm Reassign Faculty';
+          submitBtn.style.background = '#2563EB';
+          submitBtn.style.borderColor = '#2563EB';
+        }
+      } else {
+        if (reassignBox) reassignBox.style.display = 'none';
+        if (action === 'endorse') {
+          if (remarksLabel) remarksLabel.textContent = 'Coordinator Endorsement Recommendation to Dean *';
+          if (remarks) remarks.value = 'Faculty teaching workload verified. No academic conflict. Complete documents on file. Endorsed for College Dean Special Order.';
+          if (submitBtn) {
+            submitBtn.innerHTML = '<i class="fas fa-crown"></i> Endorse to College Dean';
+            submitBtn.style.background = '#8B1A1A';
+            submitBtn.style.borderColor = '#8B1A1A';
+          }
+        } else if (action === 'approve') {
+          if (remarksLabel) remarksLabel.textContent = 'Extension Coordinator Approval Remarks *';
+          if (remarks) remarks.value = 'Approved at Extension Coordinator desk. Workload cleared and verified.';
+          if (submitBtn) {
+            submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Approve Faculty Request';
+            submitBtn.style.background = '#059669';
+            submitBtn.style.borderColor = '#059669';
+          }
+        } else if (action === 'revise') {
+          if (remarksLabel) remarksLabel.textContent = 'Required Proponent Corrections / Revisions *';
+          if (remarks) remarks.value = 'Please re-upload a signed copy of the Official Invitation Letter and adjust activity session timings to avoid conflict.';
+          if (submitBtn) {
+            submitBtn.innerHTML = '<i class="fas fa-undo"></i> Return for Revision';
+            submitBtn.style.background = '#EA580C';
+            submitBtn.style.borderColor = '#EA580C';
+          }
+        } else if (action === 'reject') {
+          if (remarksLabel) remarksLabel.textContent = 'Disapproval Justification / Reason *';
+          if (remarks) remarks.value = 'Request cannot be accommodated due to mandatory university class schedule commitments.';
+          if (submitBtn) {
+            submitBtn.innerHTML = '<i class="fas fa-times-circle"></i> Disapprove / Reject Request';
+            submitBtn.style.background = '#DC2626';
+            submitBtn.style.borderColor = '#DC2626';
+          }
+        }
+      }
+    }
+
+    function updateReassignInfo(personId) {
+      if (!window.GRACE || !window.GRACE.persons) return;
+      const person = GRACE.persons.find(p => p.person_id === personId);
+      const infoEl = document.getElementById('cr-new-faculty-info');
+      if (person && infoEl) {
+        infoEl.innerHTML = `<strong>${person.affiliation || 'CCMS Faculty'}</strong> <span style="margin:0 0.35rem;opacity:0.5;">•</span> <span style="color:#059669;">${person.designation || 'Faculty Specialist'}</span>`;
+      }
+    }
+
+    function populateReassignFacultySelect(currentFacultyId) {
+      const select = document.getElementById('cr-new-faculty');
+      if (!select || !window.GRACE || !window.GRACE.persons) return;
+      const candidates = GRACE.persons.filter(p => p.person_id !== 'PER002' && p.person_id !== currentFacultyId);
+      select.innerHTML = candidates.map(p => `
+        <option value="${p.person_id}">${p.first_name} ${p.last_name} (${p.affiliation.split('—')[1]?.trim() || p.affiliation})</option>
+      `).join('');
+      if (candidates.length > 0) {
+        updateReassignInfo(candidates[0].person_id);
+      }
+    }
+
+    function openCoordReviewModal(reqId, preselectedAction = 'endorse') {
+      const req = GRACE.getFacultyRequestById(reqId);
+      if (!req) return;
+
+      document.getElementById('cr-req-id').value = reqId;
+      document.getElementById('cr-modal-sub').textContent = `${req.request_code} · Current Faculty: ${req.faculty_name} (${req.requested_role})`;
+
+      document.getElementById('cr-summary-card').innerHTML = `
+        <div style="font-weight:700;color:#111827;font-size:0.9rem;margin-bottom:0.3rem;">${req.activity_title}</div>
+        <div style="color:#4B5563;margin-bottom:0.5rem;">Project: <strong>${req.project_id}</strong> · Current Assigned Faculty: <strong style="color:#8B1A1A;">${req.faculty_name}</strong> · Role: <strong>${req.requested_role}</strong></div>
+        <div style="color:#6B7280;margin-bottom:0.5rem;"><i class="fas fa-calendar-day"></i> ${req.event_date} (${req.event_time}) · <i class="fas fa-map-marker-alt"></i> ${req.venue}</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid #E5E7EB;padding-top:0.5rem;margin-top:0.5rem;flex-wrap:wrap;gap:0.4rem;">
+          <div>
+            <span style="font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#8B1A1A;margin-right:0.3rem;">Documents:</span>
+            <span class="doc-pill" onclick="previewDoc('${req.request_id}', 'loi')"><i class="fas fa-file-pdf"></i> LOI</span>
+            <span class="doc-pill" onclick="previewDoc('${req.request_id}', 'invitation')"><i class="fas fa-envelope-open-text"></i> Invite</span>
+            <span class="doc-pill" onclick="previewDoc('${req.request_id}', 'program')"><i class="fas fa-calendar-alt"></i> Program</span>
+          </div>
+          <div>${getStatusBadge(req.status)}</div>
+        </div>
+      `;
+
+      populateReassignFacultySelect(req.faculty_id);
+      selectCoordAction(preselectedAction);
+      document.getElementById('modal-coord-review').classList.add('open');
+    }
+
+    function closeCoordReviewModal() {
+      document.getElementById('modal-coord-review').classList.remove('open');
+    }
+
+    function submitCoordDecision() {
+      const reqId = document.getElementById('cr-req-id').value;
+      const action = document.getElementById('cr-selected-action').value;
+      const remarks = document.getElementById('cr-remarks').value.trim();
+
+      if (action === 'reassign') {
+        const newFacultyId = document.getElementById('cr-new-faculty').value;
+        const result = GRACE.reassignFaculty(reqId, newFacultyId, remarks);
+        closeCoordReviewModal();
+        renderFacultyRequests();
+        showToast(`Faculty reassigned to <strong>${result.faculty_name}</strong>! Proponent notified.`, 'fa-user-check');
+        return;
+      }
+
+      if (!remarks && (action === 'revise' || action === 'reject')) {
+        alert('Please provide remarks explaining the reason for returning or rejecting the request.');
+        return;
+      }
+
+      const decisionMap = {
+        'endorse': 'Endorsed',
+        'approve': 'Approved',
+        'revise': 'Returned',
+        'reject': 'Rejected'
+      };
+
+      const decision = decisionMap[action] || 'Endorsed';
+      GRACE.updateFacultyRequestReview(reqId, decision, remarks, 'coordinator');
+      closeCoordReviewModal();
+      renderFacultyRequests();
+
+      if (action === 'endorse') {
+        showToast(`Request <strong>${reqId}</strong> endorsed to College Dean Dr. Daniel Maligat!`, 'fa-crown');
+      } else if (action === 'approve') {
+        showToast(`Request <strong>${reqId}</strong> approved by Extension Coordinator!`, 'fa-check-circle');
+      } else if (action === 'revise') {
+        showToast(`Request <strong>${reqId}</strong> returned to proponent for revision.`, 'fa-undo');
+      } else if (action === 'reject') {
+        showToast(`Request <strong>${reqId}</strong> disapproved / rejected.`, 'fa-times-circle');
+      }
+    }
+
+    /* ── Dean Actions (Approved, Rejected, Revised — Strictly No ISO Endorsement) ── */
+    function handleDeanQuickAction(reqId, action) {
+      openDeanReviewModal(reqId, action);
+    }
+
+    function selectDeanAction(action) {
+      const actInput = document.getElementById('dr-selected-action');
+      if (actInput) actInput.value = action;
+
+      document.querySelectorAll('#dr-status-cards .status-option-card').forEach(c => {
+        c.classList.toggle('active', c.getAttribute('data-action') === action);
+      });
+
+      const soGroup = document.getElementById('dr-so-group');
+      const remarks = document.getElementById('dr-remarks');
+      const submitBtn = document.getElementById('dr-submit-btn');
+      const remarksLabel = document.getElementById('dr-remarks-label');
+
+      if (action === 'approve') {
+        if (soGroup) soGroup.style.display = 'block';
+        if (remarksLabel) remarksLabel.textContent = 'Dean Executive Approval Remarks *';
+        if (remarks) remarks.value = 'Approved as official CCMS faculty extension service engagement. Special Order issued.';
+        if (submitBtn) {
+          submitBtn.innerHTML = '<i class="fas fa-stamp"></i> Execute Dean Approval &amp; Issue SO';
+          submitBtn.style.background = '#B45309';
+          submitBtn.style.borderColor = '#B45309';
+        }
+      } else if (action === 'revise') {
+        if (soGroup) soGroup.style.display = 'none';
+        if (remarksLabel) remarksLabel.textContent = 'Dean Revision Instructions *';
+        if (remarks) remarks.value = 'Please align activity schedule with college mid-term academic calendar.';
+        if (submitBtn) {
+          submitBtn.innerHTML = '<i class="fas fa-undo"></i> Return for Revision';
+          submitBtn.style.background = '#EA580C';
+          submitBtn.style.borderColor = '#EA580C';
+        }
+      } else if (action === 'reject') {
+        if (soGroup) soGroup.style.display = 'none';
+        if (remarksLabel) remarksLabel.textContent = 'Disapproval Justification *';
+        if (remarks) remarks.value = 'Disapproved as requested engagement conflicts with college institutional priorities.';
+        if (submitBtn) {
+          submitBtn.innerHTML = '<i class="fas fa-times-circle"></i> Disapprove / Reject Request';
+          submitBtn.style.background = '#DC2626';
+          submitBtn.style.borderColor = '#DC2626';
+        }
+      }
+    }
+
+    function openDeanReviewModal(reqId, preselectedAction = 'approve') {
+      const req = GRACE.getFacultyRequestById(reqId);
+      if (!req) return;
+
+      document.getElementById('dr-req-id').value = reqId;
+      document.getElementById('dr-modal-sub').textContent = `${req.request_code} · ${req.faculty_name} (${req.requested_role})`;
+      document.getElementById('dr-so-ref').value = `CCMS-SO-2026-${Math.floor(100 + Math.random() * 900)}`;
+
+      document.getElementById('dr-summary-card').innerHTML = `
+        <div style="font-weight:700;color:#111827;font-size:0.9rem;margin-bottom:0.3rem;">${req.activity_title}</div>
+        <div style="color:#4B5563;margin-bottom:0.35rem;">Faculty: <strong>${req.faculty_name}</strong> · Role: <strong>${req.requested_role}</strong> · Project: <strong>${req.project_id}</strong></div>
+        <div style="background:#ECFDF5;border:1px solid #A7F3D0;border-radius:6px;padding:0.5rem 0.75rem;margin-bottom:0.5rem;font-size:0.75rem;color:#065F46;">
+          <i class="fas fa-check-circle"></i> <strong>Coordinator Endorsement:</strong> "${req.coordinator_review?.remarks || 'Completeness check verified'}" — <em>${req.coordinator_review?.reviewed_by || 'Dr. Bolos'}</em>
+        </div>
+        <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+          <span class="doc-pill" onclick="previewDoc('${req.request_id}', 'loi')"><i class="fas fa-file-pdf"></i> View LOI</span>
+          <span class="doc-pill" onclick="previewDoc('${req.request_id}', 'invitation')"><i class="fas fa-envelope-open-text"></i> View Invitation</span>
+          <span class="doc-pill" onclick="previewDoc('${req.request_id}', 'program')"><i class="fas fa-calendar-alt"></i> View Program</span>
+        </div>
+      `;
+
+      selectDeanAction(preselectedAction);
+      document.getElementById('modal-dean-review').classList.add('open');
+    }
+
+    function closeDeanReviewModal() {
+      document.getElementById('modal-dean-review').classList.remove('open');
+    }
+
+    function submitDeanDecision() {
+      const reqId = document.getElementById('dr-req-id').value;
+      const action = document.getElementById('dr-selected-action').value;
+      const remarks = document.getElementById('dr-remarks').value.trim();
+      const soRef = document.getElementById('dr-so-ref').value.trim();
+
+      if (!remarks && (action === 'revise' || action === 'reject')) {
+        alert('Please enter remarks for returning or rejecting this proposal.');
+        return;
+      }
+
+      const decisionMap = {
+        'approve': 'Approved',
+        'revise': 'Returned',
+        'reject': 'Rejected'
+      };
+
+      const decision = decisionMap[action] || 'Approved';
+      GRACE.updateFacultyRequestReview(reqId, decision, remarks, 'dean', soRef);
+      closeDeanReviewModal();
+      renderFacultyRequests();
+
+      if (action === 'approve') {
+        showToast(`Special Order <strong>${soRef}</strong> issued! Proponent and Coordinator notified.`, 'fa-stamp');
+      } else if (action === 'revise') {
+        showToast(`Request returned to Coordinator / Proponent with revision remarks.`, 'fa-undo');
+      } else {
+        showToast(`Request disapproved / rejected by College Dean.`, 'fa-times-circle');
+      }
+    }
+
+    function openReviseModal(reqId) {
+      const req = GRACE.getFacultyRequestById(reqId);
+      if (!req) return;
+      openNewRequestModal();
+      document.getElementById('nfr-project').value = req.project_id;
+      document.getElementById('nfr-faculty').value = req.faculty_id;
+      document.getElementById('nfr-role').value = req.requested_role;
+      document.getElementById('nfr-activity-title').value = req.activity_title;
+      document.getElementById('nfr-date').value = req.event_date;
+      document.getElementById('nfr-time').value = req.event_time;
+      document.getElementById('nfr-venue').value = req.venue;
+      document.getElementById('nfr-justification').value = req.justification;
+
+      if (req.documents?.letter_of_intent) setUploadedFile('loi', req.documents.letter_of_intent);
+      if (req.documents?.invitation_letter) setUploadedFile('invitation', req.documents.invitation_letter);
+      if (req.documents?.activity_program) setUploadedFile('program', req.documents.activity_program);
+
+      showToast(`Editing request <strong>${req.request_code}</strong> for resubmission`, 'fa-edit');
+    }
+
+    /* ── Post-Event Compliance Submission ────────────────────────── */
+    function openPostEventModal(reqId) {
+      const req = GRACE.getFacultyRequestById(reqId);
+      if (!req) return;
+
+      document.getElementById('pe-req-id').value = reqId;
+      document.getElementById('pe-modal-sub').textContent = `${req.request_code} · ${req.faculty_name} (${req.requested_role})`;
+      removeUploadedFile('narrative');
+      removeUploadedFile('certificate');
+
+      document.getElementById('modal-post-event').classList.add('open');
+      setupDragAndDrop('dz-narrative', 'input-narrative', 'narrative');
+      setupDragAndDrop('dz-certificate', 'input-certificate', 'certificate');
+    }
+
+    function closePostEventModal() {
+      document.getElementById('modal-post-event').classList.remove('open');
+    }
+
+    function submitPostEventFiles(e) {
+      e.preventDefault();
+      const reqId = document.getElementById('pe-req-id').value;
+      if (!activeFiles.narrative || !activeFiles.certificate) {
+        alert('Please attach both the Narrative Report and the Certificate copy. Click "Use Official Sample" if you do not have files ready.');
+        return;
+      }
+      const notes = document.getElementById('pe-notes').value.trim();
+
+      GRACE.submitPostEventCompliance(reqId, activeFiles.narrative, activeFiles.certificate, notes);
+      closePostEventModal();
+      renderFacultyRequests();
+      showToast(`Post-event compliance submitted & cleared for <strong>${reqId}</strong>!`, 'fa-check-circle');
+    }
+
+    /* ── Dossier & Document Viewer ───────────────────────────────── */
+    function openDossierModal(reqId) {
+      const req = GRACE.getFacultyRequestById(reqId);
+      if (!req) return;
+
+      document.getElementById('dossier-modal-title').textContent = `${req.request_code}: ${req.activity_title}`;
+      document.getElementById('dossier-modal-sub').textContent = `Target Faculty: ${req.faculty_name} · Role: ${req.requested_role}`;
+
+      // Calculate timeline state
+      const isApproved = req.status.includes('Approved') || req.status.includes('Post-Event') || req.status.includes('Completed');
+      const isPostEvent = req.status.includes('Awaiting Post-Event') || req.status.includes('Completed');
+      const isCompleted = req.status === 'Completed & Cleared';
+
+      document.getElementById('dossier-modal-content').innerHTML = `
+        <!-- Timeline -->
+        <div class="freq-timeline">
+          <div class="ftl-step done">
+            <div class="ftl-step-circle"><i class="fas fa-check"></i></div>
+            <div class="ftl-step-label">1. Request Filed</div>
+          </div>
+          <div class="ftl-line ${req.coordinator_review ? 'done' : ''}"></div>
+          <div class="ftl-step ${req.coordinator_review ? (req.coordinator_review.decision === 'Approved' ? 'done' : req.coordinator_review.decision.toLowerCase()) : 'active'}">
+            <div class="ftl-step-circle">${req.coordinator_review?.decision === 'Approved' ? '<i class="fas fa-check"></i>' : '2'}</div>
+            <div class="ftl-step-label">2. Coordinator Review</div>
+          </div>
+          <div class="ftl-line ${req.dean_approval ? 'done' : ''}"></div>
+          <div class="ftl-step ${req.dean_approval ? (req.dean_approval.decision === 'Approved' ? 'done' : req.dean_approval.decision.toLowerCase()) : (req.status === 'Pending Dean Approval' ? 'active' : '')}">
+            <div class="ftl-step-circle">${req.dean_approval?.decision === 'Approved' ? '<i class="fas fa-check"></i>' : '3'}</div>
+            <div class="ftl-step-label">3. Dean Special Order</div>
+          </div>
+          <div class="ftl-line ${isPostEvent ? 'done' : ''}"></div>
+          <div class="ftl-step ${isCompleted ? 'done' : (req.status === 'Awaiting Post-Event Compliance' ? 'active' : '')}">
+            <div class="ftl-step-circle">${isCompleted ? '<i class="fas fa-check"></i>' : '4'}</div>
+            <div class="ftl-step-label">4. Post-Event Compliance</div>
+          </div>
+        </div>
+
+        <!-- Details Grid -->
+        <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:1.25rem;margin-bottom:1.25rem;">
+          <div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;padding:1.15rem;">
+            <h4 style="margin:0 0 0.75rem;font-size:0.82rem;font-weight:800;text-transform:uppercase;color:#8B1A1A;">Engagement Overview</h4>
+            <table style="width:100%;font-size:0.8rem;border-collapse:collapse;">
+              <tr><td style="color:#6B7280;padding:0.3rem 0;width:35%;">Request ID:</td><td style="font-weight:700;">${req.request_id}</td></tr>
+              <tr><td style="color:#6B7280;padding:0.3rem 0;">Project Code:</td><td style="font-weight:700;">${req.project_id}</td></tr>
+              <tr><td style="color:#6B7280;padding:0.3rem 0;">Faculty Member:</td><td style="font-weight:700;color:#111827;">${req.faculty_name}</td></tr>
+              <tr><td style="color:#6B7280;padding:0.3rem 0;">Department:</td><td>${req.faculty_dept}</td></tr>
+              <tr><td style="color:#6B7280;padding:0.3rem 0;">Role Requested:</td><td>${getRoleTag(req.requested_role)}</td></tr>
+              <tr><td style="color:#6B7280;padding:0.3rem 0;">Schedule:</td><td>${req.event_date} (${req.event_time})</td></tr>
+              <tr><td style="color:#6B7280;padding:0.3rem 0;">Venue:</td><td>${req.venue}</td></tr>
+            </table>
+          </div>
+
+          <div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;padding:1.15rem;">
+            <h4 style="margin:0 0 0.75rem;font-size:0.82rem;font-weight:800;text-transform:uppercase;color:#8B1A1A;">Institutional Sign-offs</h4>
+            
+            <!-- Coordinator Endorsement -->
+            <div style="margin-bottom:0.75rem;border-bottom:1px solid #E5E7EB;padding-bottom:0.6rem;">
+              <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#6B7280;">Extension Coordinator:</div>
+              <div style="font-weight:700;font-size:0.8rem;color:#111827;">${req.coordinator_review?.reviewed_by || 'Pending Review'}</div>
+              <div style="font-size:0.75rem;color:#059669;">${req.coordinator_review ? `✔ ${req.coordinator_review.decision} on ${req.coordinator_review.decision_date}` : 'Awaiting Action'}</div>
+              ${req.coordinator_review?.remarks ? `<div style="font-size:0.74rem;color:#4B5563;font-style:italic;margin-top:0.2rem;">"${req.coordinator_review.remarks}"</div>` : ''}
+            </div>
+
+            <!-- Dean Special Order -->
+            <div>
+              <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;color:#6B7280;">College Dean &amp; Special Order:</div>
+              <div style="font-weight:700;font-size:0.8rem;color:#111827;">${req.dean_approval?.approved_by || 'Dr. Daniel Maligat'}</div>
+              <div style="font-size:0.75rem;color:${req.dean_approval ? '#059669' : '#D97706'};">
+                ${req.dean_approval ? `✔ Endorsed (SO: <strong>${req.dean_approval.special_order_ref}</strong>)` : 'Awaiting Dean Endorsement'}
+              </div>
+              ${req.dean_approval?.remarks ? `<div style="font-size:0.74rem;color:#4B5563;font-style:italic;margin-top:0.2rem;">"${req.dean_approval.remarks}"</div>` : ''}
+            </div>
+
+            ${req.reassignment_history && req.reassignment_history.length > 0 ? `
+              <div style="margin-top:0.6rem;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:6px;padding:0.4rem 0.6rem;font-size:0.72rem;color:#1E40AF;">
+                <i class="fas fa-history" style="margin-right:0.25rem;"></i> <strong>Reassignment Trail:</strong><br>
+                ${req.reassignment_history.map(h => `• ${h.from_name} ➔ <strong>${h.to_name}</strong> on ${h.reassigned_at} (${h.remarks})`).join('<br>')}
+              </div>
+            ` : ''}
+          </div>
+        </div>
+
+        <!-- Attached Documents -->
+        <div style="border:1px solid #E5E7EB;border-radius:10px;padding:1.15rem;margin-bottom:1.25rem;">
+          <h4 style="margin:0 0 0.75rem;font-size:0.82rem;font-weight:800;text-transform:uppercase;color:#374151;">Dossier Attachments</h4>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.75rem;">
+            <div style="background:#fff;border:1px solid #E5E7EB;border-radius:8px;padding:0.75rem;">
+              <div style="font-size:0.7rem;font-weight:700;color:#6B7280;text-transform:uppercase;">1. Letter of Intent</div>
+              <div style="font-weight:700;font-size:0.8rem;margin:0.2rem 0;">${req.documents?.letter_of_intent?.name || 'On File'}</div>
+              <button class="btn btn-sm btn-outline" style="font-size:0.7rem;padding:0.25rem 0.6rem;" onclick="previewDoc('${req.request_id}', 'loi')"><i class="fas fa-eye"></i> View File</button>
+            </div>
+            <div style="background:#fff;border:1px solid #E5E7EB;border-radius:8px;padding:0.75rem;">
+              <div style="font-size:0.7rem;font-weight:700;color:#6B7280;text-transform:uppercase;">2. Invitation Letter</div>
+              <div style="font-weight:700;font-size:0.8rem;margin:0.2rem 0;">${req.documents?.invitation_letter?.name || 'On File'}</div>
+              <button class="btn btn-sm btn-outline" style="font-size:0.7rem;padding:0.25rem 0.6rem;" onclick="previewDoc('${req.request_id}', 'invitation')"><i class="fas fa-eye"></i> View File</button>
+            </div>
+            <div style="background:#fff;border:1px solid #E5E7EB;border-radius:8px;padding:0.75rem;">
+              <div style="font-size:0.7rem;font-weight:700;color:#6B7280;text-transform:uppercase;">3. Activity Program</div>
+              <div style="font-weight:700;font-size:0.8rem;margin:0.2rem 0;">${req.documents?.activity_program?.name || 'On File'}</div>
+              <button class="btn btn-sm btn-outline" style="font-size:0.7rem;padding:0.25rem 0.6rem;" onclick="previewDoc('${req.request_id}', 'program')"><i class="fas fa-eye"></i> View File</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Post Event Section -->
+        ${req.post_event?.is_submitted ? `
+          <div style="background:#F0FDF4;border:1px solid #A7F3D0;border-radius:10px;padding:1.15rem;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem;">
+              <div style="font-weight:800;color:#065F46;font-size:0.85rem;"><i class="fas fa-check-circle"></i> Post-Event Compliance Cleared</div>
+              <span class="freq-badge freq-b-completed">Cleared on ${req.post_event.submission_date}</span>
+            </div>
+            <p style="font-size:0.78rem;color:#047857;margin:0 0 0.75rem;">Narrative report and certificate of appreciation have been officially verified by Extension Coordinator Dr. Mary Grace Bolos.</p>
+            <div style="display:flex;gap:0.6rem;">
+              <button class="btn btn-sm btn-outline" onclick="previewDoc('${req.request_id}', 'narrative')"><i class="fas fa-file-invoice"></i> View Narrative Report</button>
+              <button class="btn btn-sm btn-outline" onclick="previewDoc('${req.request_id}', 'certificate')"><i class="fas fa-award"></i> View Certificate</button>
+            </div>
+          </div>
+        ` : (req.status === 'Awaiting Post-Event Compliance' && currentRole === 'proponent' ? `
+          <div style="background:#FFFBEB;border:1px solid #FCD34D;border-radius:10px;padding:1rem;display:flex;align-items:center;justify-content:space-between;">
+            <div>
+              <div style="font-weight:800;color:#92400E;font-size:0.84rem;"><i class="fas fa-exclamation-triangle"></i> Action Needed: Post-Event Compliance</div>
+              <div style="font-size:0.76rem;color:#B45309;">The event is completed. Please submit the Narrative Report &amp; Certificate.</div>
+            </div>
+            <button class="btn btn-sm" style="background:#DAA520;color:#fff;" onclick="closeDossierModal(); openPostEventModal('${req.request_id}');">Submit Now</button>
+          </div>
+        ` : '')}
+      `;
+
+      document.getElementById('modal-view-dossier').classList.add('open');
+    }
+
+    function closeDossierModal() {
+      document.getElementById('modal-view-dossier').classList.remove('open');
+    }
+
+    function previewDoc(reqId, docType) {
+      const req = GRACE.getFacultyRequestById(reqId);
+      if (!req) return;
+
+      const titles = {
+        loi: 'Official Letter of Intent / Endorsement',
+        invitation: 'Official Partner / Beneficiary Invitation Letter',
+        program: 'Timed Activity Program & Matrix',
+        narrative: 'Terminal Activity Accomplishment Report',
+        certificate: 'Certificate of Appreciation / Participation'
+      };
+
+      document.getElementById('dv-title').textContent = titles[docType] || 'Attachment Preview';
+      document.getElementById('dv-sub').textContent = `${req.request_code} · ${req.faculty_name} (${req.requested_role})`;
+
+      let bodyHTML = '';
+      if (docType === 'loi') {
+        bodyHTML = `
+          <div style="background:#fff;border:1px solid #D1D5DB;padding:2rem;border-radius:8px;font-family:'Times New Roman',serif;line-height:1.6;color:#111;">
+            <div style="text-align:center;border-bottom:2px solid #8B1A1A;padding-bottom:1rem;margin-bottom:1.5rem;">
+              <div style="font-weight:bold;font-size:1.1rem;color:#8B1A1A;font-family:'Poppins',sans-serif;">UNIVERSITY OF CAMARINES NORTE</div>
+              <div style="font-size:0.9rem;font-weight:bold;">COLLEGE OF COMPUTING AND MULTIMEDIA STUDIES</div>
+              <div style="font-size:0.8rem;color:#4B5563;">Extension Services Office • Daet, Camarines Norte</div>
+            </div>
+            <div style="margin-bottom:1rem;font-size:0.95rem;">
+              <strong>MEMORANDUM / LETTER OF INTENT</strong><br>
+              <strong>Date:</strong> ${req.documents?.letter_of_intent?.uploaded_at || 'October 2026'}<br>
+              <strong>FOR:</strong> DR. MARY GRACE BOLOS, Extension Coordinator<br>
+              <strong>THRU:</strong> DR. DANIEL MALIGAT, College Dean<br>
+              <strong>FROM:</strong> ${req.proponent_name}, Project Leader<br>
+              <strong>SUBJECT:</strong> Request for Faculty Service Engagement — ${req.faculty_name}
+            </div>
+            <p>Sir/Madam:</p>
+            <p>May I formally request the technical services of <strong>${req.faculty_name}</strong> (${req.faculty_dept}) to serve as <strong>${req.requested_role}</strong> for our approved extension project <em>${req.project_id}: ${req.activity_title}</em>.</p>
+            <p>The activity is scheduled on <strong>${req.event_date}</strong> at <strong>${req.venue}</strong>. Attached herewith are the official invitation letter from the host entity and the detailed program matrix for your favorable endorsement.</p>
+            <div style="margin-top:2.5rem;display:flex;justify-content:space-between;">
+              <div>Very respectfully,<br><br><strong>${req.proponent_name}</strong><br>Project Leader / Proponent</div>
+              <div>Endorsed by:<br><br><strong>DR. MARY GRACE BOLOS</strong><br>Extension Coordinator</div>
+            </div>
+          </div>
+        `;
+      } else if (docType === 'invitation') {
+        bodyHTML = `
+          <div style="background:#fff;border:1px solid #D1D5DB;padding:2rem;border-radius:8px;line-height:1.6;">
+            <div style="text-align:center;border-bottom:2px solid #2563EB;padding-bottom:0.75rem;margin-bottom:1.25rem;">
+              <div style="font-weight:bold;font-size:1.1rem;color:#1E40AF;">OFFICIAL INVITATION LETTER</div>
+              <div style="font-size:0.85rem;color:#4B5563;">Partner Host Entity / Beneficiary LGU Unit</div>
+            </div>
+            <p>Dear <strong>${req.faculty_name}</strong>,</p>
+            <p>Greetings of peace and service!</p>
+            <p>In line with our community partnership under Project <strong>${req.project_id}</strong>, we would like to formally invite you to share your technical knowledge as <strong>${req.requested_role}</strong> on the topic <em>"${req.activity_title}"</em> on <strong>${req.event_date}</strong> at <strong>${req.venue}</strong>.</p>
+            <p>Your expertise in ${req.faculty_expertise || 'the computing domain'} will significantly contribute to the empowerment of our participants.</p>
+            <div style="margin-top:2rem;">Sincerely yours,<br><br><strong>HON. MUNICIPAL ADMINISTRATOR / LGU HEAD</strong><br>Lead Partner Entity</div>
+          </div>
+        `;
+      } else if (docType === 'program') {
+        bodyHTML = `
+          <div style="background:#fff;border:1px solid #D1D5DB;padding:1.5rem;border-radius:8px;">
+            <h4 style="margin:0 0 0.5rem;color:#111827;text-align:center;">ACTIVITY PROGRAM &amp; SCHEDULE MATRIX</h4>
+            <div style="text-align:center;font-size:0.8rem;color:#6B7280;margin-bottom:1rem;">${req.activity_title} · ${req.event_date}</div>
+            <table class="freq-table" style="font-size:0.8rem;">
+              <tr style="background:#F9FAFB;"><th>Time</th><th>Activity Segment</th><th>Lead Resource Person</th></tr>
+              <tr><td>08:00 AM – 08:30 AM</td><td>Registration &amp; Opening Ceremonies</td><td>Project Team / Secretariat</td></tr>
+              <tr><td>08:30 AM – 10:15 AM</td><td><strong>Main Technical Presentation / Hands-On Part 1</strong></td><td><strong>${req.faculty_name} (${req.requested_role})</strong></td></tr>
+              <tr><td>10:15 AM – 10:30 AM</td><td>Health Break &amp; Consultations</td><td>Participants</td></tr>
+              <tr><td>10:30 AM – 12:00 PM</td><td><strong>Interactive Workshop / Demonstration Part 2</strong></td><td><strong>${req.faculty_name}</strong></td></tr>
+              <tr><td>12:00 PM – 12:30 PM</td><td>Open Forum, Evaluation &amp; Awarding of Certificate</td><td>Proponent &amp; Coordinators</td></tr>
+            </table>
+          </div>
+        `;
+      } else if (docType === 'narrative') {
+        bodyHTML = `
+          <div style="background:#fff;border:1px solid #D1D5DB;padding:1.5rem;border-radius:8px;">
+            <div style="text-align:center;border-bottom:2px solid #059669;padding-bottom:0.75rem;margin-bottom:1rem;">
+              <div style="font-weight:bold;font-size:1.1rem;color:#065F46;">TERMINAL ACCOMPLISHMENT &amp; NARRATIVE REPORT</div>
+              <div style="font-size:0.82rem;color:#6B7280;">CCMS Extension Services Office • Form CNSC-OP-EXT-03A Equivalent</div>
+            </div>
+            <p style="font-size:0.84rem;line-height:1.6;">
+              On <strong>${req.event_date}</strong>, the scheduled session <em>"${req.activity_title}"</em> was successfully conducted at ${req.venue}.
+              <strong>${req.faculty_name}</strong> facilitated the module for 48 participants with high engagement ratings (4.92 / 5.0). All learning competencies and hands-on exercises were delivered as programmed.
+            </p>
+            <div style="background:#F0FDF4;border:1px dashed #A7F3D0;padding:1rem;border-radius:8px;font-size:0.8rem;color:#065F46;margin-top:1rem;">
+              <i class="fas fa-check-circle"></i> Complete participant evaluation sheets, attendance sheets, and high-resolution photo documentation are archived in the G.R.A.C.E. portal.
+            </div>
+          </div>
+        `;
+      } else if (docType === 'certificate') {
+        bodyHTML = `
+          <div style="background:#FFFDF7;border:4px double #DAA520;padding:2.5rem;text-align:center;border-radius:12px;box-shadow:inset 0 0 20px rgba(218,165,32,0.1);">
+            <div style="font-size:0.85rem;letter-spacing:0.1em;text-transform:uppercase;color:#78350F;font-weight:bold;">Republic of the Philippines</div>
+            <div style="font-size:1.3rem;font-weight:900;color:#8B1A1A;font-family:'Poppins',sans-serif;">UNIVERSITY OF CAMARINES NORTE</div>
+            <div style="font-size:0.85rem;font-weight:bold;color:#111;">COLLEGE OF COMPUTING AND MULTIMEDIA STUDIES</div>
+            <div style="font-size:1.8rem;font-family:'Georgia',serif;font-style:italic;color:#DAA520;margin:1.5rem 0 0.5rem;">Certificate of Appreciation</div>
+            <div style="font-size:0.85rem;color:#4B5563;">is hereby proudly presented to</div>
+            <div style="font-size:1.6rem;font-weight:800;color:#111827;text-decoration:underline;text-underline-offset:6px;margin:0.75rem 0;">${req.faculty_name}</div>
+            <p style="font-size:0.85rem;line-height:1.6;max-width:540px;margin:0.5rem auto 2rem;color:#374151;">
+              In grateful recognition of invaluable services rendered as <strong>${req.requested_role}</strong> during the conduct of <em>"${req.activity_title}"</em> on ${req.event_date}.
+            </p>
+            <div style="display:flex;justify-content:space-around;margin-top:2rem;">
+              <div><strong>DR. MARY GRACE BOLOS</strong><br><span style="font-size:0.75rem;color:#6B7280;">Extension Coordinator</span></div>
+              <div><strong>DR. DANIEL MALIGAT</strong><br><span style="font-size:0.75rem;color:#6B7280;">College Dean</span></div>
+            </div>
+          </div>
+        `;
+      }
+
+      document.getElementById('dv-body').innerHTML = bodyHTML;
+      document.getElementById('modal-doc-viewer').classList.add('open');
+    }
+
+    function closeDocViewerModal() {
+      document.getElementById('modal-doc-viewer').classList.remove('open');
+    }
+
+    window.addEventListener('grace-faculty-requests-updated', () => {
+      renderFacultyRequests();
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      currentRole = localStorage.getItem('graceRole') || 'proponent';
+      currentStatusFilter = 'all';
+      currentRoleFilter = 'all';
+      currentSearchQuery = '';
+      const s = document.getElementById('freq-status-filter');
+      if (s) s.value = 'all';
+      const r = document.getElementById('freq-role-filter');
+      if (r) r.value = 'all';
+      const q = document.getElementById('freq-search-input');
+      if (q) q.value = '';
+      document.querySelectorAll('.freq-kpi-card').forEach(c => c.classList.remove('active'));
+      const allCard = document.getElementById('kpi-card-all');
+      if (allCard) allCard.classList.add('active');
+
+      updateRoleUI();
+      renderFacultyRequests();
+    });
+  </script>
+</body>
+</html>

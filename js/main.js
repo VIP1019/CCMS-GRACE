@@ -3,6 +3,15 @@
    ERD-Aligned | Team Thriv3 | IT 116
    ============================================================ */
 
+/* Only 3 roles exist (proponent, coordinator, dean). Clear stale sessions of removed roles. */
+(function () {
+  const r = localStorage.getItem('graceRole');
+  if (r && !['proponent', 'coordinator', 'dean'].includes(r)) {
+    localStorage.removeItem('graceRole');
+    localStorage.removeItem('graceLoggedIn');
+  }
+})();
+
 document.addEventListener('DOMContentLoaded', () => {
   injectSidebar();   // Inject ERD-aligned sidebar before anything else
   injectProfileModal(); // Inject global user profile modal after sidebar injection
@@ -21,6 +30,10 @@ document.addEventListener('DOMContentLoaded', () => {
   initRoleUI();
 });
 
+window.addEventListener('grace-notifs-updated', () => {
+  if (typeof injectSidebar === 'function') injectSidebar();
+});
+
 /* ==========  DYNAMIC SIDEBAR INJECTION  ========== */
 function injectSidebar() {
   const sidebar = document.getElementById('sidebar');
@@ -29,15 +42,11 @@ function injectSidebar() {
   const role = localStorage.getItem('graceRole') || 'proponent';
   const currentPage = window.location.pathname.split('/').pop() || 'index.html';
 
-  // Role-based user config
+  // Role-based user config (only 3 roles)
   const roleMap = {
-    admin:       { name: 'Prince Jheck T. Juan',    initials: 'PJ', label: 'System Administrator',           workspace: 'ADMIN WORKSPACE',       code: 'CCMS-ADM' },
-    coordinator: { name: 'Crystelle A. Villanueva', initials: 'CV', label: 'Extension Coordinator',          workspace: 'COORDINATOR WORKSPACE', code: 'CCMS-COORD' },
-    proponent:   { name: 'Dr. Mary Grace Bolos',    initials: 'MB', label: 'Project Proponent',              workspace: 'PROPONENT WORKSPACE',   code: 'CCMS-EXT' },
-    dean:        { name: 'Mary Grace Bolos',        initials: 'MB', label: 'College Dean',                   workspace: 'DEAN WORKSPACE',        code: 'CCMS-DEAN' },
-    ovpre:       { name: 'OVPRE Administrator',     initials: 'OV', label: 'OVPRE Administrator',             workspace: 'OVPRE WORKSPACE',       code: 'CCMS-OVPRE' },
-    vpre:        { name: 'OVPRE Administrator',     initials: 'OV', label: 'OVPRE Administrator',             workspace: 'OVPRE WORKSPACE',       code: 'CCMS-OVPRE' },
-    assistant:   { name: 'Ana Dela Rosa',           initials: 'AD', label: 'Asst. Extension Officer',         workspace: 'ASST EXT WORKSPACE',    code: 'CCMS-AEXT' }
+    coordinator: { name: 'Dr. Mary Grace Bolos', initials: 'MB', label: 'Extension Coordinator',          workspace: 'COORDINATOR WORKSPACE', code: 'CCMS-COORD' },
+    proponent:   { name: 'Prince Jheck T. Juan',  initials: 'PJ', label: 'Project Proponent',              workspace: 'PROPONENT WORKSPACE',   code: 'CCMS-EXT' },
+    dean:        { name: 'Dr. Daniel Maligat',    initials: 'DM', label: 'College Dean',                   workspace: 'DEAN WORKSPACE',        code: 'CCMS-DEAN' },
   };
   const user = roleMap[role] || roleMap['proponent'];
 
@@ -47,6 +56,12 @@ function injectSidebar() {
     return `<a href="${href}" class="sidebar-nav-item${isActive}"><span class="nav-icon"><i class="fas ${icon}"></i></span><span>${label}</span>${badgeHtml}</a>`;
   }
 
+  // Calculate dynamic unread notification count for active role
+  const unreadCount = (window.GRACE && typeof window.GRACE.getUnreadCount === 'function')
+    ? window.GRACE.getUnreadCount(role)
+    : (role === 'coordinator' ? 3 : (role === 'dean' ? 2 : 3));
+  const notifBadge = unreadCount > 0 ? String(unreadCount) : '';
+
   // Role-based nav items per Figma
   let navHTML = '';
   if (role === 'proponent') {
@@ -55,16 +70,16 @@ function injectSidebar() {
       ${navItem('proposals.html',     'fa-file-alt',         'Proposals')}
       ${navItem('projects.html',      'fa-project-diagram',  'Projects')}
       ${navItem('activities.html',    'fa-calendar-check',   'Activities')}
-      ${navItem('beneficiaries.html', 'fa-users',            'Beneficiaries')}
-      ${navItem('partners.html',      'fa-handshake',        'Partners')}
+      ${navItem('faculty-requests.html','fa-chalkboard-teacher','Faculty Requests')}
       ${navItem('project-teams.html', 'fa-id-badge',         'Project Teams')}
+      ${navItem('status-updates.html','fa-route',            'Project Status')}
       ${navItem('funding.html',       'fa-coins',            'Funding')}
       ${navItem('documents.html',     'fa-folder-open',      'Documents')}
       ${navItem('reports.html',       'fa-chart-bar',        'Reports')}
       ${navItem('completion.html',    'fa-check-circle',     'Completion')}
       ${navItem('survey.html',        'fa-poll',             'Satisfaction')}
       <div class="sidebar-nav-label">USER ACCOUNT</div>
-      ${navItem('notifications.html','fa-bell',             'Notifications', '2')}
+      ${navItem('notifications.html','fa-bell',             'Notifications', notifBadge)}
       <a href="#" class="sidebar-nav-item" onclick="openModal('profile-modal'); return false;"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>Proponent Profile</span></a>
       <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>System Logout</span></a>
     `;
@@ -75,15 +90,17 @@ function injectSidebar() {
       ${navItem('approvals.html',     'fa-clipboard-check',  'Approvals', '1')}
       ${navItem('projects.html',      'fa-project-diagram',  'Projects')}
       ${navItem('activities.html',    'fa-calendar-check',   'Activities')}
+      ${navItem('faculty-requests.html','fa-chalkboard-teacher','Faculty Requests')}
       ${navItem('beneficiaries.html', 'fa-users',            'Beneficiaries')}
       ${navItem('partners.html',      'fa-handshake',        'Partners')}
+      ${navItem('status-updates.html','fa-route',            'Status Updates')}
       ${navItem('funding.html',       'fa-coins',            'Funding')}
       ${navItem('documents.html',     'fa-folder-open',      'Documents')}
       ${navItem('reports.html',       'fa-chart-bar',        'Reports')}
       ${navItem('completion.html',    'fa-check-circle',     'Completion')}
       ${navItem('survey.html',        'fa-poll',             'Satisfaction')}
       <div class="sidebar-nav-label">USER ACCOUNT</div>
-      ${navItem('notifications.html','fa-bell',             'Notifications', '3')}
+      ${navItem('notifications.html','fa-bell',             'Notifications', notifBadge)}
       <a href="#" class="sidebar-nav-item" onclick="openModal('profile-modal'); return false;"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>Officer Profile</span></a>
       <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>System Logout</span></a>
     `;
@@ -92,65 +109,13 @@ function injectSidebar() {
       ${navItem('dashboard.html',     'fa-th-large',         'Dashboard')}
       ${navItem('approvals.html',     'fa-clipboard-check',  'Approvals', '1')}
       ${navItem('projects.html',      'fa-project-diagram',  'Projects')}
+      ${navItem('faculty-requests.html','fa-chalkboard-teacher','Faculty Requests')}
+      ${navItem('status-updates.html','fa-route',            'Project Status')}
+      ${navItem('documents.html',     'fa-folder-open',      'Documents')}
       ${navItem('reports.html',       'fa-chart-bar',        'Reports')}
       <div class="sidebar-nav-label">USER ACCOUNT</div>
-      ${navItem('notifications.html','fa-bell',             'Notifications', '1')}
+      ${navItem('notifications.html','fa-bell',             'Notifications', notifBadge)}
       <a href="#" class="sidebar-nav-item" onclick="openModal('profile-modal'); return false;"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>Dean Profile</span></a>
-      <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>System Logout</span></a>
-    `;
-  // ========== VPRE SIDEBAR ==========
-  } else if (role === 'vpre' || role === 'ovpre') {
-    navHTML = `
-      ${navItem('dashboard.html',     'fa-th-large',         'Dashboard')}
-      ${navItem('approvals.html',     'fa-clipboard-check',  'Approvals', '1')}
-      ${navItem('projects.html',      'fa-project-diagram',  'Projects')}
-      ${navItem('funding.html',       'fa-coins',            'Funding')}
-      ${navItem('documents.html',     'fa-folder-open',      'Documents')}
-      ${navItem('reports.html',       'fa-chart-bar',        'Reports')}
-      ${navItem('completion.html',    'fa-check-circle',     'Completion')}
-      ${navItem('survey.html',        'fa-poll',             'Satisfaction')}
-      <div class="sidebar-nav-label">SYSTEM</div>
-      ${navItem('admin.html',         'fa-cog',              'Admin Panel')}
-      ${navItem('notifications.html','fa-bell',             'Notifications', '2')}
-      <a href="#" class="sidebar-nav-item" onclick="openModal('profile-modal'); return false;"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>Officer Profile</span></a>
-      <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>System Logout</span></a>
-    `;
-  // ========== ASSISTANT EXTENSION OFFICER SIDEBAR ==========
-  } else if (role === 'assistant') {
-    navHTML = `
-      ${navItem('dashboard.html',          'fa-th-large',         'Dashboard')}
-      ${navItem('asst-workqueue.html',      'fa-tasks',            'My Work Queue', '3')}
-      <div class="sidebar-nav-label">OPERATIONS</div>
-      ${navItem('projects.html',            'fa-project-diagram',  'Projects')}
-      ${navItem('asst-compliance.html',     'fa-shield-alt',       'Compliance')}
-      ${navItem('documents.html',           'fa-folder-open',      'Documents')}
-      ${navItem('asst-communications.html', 'fa-comments',         'Communications')}
-      ${navItem('asst-status.html',         'fa-route',            'Status Updates')}
-      <div class="sidebar-nav-label">REPORTING</div>
-      ${navItem('reports.html',             'fa-chart-bar',        'Reports')}
-      <div class="sidebar-nav-label">USER ACCOUNT</div>
-      ${navItem('notifications.html',       'fa-bell',             'Notifications', '2')}
-      <a href="#" class="sidebar-nav-item" onclick="openModal('profile-modal'); return false;"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>My Profile</span></a>
-      <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>System Logout</span></a>
-    `;
-  } else {
-    navHTML = `
-      ${navItem('dashboard.html',     'fa-th-large',         'Dashboard')}
-      ${navItem('proposals.html',     'fa-file-alt',         'Proposals', '2')}
-      ${navItem('approvals.html',     'fa-clipboard-check',  'Approvals', '1')}
-      ${navItem('projects.html',      'fa-project-diagram',  'Projects')}
-      ${navItem('activities.html',    'fa-calendar-check',   'Activities')}
-      ${navItem('beneficiaries.html', 'fa-users',            'Beneficiaries')}
-      ${navItem('partners.html',      'fa-handshake',        'Partners')}
-      ${navItem('funding.html',       'fa-coins',            'Funding')}
-      ${navItem('documents.html',     'fa-folder-open',      'Documents')}
-      ${navItem('reports.html',       'fa-chart-bar',        'Reports')}
-      ${navItem('completion.html',    'fa-check-circle',     'Completion')}
-      ${navItem('survey.html',        'fa-poll',             'Satisfaction')}
-      <div class="sidebar-nav-label">SYSTEM</div>
-      ${navItem('admin.html',         'fa-cog',              'Admin Panel')}
-      ${navItem('notifications.html','fa-bell',             'Notifications', '2')}
-      <a href="#" class="sidebar-nav-item" onclick="openModal('profile-modal'); return false;"><span class="nav-icon"><i class="fas fa-user-circle"></i></span><span>Officer Profile</span></a>
       <a href="login.html" class="sidebar-nav-item" onclick="localStorage.clear()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span>System Logout</span></a>
     `;
   }
@@ -192,7 +157,10 @@ function injectSidebar() {
         <span class="topbar-semester">A.Y. 2026–2027 • 1st Semester</span>
       </div>
       <div class="topbar-right">
-        <button class="topbar-icon-btn" title="Notifications"><i class="fas fa-bell"></i><span class="notif-dot"></span></button>
+        <a href="notifications.html" class="topbar-icon-btn" title="Notifications" style="text-decoration:none;position:relative;display:inline-flex;align-items:center;justify-content:center;">
+          <i class="fas fa-bell"></i>
+          ${unreadCount > 0 ? `<span class="notif-dot"></span>` : ''}
+        </a>
         <div class="topbar-user" id="topbar-user-menu" role="button" tabindex="0" title="Open User Profile" onclick="openModal('profile-modal'); return false;" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openModal('profile-modal'); }">
           <div class="topbar-user-avatar">${user.initials}</div>
           <div class="topbar-user-details">
@@ -373,40 +341,26 @@ function getProfileUserData() {
   }
 
   const roleMap = {
-    admin: {
-      name: 'Prince Jheck T. Juan',
-      email: 'admin@ucn.edu.ph',
-      role: 'System Administrator',
-      contactNumber: 'Not provided',
-      affiliation: 'University of Camarines Norte'
-    },
     coordinator: {
-      name: 'Crystelle A. Villanueva',
-      email: 'coordinator@ucn.edu.ph',
+      name: 'Dr. Mary Grace Bolos',
+      email: 'mgbolos@ucn.edu.ph',
       role: 'Extension Coordinator',
-      contactNumber: 'Not provided',
-      affiliation: 'University of Camarines Norte'
+      contactNumber: '09182345678',
+      affiliation: 'CCMS — Extension Office'
     },
     proponent: {
-      name: 'Dr. Mary Grace Bolos',
-      email: 'proponent@ucn.edu.ph',
+      name: 'Prince Jheck T. Juan',
+      email: 'pjuan@ucn.edu.ph',
       role: 'Project Proponent',
-      contactNumber: 'Not provided',
-      affiliation: 'University of Camarines Norte'
+      contactNumber: '09171234567',
+      affiliation: 'CCMS — Information Technology'
     },
     dean: {
-      name: 'Mary Grace Bolos',
-      email: 'dean@ucn.edu.ph',
+      name: 'Dr. Daniel Maligat',
+      email: 'dmaligat@ucn.edu.ph',
       role: 'College Dean',
-      contactNumber: 'Not provided',
-      affiliation: 'University of Camarines Norte'
-    },
-    ovpre: {
-      name: 'OVPRE Administrator',
-      email: 'ovpre@ucn.edu.ph',
-      role: 'OVPRE Administrator',
-      contactNumber: 'Not provided',
-      affiliation: 'Office of the Vice President for Research and Extension'
+      contactNumber: '09226789012',
+      affiliation: 'CCMS — Dean Office'
     }
   };
 
@@ -1053,7 +1007,7 @@ function initPagination(containerId, itemsPerPage = 10) {
 
 /* ==========  ROLE-BASED UI RENDERING  ========== */
 function initRoleUI() {
-  const role = localStorage.getItem('graceRole') || 'admin';
+  const role = localStorage.getItem('graceRole') || 'proponent';
   const isLoggedIn = localStorage.getItem('graceLoggedIn') === 'true';
   
   // Protect dashboard routes
@@ -1066,30 +1020,19 @@ function initRoleUI() {
   }
   
   if (!isPublicPage) {
-    // Determine user info based on role
-    let userName = 'Prince Jheck';
+    // Determine user info based on role (proponent / coordinator / dean only)
+    let userName = 'Prince Jheck J.';
     let userInitials = 'PJ';
-    let userRoleStr = 'Administrator';
+    let userRoleStr = 'Project Proponent';
     
     if (role === 'coordinator') {
-      userName = 'Crystelle V.';
-      userInitials = 'CV';
-      userRoleStr = 'Extension Coordinator';
-    } else if (role === 'proponent') {
-      userName = 'Lei-anne A.';
-      userInitials = 'LA';
-      userRoleStr = 'Project Proponent';
-    } else if (role === 'dean') {
       userName = 'Mary Grace B.';
       userInitials = 'MB';
+      userRoleStr = 'Extension Coordinator';
+    } else if (role === 'dean') {
+      userName = 'Dr. Daniel M.';
+      userInitials = 'DM';
       userRoleStr = 'College Dean';
-    }
-
-    /* ========== OVPRE USER INFORMATION ADDED ========== */
-    else if (role === 'ovpre') {
-      userName = 'OVPRE Administrator';
-      userInitials = 'OV';
-      userRoleStr = 'OVPRE Administrator';
     }
     
     // Update sidebar user info
@@ -1108,226 +1051,227 @@ function initRoleUI() {
     if (topbarAvatar) topbarAvatar.textContent = userInitials;
     if (topbarName) topbarName.textContent = userName;
     
-    // Hide restricted nav items
-    if (role !== 'admin' && role !== 'ovpre') {
-      const adminNavs = document.querySelectorAll('.sidebar-nav-item[data-role="admin"], .sidebar-nav-item[href="admin.html"]');
-      adminNavs.forEach(nav => nav.style.display = 'none');
-    }
-    
-    if (role === 'proponent') {
-      // Proponents might not see funding details or system reports depending on design, 
-      // but hiding admin is the main requirement.
-      const restrictedNavs = document.querySelectorAll('.sidebar-nav-item[href="funding.html"]');
-      restrictedNavs.forEach(nav => nav.style.display = 'none');
-    }
-
-    /* ========== OVPRE ADMIN NAVIGATION ACCESS ADDED ========== */
-    if (role === 'ovpre') {
-      // OVPRE uses the same system-level navigation as the Admin sidebar.
-      // Restore Admin Panel visibility because the OVPRE sidebar is intentionally
-      // rendered with the Admin navigation structure.
-      const ovpreAdminNavs = document.querySelectorAll('.sidebar-nav-item[href="admin.html"]');
-      ovpreAdminNavs.forEach(nav => nav.style.display = '');
-
-      // Restore global operational navigation for OVPRE.
-      const ovpreGlobalNavs = document.querySelectorAll(
-        '.sidebar-nav-item[href="proposals.html"],' +
-        '.sidebar-nav-item[href="approvals.html"],' +
-        '.sidebar-nav-item[href="projects.html"],' +
-        '.sidebar-nav-item[href="activities.html"],' +
-        '.sidebar-nav-item[href="beneficiaries.html"],' +
-        '.sidebar-nav-item[href="partners.html"],' +
-        '.sidebar-nav-item[href="funding.html"],' +
-        '.sidebar-nav-item[href="documents.html"],' +
-        '.sidebar-nav-item[href="reports.html"],' +
-        '.sidebar-nav-item[href="completion.html"],' +
-        '.sidebar-nav-item[href="survey.html"]'
-      );
-
-      ovpreGlobalNavs.forEach(nav => nav.style.display = '');
-    }
+    // Only 3 roles exist: proponent, coordinator, dean (no admin / OVPRE / assistant)
 
     // Role-specific Dashboard Content (Only runs on dashboard.html)
     if (currentPath === 'dashboard.html' || currentPath === 'dashboard.html#') {
+      if (typeof window.renderDashboardByRole === 'function') {
+        window.renderDashboardByRole(role);
+        return;
+      }
+      const pageTitle = document.querySelector('.dashboard-wrap h2');
+      const pageSubtitle = document.querySelector('.dashboard-wrap p');
+      const qaGrid = document.querySelector('.qa-grid');
+      const dsCards = document.querySelectorAll('.ds-cards-grid .ds-card');
+      const dsMetrics = document.querySelectorAll('.ds-metrics-grid .dsm-card');
+
       if (role === 'proponent') {
-        // 1. Top Row Stats
-        const topCards = document.querySelectorAll('.summary-cards:first-of-type .summary-card-info');
-        if (topCards.length >= 4) {
-          topCards[0].querySelector('h3').textContent = '4';
-          topCards[0].querySelector('p').textContent = 'My Proposals';
-          topCards[0].querySelector('.summary-card-trend').innerHTML = '<i class="fas fa-arrow-up"></i> 1 new this semester';
-          
-          topCards[1].querySelector('h3').textContent = '2';
-          topCards[1].querySelector('p').textContent = 'Active Projects';
-          topCards[1].querySelector('.summary-card-trend').innerHTML = '<i class="fas fa-arrow-up"></i> 1 ongoing';
-          
-          topCards[2].querySelector('h3').textContent = '1';
-          topCards[2].querySelector('p').textContent = 'Pending Approval';
-          topCards[2].querySelector('.summary-card-trend').innerHTML = '<i class="fas fa-clock"></i> In Review';
-          
-          topCards[3].querySelector('h3').textContent = '1';
-          topCards[3].querySelector('p').textContent = 'Completed';
-          topCards[3].querySelector('.summary-card-trend').innerHTML = '<i class="fas fa-check"></i> Last year';
+        if (pageTitle) pageTitle.textContent = 'Project Proponent Dashboard';
+        if (pageSubtitle) pageSubtitle.textContent = 'Prepare & submit proposals, upload implementation reports, and track your project status.';
+
+        if (dsCards.length >= 4) {
+          dsCards[0].querySelector('.dsc-title').textContent = 'My Proposals';
+          dsCards[0].querySelector('.dsc-val').textContent = '4';
+          dsCards[0].querySelector('.dsc-trend span').textContent = '1 new draft';
+
+          dsCards[1].querySelector('.dsc-title').textContent = 'My Active Projects';
+          dsCards[1].querySelector('.dsc-val').textContent = '2';
+          dsCards[1].querySelector('.dsc-trend span').textContent = 'Implementation ongoing';
+
+          dsCards[2].querySelector('.dsc-title').textContent = 'Pending Actions';
+          dsCards[2].querySelector('.dsc-val').textContent = '1';
+          dsCards[2].querySelector('.dsc-trend span').textContent = 'Progress report due';
+
+          dsCards[3].querySelector('.dsc-title').textContent = 'Completed Projects';
+          dsCards[3].querySelector('.dsc-val').textContent = '1';
+          dsCards[3].querySelector('.dsc-trend span').textContent = 'Documented complete';
         }
 
-        // 2. Secondary Row Stats
-        const secCards = document.querySelectorAll('.summary-cards:nth-of-type(2) .summary-card-info');
-        if (secCards.length >= 4) {
-          secCards[0].querySelector('h3').textContent = '3';
-          secCards[0].querySelector('p').textContent = 'My Activities';
-          secCards[0].querySelector('.summary-card-trend').innerHTML = '<i class="fas fa-calendar"></i> This month';
-
-          secCards[1].querySelector('h3').textContent = '120';
-          secCards[1].querySelector('p').textContent = 'Target Beneficiaries';
-          secCards[1].querySelector('.summary-card-trend').innerHTML = '<i class="fas fa-users"></i> Across 2 projects';
-
-          secCards[2].querySelector('h3').textContent = '8';
-          secCards[2].querySelector('p').textContent = 'Documents Uploaded';
-          secCards[2].querySelector('.summary-card-trend').innerHTML = '<i class="fas fa-arrow-up"></i> 2 this week';
-
-          secCards[3].querySelector('h3').textContent = '4.8';
-          secCards[3].querySelector('p').textContent = 'Avg. Satisfaction';
-          secCards[3].querySelector('.summary-card-trend').innerHTML = '<i class="fas fa-star"></i> out of 5.0';
-        }
-
-        // 3. Table Rows
-        const tableRows = document.querySelectorAll('.table-container tbody tr');
-        if (tableRows.length >= 5) {
-          tableRows[1].style.display = 'none'; // Basud Library
-          tableRows[2].style.display = 'none'; // DOST
-          tableRows[3].style.display = 'none'; // Brgy. Lag-on
-        }
-
-        // 4. Quick Actions
-        const quickActions = document.querySelectorAll('.quick-action-btn');
-        if (quickActions.length >= 6) {
-          quickActions[2].style.display = 'none'; // Generate Report
-          quickActions[4].style.display = 'none'; // Check Funding
-          quickActions[5].style.display = 'none'; // Client Survey
-        }
-
-        // 5. Hide Global Pipeline & Funding
-        const globalSection = document.querySelector('.dashboard-grid-equal');
-        if (globalSection) {
-          globalSection.style.display = 'none';
-        }
-
-        // 6. Timeline
-        const timelines = document.querySelectorAll('.timeline-item');
-        if (timelines.length >= 4) {
-          timelines[1].style.display = 'none'; // Funding verified
-          timelines[2].style.display = 'none'; // Marked complete
-          timelines[3].style.display = 'none'; // New proposal submitted
+        if (qaGrid) {
+          qaGrid.style.gridTemplateColumns = 'repeat(auto-fit, minmax(140px, 1fr))';
+          qaGrid.innerHTML = `
+            <a href="projects.html" class="qa-btn">
+              <i class="fas fa-project-diagram"></i>
+              <span>My Projects</span>
+            </a>
+            <a href="project-form.html" class="qa-btn">
+              <i class="fas fa-plus-circle"></i>
+              <span>Create / Submit Proposal</span>
+            </a>
+            <a href="proposals.html" class="qa-btn">
+              <i class="fas fa-edit"></i>
+              <span>Proposal Revisions</span>
+            </a>
+            <a href="documents.html" class="qa-btn">
+              <i class="fas fa-folder"></i>
+              <span>Required Documents</span>
+            </a>
+            <a href="activities.html" class="qa-btn">
+              <i class="fas fa-calendar-check"></i>
+              <span>My Activities &amp; Details</span>
+            </a>
+            <a href="documents.html" class="qa-btn">
+              <i class="fas fa-file-alt"></i>
+              <span>Submit Progress / Narrative</span>
+            </a>
+            <a href="documents.html" class="qa-btn">
+              <i class="fas fa-file-upload"></i>
+              <span>Upload Supporting Docs</span>
+            </a>
+            <a href="completion.html" class="qa-btn">
+              <i class="fas fa-flag-checkered"></i>
+              <span>Submit Completion Docs</span>
+            </a>
+            <a href="completion.html" class="qa-btn">
+              <i class="fas fa-poll"></i>
+              <span>Submit Post-Implementation</span>
+            </a>
+            <a href="status-updates.html" class="qa-btn">
+              <i class="fas fa-route"></i>
+              <span>Project Status &amp; Updates</span>
+            </a>
+            <a href="notifications.html" class="qa-btn">
+              <i class="fas fa-bell"></i>
+              <span>Notifications &amp; Follow-ups</span>
+            </a>
+          `;
         }
       } else if (role === 'coordinator') {
-        // Extension Coordinator sees global stats, but hide Proposal creation action to differentiate slightly
-        const quickActions = document.querySelectorAll('.quick-action-btn');
-        if (quickActions.length >= 6) {
-           quickActions[0].style.display = 'none'; // New Proposal
+        if (pageTitle) pageTitle.textContent = 'Extension Coordinator Dashboard';
+        if (pageSubtitle) pageSubtitle.textContent = 'Central coordination: verify completeness, record institutional updates, monitor submissions, and inform proponents.';
+
+        if (dsCards.length >= 4) {
+          dsCards[0].querySelector('.dsc-title').textContent = 'All Project Records';
+          dsCards[0].querySelector('.dsc-val').textContent = '48';
+          dsCards[0].querySelector('.dsc-trend span').textContent = 'Institutional database';
+
+          dsCards[1].querySelector('.dsc-title').textContent = 'Active Monitoring';
+          dsCards[1].querySelector('.dsc-val').textContent = '18';
+          dsCards[1].querySelector('.dsc-trend span').textContent = 'Ongoing activities';
+
+          dsCards[2].querySelector('.dsc-title').textContent = 'Completeness Queue';
+          dsCards[2].querySelector('.dsc-val').textContent = '3';
+          dsCards[2].querySelector('.dsc-trend span').textContent = 'For checking / routing';
+
+          dsCards[3].querySelector('.dsc-title').textContent = 'Authorized to Implement';
+          dsCards[3].querySelector('.dsc-val').textContent = '23';
+          dsCards[3].querySelector('.dsc-trend span').textContent = 'NTP issued';
+        }
+
+        if (qaGrid) {
+          qaGrid.style.gridTemplateColumns = 'repeat(auto-fit, minmax(140px, 1fr))';
+          qaGrid.innerHTML = `
+            <a href="projects.html" class="qa-btn">
+              <i class="fas fa-database"></i>
+              <span>All Project Records</span>
+            </a>
+            <a href="proposals.html" class="qa-btn">
+              <i class="fas fa-clipboard-check"></i>
+              <span>Proposal Completeness Queue</span>
+            </a>
+            <a href="proposals.html" class="qa-btn">
+              <i class="fas fa-paper-plane"></i>
+              <span>Proposals for Dean Review</span>
+            </a>
+            <a href="proposals.html" class="qa-btn">
+              <i class="fas fa-undo"></i>
+              <span>Returned Proposals / Revisions</span>
+            </a>
+            <a href="status-updates.html" class="qa-btn">
+              <i class="fas fa-route"></i>
+              <span>Institutional Process Tracking</span>
+            </a>
+            <a href="status-updates.html" class="qa-btn">
+              <i class="fas fa-bullhorn"></i>
+              <span>Awaiting Official Updates</span>
+            </a>
+            <a href="projects.html" class="qa-btn">
+              <i class="fas fa-tasks"></i>
+              <span>Implementation Monitoring</span>
+            </a>
+            <a href="documents.html" class="qa-btn">
+              <i class="fas fa-folder-open"></i>
+              <span>Progress &amp; Narrative Submissions</span>
+            </a>
+            <a href="documents.html" class="qa-btn">
+              <i class="fas fa-exclamation-circle"></i>
+              <span>Missing / Overdue Docs</span>
+            </a>
+            <a href="completion.html" class="qa-btn">
+              <i class="fas fa-award"></i>
+              <span>Completion Documentation</span>
+            </a>
+            <a href="completion.html" class="qa-btn">
+              <i class="fas fa-chart-line"></i>
+              <span>Post-Implementation Monitoring</span>
+            </a>
+            <a href="notifications.html" class="qa-btn">
+              <i class="fas fa-comments"></i>
+              <span>Communications &amp; Follow-ups</span>
+            </a>
+            <a href="reports.html" class="qa-btn">
+              <i class="fas fa-chart-bar"></i>
+              <span>Status History &amp; Reports</span>
+            </a>
+          `;
         }
       } else if (role === 'dean') {
-        // Dean sees high-level overview, hide operational quick actions
-        const quickActions = document.querySelectorAll('.quick-action-btn');
-        if (quickActions.length >= 6) {
-           quickActions[0].style.display = 'none'; // New Proposal
-           quickActions[1].style.display = 'none'; // Log Activity
-           quickActions[2].style.display = 'none'; // Upload Doc
+        if (pageTitle) pageTitle.textContent = 'College Dean Dashboard';
+        if (pageSubtitle) pageSubtitle.textContent = 'College-level academic oversight: review proposals, record endorsements, and monitor project status.';
+
+        if (dsCards.length >= 4) {
+          dsCards[0].querySelector('.dsc-title').textContent = 'College Projects';
+          dsCards[0].querySelector('.dsc-val').textContent = '48';
+          dsCards[0].querySelector('.dsc-trend span').textContent = 'CCMS Extension';
+
+          dsCards[1].querySelector('.dsc-title').textContent = 'Active Initiatives';
+          dsCards[1].querySelector('.dsc-val').textContent = '18';
+          dsCards[1].querySelector('.dsc-trend span').textContent = 'Currently ongoing';
+
+          dsCards[2].querySelector('.dsc-title').textContent = 'Proposals For Review';
+          dsCards[2].querySelector('.dsc-val').textContent = '1';
+          dsCards[2].querySelector('.dsc-trend span').textContent = 'Awaiting Dean endorsement';
+
+          dsCards[3].querySelector('.dsc-title').textContent = 'Total Endorsed';
+          dsCards[3].querySelector('.dsc-val').textContent = '23';
+          dsCards[3].querySelector('.dsc-trend span').textContent = 'College endorsed';
+        }
+
+        if (qaGrid) {
+          qaGrid.style.gridTemplateColumns = 'repeat(auto-fit, minmax(140px, 1fr))';
+          qaGrid.innerHTML = `
+            <a href="approvals.html" class="qa-btn">
+              <i class="fas fa-stamp"></i>
+              <span>Proposals for Review</span>
+            </a>
+            <a href="proposals.html" class="qa-btn">
+              <i class="fas fa-file-alt"></i>
+              <span>Proposal Details &amp; Attachments</span>
+            </a>
+            <a href="approvals.html" class="qa-btn">
+              <i class="fas fa-comment-dots"></i>
+              <span>Review Comments &amp; Endorse</span>
+            </a>
+            <a href="approvals.html" class="qa-btn">
+              <i class="fas fa-undo-alt"></i>
+              <span>Return for Revision</span>
+            </a>
+            <a href="approvals.html" class="qa-btn">
+              <i class="fas fa-history"></i>
+              <span>Previously Reviewed Proposals</span>
+            </a>
+            <a href="status-updates.html" class="qa-btn">
+              <i class="fas fa-route"></i>
+              <span>Project Status Tracking</span>
+            </a>
+            <a href="reports.html" class="qa-btn">
+              <i class="fas fa-chart-line"></i>
+              <span>Executive Reports</span>
+            </a>
+          `;
         }
       }
 
-      /* ============================================================
-         OVPRE GLOBAL DASHBOARD STATISTICS
-         OVPRE is granted global dashboard visibility similar to Admin.
-         This block intentionally does not hide global statistics,
-         pipeline information, funding information, or timeline entries.
-         ============================================================ */
-      if (role === 'ovpre') {
-        // 1. Ensure all dashboard summary cards are visible.
-        const ovpreSummaryCards = document.querySelectorAll('.summary-card');
-        ovpreSummaryCards.forEach(card => {
-          card.style.display = '';
-        });
-
-        // 2. Ensure both summary-card groups are visible.
-        const ovpreSummaryGroups = document.querySelectorAll('.summary-cards');
-        ovpreSummaryGroups.forEach(group => {
-          group.style.display = '';
-        });
-
-        // 3. Ensure global pipeline and funding sections are visible.
-        const ovpreGlobalSection = document.querySelector('.dashboard-grid-equal');
-        if (ovpreGlobalSection) {
-          ovpreGlobalSection.style.display = '';
-        }
-
-        // 4. Ensure dashboard tables remain visible for global monitoring.
-        const ovpreTableContainers = document.querySelectorAll('.table-container');
-        ovpreTableContainers.forEach(table => {
-          table.style.display = '';
-        });
-
-        // 5. Ensure all dashboard timeline entries remain visible.
-        const ovpreTimelines = document.querySelectorAll('.timeline-item');
-        ovpreTimelines.forEach(timeline => {
-          timeline.style.display = '';
-        });
-
-        // 6. Ensure global quick actions are available.
-        const ovpreQuickActions = document.querySelectorAll('.quick-action-btn');
-        ovpreQuickActions.forEach(action => {
-          action.style.display = '';
-        });
-
-        // 7. Restore all global navigation-related dashboard elements.
-        const ovpreDashboardSections = document.querySelectorAll(
-          '.dashboard-grid,' +
-          '.dashboard-grid-equal,' +
-          '.summary-cards,' +
-          '.summary-card,' +
-          '.timeline,' +
-          '.timeline-container'
-        );
-
-        ovpreDashboardSections.forEach(section => {
-          section.style.display = '';
-        });
-
-        // 8. Mark the dashboard as using global statistics for OVPRE.
-        document.body.setAttribute('data-role', 'ovpre');
-        document.body.setAttribute('data-dashboard-scope', 'global');
-
-        // 9. Add a global statistics indicator when a matching dashboard
-        // element exists. This does not replace existing dashboard content.
-        const globalStatsLabels = document.querySelectorAll(
-          '.dashboard-title,' +
-          '.page-title,' +
-          '.section-title'
-        );
-
-        globalStatsLabels.forEach(label => {
-          if (
-            label.textContent &&
-            (
-              label.textContent.toLowerCase().includes('dashboard') ||
-              label.textContent.toLowerCase().includes('statistics') ||
-              label.textContent.toLowerCase().includes('overview')
-            )
-          ) {
-            label.setAttribute('data-ovpre-global-statistics', 'true');
-          }
-        });
-
-        // 10. Ensure hidden global cards from other role-specific
-        // dashboard logic are restored when OVPRE is the active role.
-        const ovpreHiddenCards = document.querySelectorAll(
-          '.summary-card-info,' +
-          '.summary-card-trend'
-        );
-
-        ovpreHiddenCards.forEach(cardElement => {
-          cardElement.style.display = '';
-        });
-      }
     }
   }
 }

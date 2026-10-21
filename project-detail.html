@@ -60,30 +60,74 @@
           </div>
         </div>
 
-        <!-- Approval Progress Stepper -->
+        <!-- Complete Workflow Progress Stepper (Steps 1 to 9) -->
         <div class="card" style="margin-bottom: 1.5rem;">
           <div class="card-body">
-            <h4 style="margin-bottom: 1rem;"><i class="fas fa-route" style="color: var(--maroon); margin-right: 0.5rem;"></i>Approval Progress</h4>
-            <div class="stepper">
-              <div class="step completed">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+              <h4 style="margin: 0;"><i class="fas fa-route" style="color: var(--maroon); margin-right: 0.5rem;"></i>9-Step Project Lifecycle Tracking</h4>
+              <span style="font-size: 0.75rem; color: #6B7280; font-weight: 600;">Maintained by Extension Coordinator</span>
+            </div>
+            <div class="stepper" style="overflow-x: auto; padding-bottom: 0.5rem;">
+              <div class="step completed" title="Step 1: Project Proponent submits proposal and supporting docs">
                 <div class="step-circle"><i class="fas fa-check"></i></div>
-                <span class="step-label">Proposal Submitted</span>
+                <span class="step-label">1. Proposal Submitted</span>
               </div>
-              <div class="step completed">
+              <div class="step completed" title="Step 2: Extension Coordinator checks completeness">
                 <div class="step-circle"><i class="fas fa-check"></i></div>
-                <span class="step-label">Under Evaluation</span>
+                <span class="step-label">2. Completeness Check</span>
               </div>
-              <div class="step completed">
+              <div class="step completed" title="Step 3: College Dean review and endorsement">
                 <div class="step-circle"><i class="fas fa-check"></i></div>
-                <span class="step-label">Head of Extension Approved</span>
+                <span class="step-label">3. Dean Endorsement</span>
               </div>
-              <div class="step active">
-                <div class="step-circle">4</div>
-                <span class="step-label">Implementation</span>
+              <div class="step completed" title="Step 4: Institutional processing tracked by Coordinator">
+                <div class="step-circle"><i class="fas fa-check"></i></div>
+                <span class="step-label">4. Institutional Tracking</span>
               </div>
-              <div class="step">
-                <div class="step-circle">5</div>
-                <span class="step-label">Completion &amp; Report</span>
+              <div class="step completed" title="Step 5: Authorization confirmed & NTP linked">
+                <div class="step-circle"><i class="fas fa-check"></i></div>
+                <span class="step-label">5. Authorization / NTP</span>
+              </div>
+              <div class="step active" title="Step 6: Project Proponent implements & submits reports">
+                <div class="step-circle">6</div>
+                <span class="step-label">6. Implementation</span>
+              </div>
+              <div class="step" title="Step 7: Proponent submits final accomplishment & completion docs">
+                <div class="step-circle">7</div>
+                <span class="step-label">7. Completion</span>
+              </div>
+              <div class="step" title="Step 8: Post-implementation reporting & beneficiary feedback">
+                <div class="step-circle">8</div>
+                <span class="step-label">8. Post-Implementation</span>
+              </div>
+              <div class="step" title="Step 9: Organized central record">
+                <div class="step-circle">9</div>
+                <span class="step-label">9. Record Complete</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Latest Verified Updates Timeline (From Extension Coordinator) -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+          <div class="card-body">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem;">
+              <h4 style="margin:0;"><i class="fas fa-bullhorn" style="color:var(--maroon);margin-right:0.5rem;"></i>Official Coordinator Status Updates</h4>
+              <a href="status-updates.html" class="btn btn-sm btn-outline"><i class="fas fa-history"></i> Full History &amp; Actions</a>
+            </div>
+            <div id="project-detail-updates" style="display:flex;flex-direction:column;gap:0.75rem;">
+              <div style="background:#F9FAFB;border:1px solid #E5E7EB;border-left:4px solid #059669;border-radius:8px;padding:0.85rem 1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3rem;">
+                  <span style="font-weight:700;font-size:0.88rem;color:#111827;">Implementation Phase &amp; Activity Delivery</span>
+                  <span class="badge badge-progress">Ongoing / In Progress</span>
+                </div>
+                <p style="font-size:0.8rem;color:#374151;margin:0 0 0.4rem;">
+                  Notice to Proceed confirmed (Ref: NTP-2026-048). Module 1 &amp; Module 2 training activities delivered successfully. Module 3 JavaScript exercises ongoing.
+                </p>
+                <div style="font-size:0.72rem;color:#6B7280;display:flex;gap:1rem;">
+                  <span><i class="fas fa-user-check"></i> Recorded by: Dr. Mary Grace Bolos (Extension Coordinator)</span>
+                  <span><i class="fas fa-calendar-alt"></i> Sep 16, 2026, 09:30 AM</span>
+                </div>
               </div>
             </div>
           </div>
@@ -227,7 +271,7 @@
                 <thead><tr><th>Name</th><th>Department</th><th>Role</th><th>Hours</th></tr></thead>
                 <tbody>
                   <tr><td><strong>Prof. Juan, Prince Jheck T.</strong></td><td>CCMS - IT</td><td>Project Lead / Trainer</td><td>48</td></tr>
-                  <tr><td><strong>Prof. Villanueva, Crystelle A.</strong></td><td>CCMS - IT</td><td>Co-Trainer</td><td>36</td></tr>
+                  <tr><td><strong>Prof. De Leon, Roberto</strong></td><td>CCMS - IT</td><td>Co-Trainer</td><td>36</td></tr>
                   <tr><td><strong>Prof. Araña, Lei-anne C.</strong></td><td>CCMS - IT</td><td>Co-Trainer</td><td>36</td></tr>
                   <tr><td><strong>Prof. Santos, Maria R.</strong></td><td>CCMS - CS</td><td>Technical Support</td><td>24</td></tr>
                 </tbody>

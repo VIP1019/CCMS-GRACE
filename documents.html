@@ -8,6 +8,137 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/dashboard.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .dm-nav-btns { display: flex; gap: 0.5rem; align-items: center; }
+    .dm-nav-btn {
+      padding: 0.45rem 0.95rem; border-radius: 8px; font-size: 0.8rem;
+      font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 0.45rem;
+      border: 1.5px solid transparent; transition: all 0.2s;
+    }
+    .dm-nav-btn.active {
+      background: linear-gradient(135deg, #8B1A1A, #6B0000); color: #fff;
+      box-shadow: 0 2px 6px rgba(139,26,26,0.25);
+    }
+    .dm-nav-btn.inactive {
+      background: #fff; color: #4B5563; border-color: #D1D5DB;
+    }
+    .dm-nav-btn.inactive:hover { background: #F9FAFB; border-color: #9CA3AF; }
+
+    /* Project dossier card (Compiled View) */
+    .project-dossier {
+      background: #fff; border: 1px solid #E5E7EB; border-radius: 12px;
+      margin-bottom: 1.5rem; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+    .project-dossier:hover { border-color: #D1D5DB; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+    .dossier-head {
+      padding: 1rem 1.25rem; background: #F9FAFB; border-bottom: 1px solid #E5E7EB;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;
+    }
+    .dossier-title-group h3 {
+      font-size: 1rem; font-weight: 800; color: #111827; margin: 0 0 0.2rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .dossier-title-group p { font-size: 0.78rem; color: #6B7280; margin: 0; }
+    .dossier-badges { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+    .dossier-count-badge {
+      background: #ECFDF5; color: #047857; border: 1px solid #A7F3D0;
+      font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.65rem; border-radius: 999px;
+    }
+
+    .dm-table-wrap { background:#fff; overflow-x:auto; }
+    .dm-table { width:100%; border-collapse:collapse; font-size:.82rem; }
+    .dm-table th { text-align:left; padding:.65rem .9rem; font-size:.68rem; text-transform:uppercase; letter-spacing:.05em; color:#6B7280; background:#F9FAFB; border-bottom:1px solid #E5E7EB; white-space:nowrap; }
+    .dm-table td { padding:.75rem .9rem; border-bottom:1px solid #F3F4F6; vertical-align:middle; }
+    .dm-table tr:last-child td { border-bottom: none; }
+    .dm-doc-title { font-weight:700; color:#111827; font-size: 0.85rem; }
+    .dm-sub { font-size:.7rem; color:#6B7280; margin-top: 0.1rem; }
+    .dm-pill { font-size:.68rem; font-weight:700; padding:.2rem .6rem; border-radius:999px; white-space:nowrap; background:#E5E7EB; color:#374151; }
+    .dm-pill.submitted { background:#DBEAFE; color:#1E40AF; }
+    .dm-pill.checking { background:#FEF3C7; color:#92400E; }
+    .dm-pill.correction { background:#FEE2E2; color:#991B1B; }
+    .dm-pill.complete { background:#D1FAE5; color:#065F46; }
+    .dm-select { padding:.3rem .5rem; border:1.5px solid #D1D5DB; border-radius:6px; font-size:.75rem; }
+    .dm-note { background:#EFF6FF; border:1px solid #BFDBFE; color:#1E40AF; border-radius:8px; padding:.7rem .9rem; font-size:.78rem; margin-bottom:1.25rem; display:flex; gap:.5rem; align-items:center; }
+    
+    .dm-upload { background:#fff; border:1px solid #E5E7EB; border-radius:12px; padding:1.25rem; margin-bottom:1.5rem; }
+    .dm-upload h4 { font-size:.92rem; margin-bottom:.85rem; color:#111827; }
+    .dm-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:.75rem; align-items:end; }
+    .dm-grid label { display:block; font-size:.68rem; font-weight:700; text-transform:uppercase; color:#374151; margin-bottom:.3rem; }
+    .dm-grid select, .dm-grid input[type=text], .dm-grid input[type=file] { width:100%; padding:.5rem .65rem; border:1.5px solid #D1D5DB; border-radius:8px; font-size:.82rem; }
+    .dm-btn { padding:.55rem 1rem; border:none; border-radius:8px; background:linear-gradient(135deg,#8B1A1A,#6B0000); color:#fff; font-weight:700; cursor:pointer; }
+    .dm-toast { position:fixed; bottom:1.5rem; right:1.5rem; background:#059669; color:#fff; padding:.75rem 1.1rem; border-radius:8px; font-size:.85rem; font-weight:600; display:none; z-index:9999; }
+
+    /* In-Portal Modal Overlays */
+    .pd-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.52); z-index: 2000;
+      align-items: flex-start; justify-content: center;
+      padding: 2rem 1rem; overflow-y: auto;
+    }
+    .pd-overlay.open { display: flex; }
+    .pd-modal {
+      background: #fff; border-radius: 14px;
+      width: 100%; max-width: 860px;
+      box-shadow: 0 24px 72px rgba(0,0,0,0.22);
+      position: relative; overflow: hidden;
+      margin: auto;
+    }
+    .pd-header {
+      background: linear-gradient(120deg, #5a0e0e 0%, #8B1A1A 60%, #b22222 100%);
+      padding: 1.1rem 1.5rem; color: #fff;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    }
+    .pd-header h2 { font-size: 1.05rem; font-weight: 800; margin: 0; }
+    .pd-header p { font-size: 0.76rem; opacity: 0.85; margin: 0.15rem 0 0; }
+    .pd-close {
+      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 8px; width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; cursor: pointer; font-size: 1rem; flex-shrink: 0;
+    }
+    .pd-close:hover { background: rgba(255,255,255,0.28); }
+    .pd-btn {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      padding: 0.42rem 0.95rem; border-radius: 7px; font-size: 0.78rem;
+      font-weight: 600; cursor: pointer; border: 1px solid transparent;
+      text-decoration: none;
+    }
+
+    /* Official Form CNSC-OP-EXT-01A Paper Styling */
+    .real-form-paper {
+      background: #fff; color: #111827; padding: 2rem 2.5rem;
+      max-width: 840px; margin: 0 auto; border: 1px solid #D1D5DB;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08); font-family: 'Times New Roman', Times, serif; line-height: 1.4;
+    }
+    .real-form-header {
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 2px solid #000; padding-bottom: 0.75rem; margin-bottom: 1.25rem;
+    }
+    .real-form-header-center { text-align: center; flex: 1; }
+    .rf-title-main { font-size: 13pt; font-weight: bold; text-transform: uppercase; margin: 0; }
+    .rf-sub { font-size: 10pt; margin: 2px 0; }
+    .rf-code-box { border: 1px solid #000; padding: 4px 8px; font-size: 8pt; font-family: 'Arial', sans-serif; text-align: right; }
+    .real-form-title-banner {
+      background: #E5E7EB; border: 1px solid #000; text-align: center; font-weight: bold;
+      font-size: 11pt; padding: 6px; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .real-form-table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; font-size: 9.5pt; }
+    .real-form-table th, .real-form-table td { border: 1px solid #000; padding: 6px 8px; vertical-align: top; }
+    .real-form-table th { background: #F3F4F6; font-weight: bold; text-align: left; }
+    .rf-section-head { background: #E5E7EB; font-weight: bold; font-size: 10pt; padding: 5px 8px; border: 1px solid #000; border-bottom: none; margin-top: 1rem; }
+    .rf-signature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 2rem; font-size: 9pt; text-align: center; }
+    .rf-sig-line { border-bottom: 1px solid #000; margin-top: 3.5rem; margin-bottom: 0.35rem; font-weight: bold; }
+
+    @media print {
+      body * { visibility: hidden !important; }
+      #rf-print-area, #rf-print-area * { visibility: visible !important; }
+      #rf-print-area { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; }
+      .pd-overlay { position: static; background: none; }
+      .pd-modal { box-shadow: none; border: none; }
+      .pd-header, .no-print { display: none !important; }
+    }
+  </style>
 </head>
 <body>
   <div class="dashboard-layout">
@@ -18,184 +149,632 @@
 
       <div class="dashboard-content">
         <div class="page-header">
-          <div><h2>Project Documents &amp; Records</h2><p class="page-subtitle">Organize, store, and retrieve project documentation and supporting records</p></div>
+          <div>
+            <h2>Project Documents &amp; Records</h2>
+            <p class="page-subtitle" id="dm-subtitle">Compiled per project — all uploaded files, proposals, and implementation records</p>
+          </div>
           <div class="page-header-actions">
-            <button class="btn btn-sm btn-primary"><i class="fas fa-upload"></i> Upload Document</button>
+            <!-- Toggle Button: Compiled per project vs All uploaded documents -->
+            <div class="dm-nav-btns">
+              <button class="dm-nav-btn active" id="btn-mode-compiled" onclick="switchViewMode('compiled')">
+                <i class="fas fa-folder-open"></i> Compiled Per Project
+              </button>
+              <button class="dm-nav-btn inactive" id="btn-mode-all" onclick="switchViewMode('all')">
+                <i class="fas fa-list"></i> All Uploaded Documents
+              </button>
+            </div>
           </div>
         </div>
 
-        <!-- Upload Zone -->
-        <div class="upload-zone" id="upload-zone">
-          <div class="upload-zone-content">
-            <i class="fas fa-cloud-upload-alt" style="font-size: 2.5rem; color: var(--maroon); margin-bottom: 0.75rem;"></i>
-            <h4>Drop files here or click to upload</h4>
-            <p>Supports PDF, DOCX, XLSX, PPTX, JPG, PNG, ZIP — Max 50 MB per file</p>
-            <input type="file" id="file-upload" multiple style="display: none;">
-            <button class="btn btn-sm btn-outline" onclick="document.getElementById('file-upload').click()" style="margin-top: 0.75rem;"><i class="fas fa-folder-open"></i> Browse Files</button>
+        <div class="dm-note" id="dm-note">
+          <i class="fas fa-info-circle"></i>
+          <span id="dm-note-text"></span>
+        </div>
+
+        <!-- Proponent / Coordinator: add a document record -->
+        <section class="dm-upload" id="dm-upload" style="display:none;">
+          <h4><i class="fas fa-cloud-upload-alt" style="color:var(--maroon);"></i> <span id="dm-upload-title">Upload &amp; Attach Document</span></h4>
+          <div class="dm-grid">
+            <div><label for="dm-project">Project</label><select id="dm-project"></select></div>
+            <div><label for="dm-category">Document Type</label><select id="dm-category"></select></div>
+            <div><label for="dm-stage">Process Stage</label><select id="dm-stage"></select></div>
+            <div><label for="dm-file">Choose File</label><input type="file" id="dm-file"></div>
+            <div><button class="dm-btn" id="dm-add"><i class="fas fa-upload"></i> Attach Document</button></div>
+          </div>
+        </section>
+
+        <!-- Filters (Active for Flat View & Project Selector) -->
+        <div class="filter-bar" id="dm-filter-bar">
+          <div class="filter-group"><span class="filter-label">Filter Project:</span><select class="form-select" id="dm-f-project"></select></div>
+          <div class="filter-group"><span class="filter-label">Stage:</span><select class="form-select" id="dm-f-stage"></select></div>
+          <div class="filter-group"><span class="filter-label">Monitoring Status:</span><select class="form-select" id="dm-f-status"></select></div>
+        </div>
+
+        <!-- 1. COMPILED PER PROJECT CONTAINER (Default) -->
+        <div id="compiled-projects-container"></div>
+
+        <!-- 2. ALL UPLOADED DOCUMENTS FLAT TABLE CONTAINER (Toggled via button) -->
+        <div id="all-documents-container" style="display:none;">
+          <h4 style="margin-bottom:1rem;"><i class="fas fa-list" style="color:var(--gold);margin-right:.5rem;"></i>Master Document Registry (All Uploaded Documents)</h4>
+          <div class="dm-table-wrap" style="border:1px solid #E5E7EB;border-radius:12px;">
+            <table class="dm-table">
+              <thead><tr><th>Document</th><th>Project</th><th>Stage</th><th>Version</th><th>Date Received</th><th>Monitoring Status</th><th>Remarks</th><th style="text-align:right;">Action</th></tr></thead>
+              <tbody id="dm-body"></tbody>
+            </table>
           </div>
         </div>
 
-        <!-- Filter -->
-        <div class="filter-bar">
-          <div class="filter-group">
-            <span class="filter-label">Project:</span>
-            <select class="form-select">
-              <option>All Projects</option>
-              <option>EXT-2026-048 – Web Dev Training</option>
-              <option>EXT-2026-045 – Basud Library</option>
-              <option>EXT-2026-041 – ICT Consultancy</option>
-              <option>EXT-2026-038 – Digital Literacy</option>
-            </select>
-          </div>
-          <div class="filter-group">
-            <span class="filter-label">Category:</span>
-            <select class="form-select">
-              <option>All Categories</option>
-              <option>Proposal</option>
-              <option>Budget</option>
-              <option>MOA/MOU</option>
-              <option>Training Materials</option>
-              <option>Attendance</option>
-              <option>Narrative Report</option>
-              <option>Survey Results</option>
-              <option>Photos</option>
-              <option>Certificates</option>
-            </select>
-          </div>
-          <div class="filter-group">
-            <span class="filter-label">Type:</span>
-            <select class="form-select">
-              <option>All Formats</option>
-              <option>PDF</option>
-              <option>DOCX</option>
-              <option>XLSX</option>
-              <option>PPTX</option>
-              <option>ZIP</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Documents Grid -->
-        <h4 style="margin-bottom: 1rem;"><i class="fas fa-folder" style="color: var(--gold); margin-right: 0.5rem;"></i>Document Library</h4>
-        <div class="documents-grid">
-          <div class="doc-card">
-            <div class="doc-icon" style="background: rgba(239,68,68,0.1); color: #DC2626;"><i class="fas fa-file-pdf"></i></div>
-            <div class="doc-info">
-              <h5>Project Proposal</h5>
-              <p>EXT-2026-048 • PDF • 2.4 MB</p>
-              <span class="text-xs text-muted">Aug 15, 2026</span>
+        <div class="card" style="margin-top:1.5rem;">
+          <div class="card-body" style="padding:1.25rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;">
+              <span style="font-size:.88rem;font-weight:600;"><i class="fas fa-hdd" style="color:var(--maroon);margin-right:.4rem;"></i> Storage Usage</span>
+              <span style="font-size:.82rem;color:var(--gray-500);">62.3 MB of 500 GB used</span>
             </div>
-            <button class="btn btn-sm btn-outline" style="padding: 0.3rem 0.6rem;"><i class="fas fa-download"></i></button>
-          </div>
-          <div class="doc-card">
-            <div class="doc-icon" style="background: rgba(16,185,129,0.1); color: #059669;"><i class="fas fa-file-excel"></i></div>
-            <div class="doc-info">
-              <h5>Budget Breakdown</h5>
-              <p>EXT-2026-048 • XLSX • 156 KB</p>
-              <span class="text-xs text-muted">Aug 20, 2026</span>
-            </div>
-            <button class="btn btn-sm btn-outline" style="padding: 0.3rem 0.6rem;"><i class="fas fa-download"></i></button>
-          </div>
-          <div class="doc-card">
-            <div class="doc-icon" style="background: rgba(59,130,246,0.1); color: #2563EB;"><i class="fas fa-file-word"></i></div>
-            <div class="doc-info">
-              <h5>MOA / MOU</h5>
-              <p>EXT-2026-048 • DOCX • 890 KB</p>
-              <span class="text-xs text-muted">Aug 22, 2026</span>
-            </div>
-            <button class="btn btn-sm btn-outline" style="padding: 0.3rem 0.6rem;"><i class="fas fa-download"></i></button>
-          </div>
-          <div class="doc-card">
-            <div class="doc-icon" style="background: rgba(245,158,11,0.1); color: #D97706;"><i class="fas fa-file-powerpoint"></i></div>
-            <div class="doc-info">
-              <h5>Training Modules</h5>
-              <p>EXT-2026-048 • PPTX • 5.2 MB</p>
-              <span class="text-xs text-muted">Aug 26, 2026</span>
-            </div>
-            <button class="btn btn-sm btn-outline" style="padding: 0.3rem 0.6rem;"><i class="fas fa-download"></i></button>
-          </div>
-          <div class="doc-card">
-            <div class="doc-icon" style="background: rgba(239,68,68,0.1); color: #DC2626;"><i class="fas fa-file-pdf"></i></div>
-            <div class="doc-info">
-              <h5>Attendance Records — Module 1</h5>
-              <p>EXT-2026-048 • PDF • 340 KB</p>
-              <span class="text-xs text-muted">Sep 04, 2026</span>
-            </div>
-            <button class="btn btn-sm btn-outline" style="padding: 0.3rem 0.6rem;"><i class="fas fa-download"></i></button>
-          </div>
-          <div class="doc-card">
-            <div class="doc-icon" style="background: rgba(239,68,68,0.1); color: #DC2626;"><i class="fas fa-file-pdf"></i></div>
-            <div class="doc-info">
-              <h5>Attendance Records — Module 2</h5>
-              <p>EXT-2026-048 • PDF • 355 KB</p>
-              <span class="text-xs text-muted">Sep 12, 2026</span>
-            </div>
-            <button class="btn btn-sm btn-outline" style="padding: 0.3rem 0.6rem;"><i class="fas fa-download"></i></button>
-          </div>
-          <div class="doc-card">
-            <div class="doc-icon" style="background: rgba(59,130,246,0.1); color: #2563EB;"><i class="fas fa-file-word"></i></div>
-            <div class="doc-info">
-              <h5>System Requirements Document</h5>
-              <p>EXT-2026-045 • DOCX • 1.8 MB</p>
-              <span class="text-xs text-muted">Jun 15, 2026</span>
-            </div>
-            <button class="btn btn-sm btn-outline" style="padding: 0.3rem 0.6rem;"><i class="fas fa-download"></i></button>
-          </div>
-          <div class="doc-card">
-            <div class="doc-icon" style="background: rgba(239,68,68,0.1); color: #DC2626;"><i class="fas fa-file-pdf"></i></div>
-            <div class="doc-info">
-              <h5>Narrative Report</h5>
-              <p>EXT-2026-038 • PDF • 3.1 MB</p>
-              <span class="text-xs text-muted">Jun 25, 2026</span>
-            </div>
-            <button class="btn btn-sm btn-outline" style="padding: 0.3rem 0.6rem;"><i class="fas fa-download"></i></button>
-          </div>
-          <div class="doc-card">
-            <div class="doc-icon" style="background: rgba(239,68,68,0.1); color: #DC2626;"><i class="fas fa-file-pdf"></i></div>
-            <div class="doc-info">
-              <h5>Client Satisfaction Survey Results</h5>
-              <p>EXT-2026-038 • PDF • 890 KB</p>
-              <span class="text-xs text-muted">Jun 22, 2026</span>
-            </div>
-            <button class="btn btn-sm btn-outline" style="padding: 0.3rem 0.6rem;"><i class="fas fa-download"></i></button>
-          </div>
-          <div class="doc-card">
-            <div class="doc-icon" style="background: rgba(124,58,237,0.1); color: #7C3AED;"><i class="fas fa-file-archive"></i></div>
-            <div class="doc-info">
-              <h5>Photo Documentation</h5>
-              <p>EXT-2026-038 • ZIP • 45 MB</p>
-              <span class="text-xs text-muted">Jun 20, 2026</span>
-            </div>
-            <button class="btn btn-sm btn-outline" style="padding: 0.3rem 0.6rem;"><i class="fas fa-download"></i></button>
-          </div>
-          <div class="doc-card">
-            <div class="doc-icon" style="background: rgba(239,68,68,0.1); color: #DC2626;"><i class="fas fa-file-pdf"></i></div>
-            <div class="doc-info">
-              <h5>Completion Certificates</h5>
-              <p>EXT-2026-038 • PDF • 2.8 MB</p>
-              <span class="text-xs text-muted">Jun 20, 2026</span>
-            </div>
-            <button class="btn btn-sm btn-outline" style="padding: 0.3rem 0.6rem;"><i class="fas fa-download"></i></button>
-          </div>
-        </div>
-
-        <!-- Storage Info -->
-        <div class="card" style="margin-top: 1.5rem;">
-          <div class="card-body" style="padding: 1.25rem;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-              <span style="font-size: 0.88rem; font-weight: 600;"><i class="fas fa-hdd" style="color: var(--maroon); margin-right: 0.4rem;"></i> Storage Usage</span>
-              <span style="font-size: 0.82rem; color: var(--gray-500);">62.3 MB of 500 GB used</span>
-            </div>
-            <div class="progress-bar" style="height: 8px;">
-              <div class="progress-bar-fill" style="width: 0.01%; background: linear-gradient(90deg, var(--maroon), var(--gold));"></div>
-            </div>
-            <p style="font-size: 0.78rem; color: var(--gray-400); margin-top: 0.5rem; margin-bottom: 0;">Storage is monitored. File-size controls and archiving procedures apply per institutional policies.</p>
+            <div class="progress-bar" style="height:8px;"><div class="progress-bar-fill" style="width:0.01%;background:linear-gradient(90deg,var(--maroon),var(--gold));"></div></div>
+            <p style="font-size:.78rem;color:var(--gray-400);margin-top:.5rem;margin-bottom:0;">All uploaded proposal and activity documents are preserved and organized by project record for audit and reporting retrieval.</p>
           </div>
         </div>
       </div>
     </div>
   </div>
+  <div class="dm-toast" id="dm-toast"></div>
+
   <script src="js/data.js"></script>
   <script src="js/main.js"></script>
+  <script>
+    (function () {
+      const KEY = 'grace_documents_v1';
+      const role = localStorage.getItem('graceRole') || 'proponent';
+      const projects = (window.GRACE && GRACE.projects) ? GRACE.projects : [];
+
+      const CATEGORIES = [
+        'Extension Project Proposal', 'Proposal Supporting Document', 'Revised Proposal', 'Compliance Document / Matrix',
+        'Implementation Plan / Activity Details', 'Progress Report', 'Narrative Report',
+        'Attendance Sheet / Participant Record', 'Photographs', 'Certificates', 'Deliverables / Evidence',
+        'Issues, Concerns & Action Plan', 'Final Narrative / Accomplishment Report', 'Post-Implementation Report / Evaluation Form',
+        'Beneficiary Feedback / Client Satisfaction Record'
+      ];
+      const STAGES = [
+        'Proposal Submitted', 'Completeness Check', 'Dean/Director Endorsement', 'Revision & Resubmission',
+        'Compliance / Required Revisions', 'Notice to Proceed (NTP)', 'Implementation & Monitoring',
+        'Project Completion', 'Post-Implementation Reporting'
+      ];
+      const STATUSES = ['Submitted', 'For Checking', 'Needs Correction', 'Complete'];
+
+      const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+      const opts = (arr, first) => (first ? `<option value="">${first}</option>` : '') + arr.map(a => `<option>${esc(a)}</option>`).join('');
+      const toast = msg => { const t = document.getElementById('dm-toast'); t.textContent = msg; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 2600); };
+
+      const seed = [
+        { id: 1, project_id: 'EXT-2026-048', title: 'Extension Project Proposal', category: 'Extension Project Proposal', stage: 'Proposal Submitted', version: 'v1', date: '2026-08-15', status: 'Complete', remarks: 'Verified complete.', by: 'proponent' },
+        { id: 2, project_id: 'EXT-2026-048', title: 'Budget Breakdown', category: 'Proposal Supporting Document', stage: 'Proposal Submitted', version: 'v1', date: '2026-08-20', status: 'Complete', remarks: '', by: 'proponent' },
+        { id: 3, project_id: 'EXT-2026-048', title: 'Attendance Records - Module 1', category: 'Attendance Sheet / Participant Record', stage: 'Implementation & Monitoring', version: 'v1', date: '2026-09-04', status: 'Complete', remarks: '', by: 'proponent' },
+        { id: 4, project_id: 'EXT-2026-048', title: 'Attendance Records - Module 2', category: 'Attendance Sheet / Participant Record', stage: 'Implementation & Monitoring', version: 'v1', date: '2026-09-12', status: 'For Checking', remarks: 'Pending verification of signatures', by: 'proponent' },
+        { id: 5, project_id: 'EXT-2026-045', title: 'System Requirements Document', category: 'Extension Project Proposal', stage: 'Dean/Director Endorsement', version: 'v2', date: '2026-06-15', status: 'Needs Correction', remarks: 'Signed MOA copy missing.', by: 'proponent' },
+        { id: 6, project_id: 'EXT-2026-045', title: 'MOA Draft Basud LGU', category: 'Proposal Supporting Document', stage: 'Dean/Director Endorsement', version: 'v1', date: '2026-06-10', status: 'For Checking', remarks: '', by: 'proponent' },
+        { id: 7, project_id: 'EXT-2026-038', title: 'Narrative Report Final', category: 'Narrative Report', stage: 'Project Completion', version: 'v1', date: '2026-06-25', status: 'Complete', remarks: '', by: 'proponent' },
+        { id: 8, project_id: 'EXT-2026-038', title: 'Client Satisfaction Survey Results', category: 'Beneficiary Feedback / Client Satisfaction Record', stage: 'Post-Implementation Reporting', version: 'v1', date: '2026-06-22', status: 'Complete', remarks: '96% satisfaction rate', by: 'proponent' },
+        { id: 9, project_id: 'EXT-2026-038', title: 'Photo Documentation & Certificates', category: 'Photographs', stage: 'Project Completion', version: 'v1', date: '2026-06-20', status: 'Complete', remarks: '', by: 'proponent' }
+      ];
+
+      function load() {
+        try { const s = JSON.parse(localStorage.getItem(KEY)); if (Array.isArray(s)) return s; } catch (e) {}
+        localStorage.setItem(KEY, JSON.stringify(seed)); return seed.slice();
+      }
+      const save = l => localStorage.setItem(KEY, JSON.stringify(l));
+      const pillCls = s => ({ 'Submitted': 'submitted', 'For Checking': 'checking', 'Needs Correction': 'correction', 'Complete': 'complete' }[s] || '');
+      const titleOf = id => { const p = projects.find(x => x.project_id === id); return p ? p.title : id; };
+
+      const canSubmit = role === 'proponent' || role === 'coordinator';
+      const isCoord = role === 'coordinator';
+
+      const note = {
+        proponent: 'All documents are compiled per project. You can view all uploaded files for each project, upload additional requirements, and check the coordinator\'s review status.',
+        coordinator: 'All documents are organized and compiled per project. Update the monitoring status (Submitted, For Checking, Needs Correction, Complete) and add remarks for the proponent.',
+        dean: 'View-only access to compiled project documents and reports for college review and oversight.'
+      };
+      document.getElementById('dm-note-text').textContent = note[role] || note.proponent;
+      if (canSubmit) {
+        document.getElementById('dm-upload').style.display = 'block';
+        document.getElementById('dm-upload-title').textContent = isCoord ? 'Upload Document to Project Dossier' : 'Attach Document to Project';
+      }
+
+      const projOpts = projects.map(p => `<option value="${esc(p.project_id)}">${esc(p.project_id)} — ${esc(p.title)}</option>`).join('');
+      document.getElementById('dm-project').innerHTML = projOpts;
+      document.getElementById('dm-category').innerHTML = opts(CATEGORIES);
+      document.getElementById('dm-stage').innerHTML = opts(STAGES);
+      document.getElementById('dm-f-project').innerHTML = '<option value="">All Projects</option>' + projOpts;
+      document.getElementById('dm-f-stage').innerHTML = opts(STAGES, 'All Stages');
+      document.getElementById('dm-f-status').innerHTML = opts(STATUSES, 'All Statuses');
+
+      // Check query parameter for initial project filter
+      const urlParams = new URLSearchParams(window.location.search);
+      const initialProject = urlParams.get('project');
+      if (initialProject) {
+        document.getElementById('dm-f-project').value = initialProject;
+      }
+
+      // Mode Switcher
+      window.viewMode = 'compiled';
+      window.switchViewMode = function (mode) {
+        window.viewMode = mode;
+        const btnCompiled = document.getElementById('btn-mode-compiled');
+        const btnAll = document.getElementById('btn-mode-all');
+        const compiledContainer = document.getElementById('compiled-projects-container');
+        const allContainer = document.getElementById('all-documents-container');
+
+        if (mode === 'compiled') {
+          btnCompiled.className = 'dm-nav-btn active';
+          btnAll.className = 'dm-nav-btn inactive';
+          compiledContainer.style.display = 'block';
+          allContainer.style.display = 'none';
+        } else {
+          btnCompiled.className = 'dm-nav-btn inactive';
+          btnAll.className = 'dm-nav-btn active';
+          compiledContainer.style.display = 'none';
+          allContainer.style.display = 'block';
+        }
+        render();
+      };
+
+      function render() {
+        const fp = document.getElementById('dm-f-project').value;
+        const fs = document.getElementById('dm-f-stage').value;
+        const ft = document.getElementById('dm-f-status').value;
+        const allDocs = load();
+
+        // 1. Render Compiled Per Project View
+        const compiledContainer = document.getElementById('compiled-projects-container');
+        const targetProjects = projects.filter(p => !fp || p.project_id === fp);
+
+        if (!targetProjects.length) {
+          compiledContainer.innerHTML = '<div style="text-align:center;padding:2.5rem;color:#9CA3AF;background:#fff;border-radius:12px;border:1px solid #E5E7EB;">No projects found matching filter.</div>';
+        } else {
+          compiledContainer.innerHTML = targetProjects.map(proj => {
+            const projDocs = allDocs.filter(d => d.project_id === proj.project_id && (!fs || d.stage === fs) && (!ft || d.status === ft))
+                                    .sort((a,b) => b.date.localeCompare(a.date));
+
+            return `
+              <div class="project-dossier" id="dossier-${proj.project_id}">
+                <div class="dossier-head">
+                  <div class="dossier-title-group">
+                    <h3>
+                      <i class="fas fa-folder" style="color:var(--maroon);"></i>
+                      <span>${esc(proj.project_id)} — ${esc(proj.title)}</span>
+                    </h3>
+                    <p><i class="fas fa-user-tie"></i> Proponent: Prince Jheck T. Juan · Type: ${esc(proj.service_type || 'Extension Service')}</p>
+                  </div>
+                  <div class="dossier-badges">
+                    <span class="dossier-count-badge"><i class="fas fa-paperclip"></i> ${projDocs.length} Compiled Documents</span>
+                    ${canSubmit ? `<button class="btn btn-sm btn-outline" onclick="selectUploadProject('${proj.project_id}')" style="font-size:0.75rem;"><i class="fas fa-plus"></i> Add File</button>` : ''}
+                  </div>
+                </div>
+
+                <div class="dm-table-wrap">
+                  <table class="dm-table">
+                    <thead>
+                      <tr>
+                        <th>Document</th>
+                        <th>Stage</th>
+                        <th>Version</th>
+                        <th>Date Received</th>
+                        <th>Status</th>
+                        <th>Coordinator Remarks</th>
+                        <th style="text-align:right;">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${projDocs.length ? projDocs.map(d => `
+                        <tr>
+                          <td>
+                            <div class="dm-doc-title">
+                              <i class="fas fa-file-alt" style="color:var(--maroon);margin-right:0.3rem;"></i>
+                              <a href="javascript:void(0)" onclick="viewDocumentInPortal(${d.id})" style="color:#111827;text-decoration:none;font-weight:700;" onmouseover="this.style.color='#8B1A1A'" onmouseout="this.style.color='#111827'">${esc(d.title)}</a>
+                            </div>
+                            <div class="dm-sub">${esc(d.category)}</div>
+                          </td>
+                          <td><span style="font-size:0.75rem;color:#4B5563;">${esc(d.stage)}</span></td>
+                          <td><span class="badge" style="background:#F3F4F6;color:#374151;font-size:0.72rem;">${esc(d.version)}</span></td>
+                          <td style="font-size:0.78rem;color:#6B7280;">${esc(d.date)}</td>
+                          <td>
+                            ${isCoord
+                              ? `<select class="dm-select" data-id="${d.id}" data-act="status">${STATUSES.map(s => `<option ${s === d.status ? 'selected' : ''}>${s}</option>`).join('')}</select>`
+                              : `<span class="dm-pill ${pillCls(d.status)}">${esc(d.status)}</span>`
+                            }
+                          </td>
+                          <td>
+                            ${isCoord
+                              ? `<input type="text" class="dm-select" style="width:100%;min-width:140px;" data-id="${d.id}" data-act="remarks" value="${esc(d.remarks)}" placeholder="Add remarks">`
+                              : esc(d.remarks || '—')
+                            }
+                          </td>
+                          <td style="text-align:right;">
+                            <button class="btn btn-sm" onclick="viewDocumentInPortal(${d.id})" style="padding:0.32rem 0.75rem;font-size:0.75rem;background:#8B1A1A;color:#fff;border:none;border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;gap:0.35rem;" title="View in-portal without download">
+                              <i class="fas fa-eye"></i> View
+                            </button>
+                          </td>
+                        </tr>
+                      `).join('') : `<tr><td colspan="7" style="text-align:center;padding:1.5rem;color:#9CA3AF;">No documents attached for this project matching current filters.</td></tr>`}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+
+        // 2. Render All Documents Flat Table View
+        const flatList = allDocs.filter(d => (!fp || d.project_id === fp) && (!fs || d.stage === fs) && (!ft || d.status === ft))
+                                .sort((a, b) => b.date.localeCompare(a.date));
+
+        document.getElementById('dm-body').innerHTML = flatList.length ? flatList.map(d => `
+          <tr>
+            <td>
+              <div class="dm-doc-title">
+                <a href="javascript:void(0)" onclick="viewDocumentInPortal(${d.id})" style="color:#111827;text-decoration:none;font-weight:700;" onmouseover="this.style.color='#8B1A1A'" onmouseout="this.style.color='#111827'">${esc(d.title)}</a>
+              </div>
+              <div class="dm-sub">${esc(d.category)}</div>
+            </td>
+            <td><strong>${esc(d.project_id)}</strong><div class="dm-sub">${esc(titleOf(d.project_id))}</div></td>
+            <td>${esc(d.stage)}</td>
+            <td>${esc(d.version)}</td>
+            <td>${esc(d.date)}</td>
+            <td>${isCoord
+              ? `<select class="dm-select" data-id="${d.id}" data-act="status">${STATUSES.map(s => `<option ${s === d.status ? 'selected' : ''}>${s}</option>`).join('')}</select>`
+              : `<span class="dm-pill ${pillCls(d.status)}">${esc(d.status)}</span>`}</td>
+            <td>${isCoord
+              ? `<input type="text" class="dm-select" style="width:100%;min-width:140px;" data-id="${d.id}" data-act="remarks" value="${esc(d.remarks)}" placeholder="Add remarks">`
+              : esc(d.remarks || '—')}</td>
+            <td style="text-align:right;">
+              <button class="btn btn-sm" onclick="viewDocumentInPortal(${d.id})" style="padding:0.32rem 0.75rem;font-size:0.75rem;background:#8B1A1A;color:#fff;border:none;border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;gap:0.35rem;" title="View in-portal without download">
+                <i class="fas fa-eye"></i> View
+              </button>
+            </td>
+          </tr>`).join('') : '<tr><td colspan="8" style="text-align:center;color:#9CA3AF;padding:2rem;">No documents found.</td></tr>';
+      }
+
+      window.selectUploadProject = function (pid) {
+        document.getElementById('dm-project').value = pid;
+        document.getElementById('dm-upload').scrollIntoView({ behavior: 'smooth' });
+        document.getElementById('dm-file').focus();
+      };
+
+      document.getElementById('compiled-projects-container').addEventListener('change', handleTableChange);
+      document.getElementById('dm-body').addEventListener('change', handleTableChange);
+
+      function handleTableChange(e) {
+        const el = e.target; const id = Number(el.dataset.id); if (!id) return;
+        const list = load(); const d = list.find(x => x.id === id); if (!d) return;
+        if (el.dataset.act === 'status') { d.status = el.value; toast('Status set to "' + el.value + '". Proponent informed.'); }
+        if (el.dataset.act === 'remarks') { d.remarks = el.value; toast('Remarks saved.'); }
+        save(list); if (el.dataset.act === 'status') render();
+      }
+
+      document.getElementById('dm-add').addEventListener('click', () => {
+        const cat = document.getElementById('dm-category').value;
+        const stage = document.getElementById('dm-stage').value;
+        const f = document.getElementById('dm-file').files[0];
+        if (!f) { toast('Please choose a file first.'); return; }
+        const list = load();
+        const pid = document.getElementById('dm-project').value;
+        const same = list.filter(d => d.project_id === pid && d.category === cat).length;
+        list.push({ id: Date.now(), project_id: pid, title: f.name, category: cat, stage: stage, version: 'v' + (same + 1),
+          date: new Date().toISOString().slice(0, 10), status: 'Submitted', remarks: '', by: role });
+        save(list); document.getElementById('dm-file').value = ''; render();
+        toast(isCoord ? 'Document attached to project.' : 'Document submitted to the Extension Coordinator.');
+      });
+
+      /* In-Portal Document Viewer Logic */
+      window.viewDocumentInPortal = function (docId) {
+        const allDocs = load();
+        const d = allDocs.find(x => x.id === docId);
+        if (!d) return;
+
+        const p = projects.find(x => x.project_id === d.project_id);
+        const projTitle = p ? p.title : d.project_id;
+
+        let bodyContent = '';
+
+        if (d.category && (d.category.includes('Proposal') || d.title.includes('Proposal') || d.title.includes('Requirements'))) {
+          bodyContent = `
+            <div style="border:1px solid #D1D5DB;padding:1.5rem;background:#fff;border-radius:8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #8B1A1A;padding-bottom:0.75rem;margin-bottom:1rem;">
+                <div>
+                  <h3 style="margin:0;color:#8B1A1A;font-size:1.15rem;font-weight:800;">${esc(d.title)}</h3>
+                  <div style="font-size:0.8rem;color:#4B5563;">Project: <strong>${esc(d.project_id)} — ${esc(projTitle)}</strong></div>
+                </div>
+                <span class="dm-pill ${pillCls(d.status)}">${esc(d.status)}</span>
+              </div>
+              <p style="font-size:0.85rem;line-height:1.6;color:#374151;">
+                This document is the official extension project proposal prepared and submitted in adherence to the CCMS Extension Office standards. It contains the complete project profile, rationale, target beneficiaries, methodology, budget, and implementation timeline.
+              </p>
+              <div style="margin-top:1.5rem;background:#FFFBEB;border:1px solid #FDE68A;padding:1rem;border-radius:8px;display:flex;align-items:center;justify-content:space-between;">
+                <div>
+                  <div style="font-weight:700;font-size:0.85rem;color:#92400E;"><i class="fas fa-file-invoice"></i> Official University Form Available</div>
+                  <div style="font-size:0.75rem;color:#78350F;">Form CNSC-OP-EXT-01A (Extension Project Proposal Form)</div>
+                </div>
+                <button class="pd-btn" onclick="viewOfficialForm('${esc(d.project_id)}')" style="background:#8B1A1A;color:#fff;border:none;font-weight:700;">
+                  <i class="fas fa-external-link-alt"></i> Generate Real Form
+                </button>
+              </div>
+            </div>
+          `;
+        } else if (d.category && (d.category.includes('Budget') || d.title.includes('Budget'))) {
+          bodyContent = `
+            <div style="border:1px solid #D1D5DB;padding:1.5rem;background:#fff;border-radius:8px;">
+              <h4 style="margin:0 0 0.5rem;color:#111827;font-size:1.05rem;font-weight:800;">Official Line-Item Budget Allocation</h4>
+              <p style="font-size:0.8rem;color:#6B7280;margin-bottom:1rem;">Project: ${esc(d.project_id)} — ${esc(projTitle)}</p>
+              <table class="dm-table" style="border:1px solid #E5E7EB;margin-bottom:1rem;">
+                <thead>
+                  <tr><th>Expense Item</th><th>Specification</th><th>Unit Cost</th><th style="text-align:right;">Subtotal</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td><strong>Honoraria (Facilitator)</strong></td><td>20 Instruction Hours</td><td>₱ 500.00 / hr</td><td style="text-align:right;font-weight:700;">₱ 10,000.00</td></tr>
+                  <tr><td><strong>Honoraria (Support)</strong></td><td>20 Lab / Tech Hours</td><td>₱ 250.00 / hr</td><td style="text-align:right;font-weight:700;">₱ 5,000.00</td></tr>
+                  <tr><td><strong>Training Materials &amp; Kits</strong></td><td>40 Sets of Modules</td><td>₱ 200.00 / set</td><td style="text-align:right;font-weight:700;">₱ 8,000.00</td></tr>
+                  <tr><td><strong>Meals &amp; Refreshments</strong></td><td>40 Participants x 2 Days</td><td>₱ 150.00 / meal</td><td style="text-align:right;font-weight:700;">₱ 12,000.00</td></tr>
+                  <tr><td><strong>Certificates &amp; Tokens</strong></td><td>Security Paper &amp; Plaque</td><td>₱ 5,000.00 / lot</td><td style="text-align:right;font-weight:700;">₱ 5,000.00</td></tr>
+                  <tr style="background:#F9FAFB;font-weight:bold;">
+                    <td colspan="3" style="text-align:right;font-size:0.88rem;">TOTAL ESTIMATED BUDGET:</td>
+                    <td style="text-align:right;color:#8B1A1A;font-size:0.95rem;">₱ 40,000.00</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div style="font-size:0.75rem;color:#6B7280;display:flex;justify-content:space-between;border-top:1px solid #E5E7EB;padding-top:0.75rem;">
+                <span>Audited: <strong>CCMS Extension Office</strong></span>
+                <span>Fund Source: <strong>Institutional Extension Allocation</strong></span>
+              </div>
+            </div>
+          `;
+        } else if (d.category && (d.category.includes('Attendance') || d.title.includes('Attendance'))) {
+          bodyContent = `
+            <div style="border:1px solid #D1D5DB;padding:1.5rem;background:#fff;border-radius:8px;">
+              <h4 style="margin:0 0 0.5rem;color:#111827;font-size:1.05rem;font-weight:800;">Participant Attendance Record (Form CNSC-OP-EXT-02A)</h4>
+              <p style="font-size:0.8rem;color:#6B7280;margin-bottom:1rem;">${esc(d.title)} · Project: ${esc(d.project_id)} — ${esc(projTitle)}</p>
+              <table class="dm-table" style="border:1px solid #E5E7EB;margin-bottom:1rem;">
+                <thead>
+                  <tr><th>#</th><th>Participant Name</th><th>Agency / Designation</th><th>AM Log</th><th>PM Log</th><th>Verification</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>1</td><td><strong>Abalos, Maria Cristina</strong></td><td>Daet LGU — HR Officer</td><td>08:14 AM</td><td>01:10 PM</td><td><span class="dm-pill complete">Verified</span></td></tr>
+                  <tr><td>2</td><td><strong>Beltran, Reynaldo Jr.</strong></td><td>Daet LGU — IT Unit</td><td>08:20 AM</td><td>01:15 PM</td><td><span class="dm-pill complete">Verified</span></td></tr>
+                  <tr><td>3</td><td><strong>Castillo, Eleanor D.</strong></td><td>Daet LGU — Planning Office</td><td>08:05 AM</td><td>01:05 PM</td><td><span class="dm-pill complete">Verified</span></td></tr>
+                  <tr><td>4</td><td><strong>Dela Cruz, Anthony M.</strong></td><td>Daet LGU — Budget Office</td><td>08:25 AM</td><td>01:12 PM</td><td><span class="dm-pill complete">Verified</span></td></tr>
+                  <tr><td>5</td><td><strong>Espiritu, Joanne V.</strong></td><td>Daet LGU — Assessor Office</td><td>08:18 AM</td><td>01:08 PM</td><td><span class="dm-pill complete">Verified</span></td></tr>
+                </tbody>
+              </table>
+              <div style="font-size:0.75rem;color:#6B7280;text-align:right;">
+                Certified and Checked by: <strong>Dr. Mary Grace Bolos (Extension Coordinator)</strong>
+              </div>
+            </div>
+          `;
+        } else if (d.category && (d.category.includes('Satisfaction') || d.category.includes('Feedback') || d.title.includes('Satisfaction'))) {
+          bodyContent = `
+            <div style="border:1px solid #D1D5DB;padding:1.5rem;background:#fff;border-radius:8px;">
+              <h4 style="margin:0 0 0.5rem;color:#111827;font-size:1.05rem;font-weight:800;">Client Satisfaction Measurement Summary (CSMR)</h4>
+              <p style="font-size:0.8rem;color:#6B7280;margin-bottom:1rem;">Project: ${esc(d.project_id)} — ${esc(projTitle)}</p>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.25rem;">
+                <div style="background:#F0FDF4;border:1px solid #A7F3D0;padding:1rem;border-radius:8px;text-align:center;">
+                  <div style="font-size:1.8rem;font-weight:900;color:#059669;">96.8%</div>
+                  <div style="font-size:0.75rem;font-weight:700;color:#065F46;">Overall Satisfaction</div>
+                </div>
+                <div style="background:#EFF6FF;border:1px solid #BFDBFE;padding:1rem;border-radius:8px;text-align:center;">
+                  <div style="font-size:1.8rem;font-weight:900;color:#2563EB;">4.92 / 5.0</div>
+                  <div style="font-size:0.75rem;font-weight:700;color:#1E40AF;">Content Relevance</div>
+                </div>
+                <div style="background:#FFFBEB;border:1px solid #FDE68A;padding:1rem;border-radius:8px;text-align:center;">
+                  <div style="font-size:1.8rem;font-weight:900;color:#D97706;">40 / 40</div>
+                  <div style="font-size:0.75rem;font-weight:700;color:#92400E;">Feedback Collected</div>
+                </div>
+              </div>
+              <p style="font-size:0.82rem;line-height:1.5;color:#374151;">
+                Evaluations confirm significant knowledge enhancement and practical skill acquisition by municipal personnel. Recommendation: Proceed with advanced Phase 2 training.
+              </p>
+            </div>
+          `;
+        } else {
+          bodyContent = `
+            <div style="border:1px solid #D1D5DB;padding:1.5rem;background:#fff;border-radius:8px;">
+              <h4 style="margin:0 0 0.5rem;color:#111827;font-size:1.05rem;font-weight:800;">${esc(d.title)}</h4>
+              <p style="font-size:0.8rem;color:#6B7280;margin-bottom:1.25rem;">Type: <strong>${esc(d.category)}</strong> · Project: <strong>${esc(d.project_id)} — ${esc(projTitle)}</strong> · Date: <strong>${esc(d.date)}</strong></p>
+              <div style="background:#F9FAFB;border:1px dashed #D1D5DB;padding:2.2rem;text-align:center;border-radius:8px;">
+                <i class="fas fa-file-check" style="font-size:2.5rem;color:#059669;margin-bottom:0.75rem;display:block;"></i>
+                <div style="font-weight:700;font-size:0.95rem;color:#111827;margin-bottom:0.25rem;">Document Verified &amp; Preserved On-Screen</div>
+                <p style="font-size:0.8rem;color:#6B7280;max-width:480px;margin:0 auto;">
+                  This document is compiled in the official CCMS Project Dossier. All required metadata, institutional tracking codes, and status logs have been authenticated.
+                </p>
+              </div>
+            </div>
+          `;
+        }
+
+        document.getElementById('doc-viewer-title').textContent = d.title;
+        document.getElementById('doc-viewer-meta').textContent = `${d.category} · ${d.version} · ${d.date} · Project: ${d.project_id}`;
+        document.getElementById('doc-viewer-content').innerHTML = bodyContent;
+        document.getElementById('modal-doc-viewer').classList.add('open');
+      };
+
+      window.closeDocModal = function () {
+        document.getElementById('modal-doc-viewer').classList.remove('open');
+      };
+
+      window.viewOfficialForm = function (pid) {
+        const p = projects.find(x => x.project_id === pid) || projects[0];
+        const formHtml = `
+          <div class="real-form-paper" id="rf-paper-content">
+            <div class="real-form-header">
+              <div style="width:70px;text-align:left;">
+                <div style="font-weight:900;font-size:1.4rem;color:#8B1A1A;font-family:'Poppins',sans-serif;">UCN</div>
+              </div>
+              <div class="real-form-header-center">
+                <div style="font-size:8pt;text-transform:uppercase;letter-spacing:0.04em;">Republic of the Philippines</div>
+                <div class="rf-title-main">UNIVERSITY OF CAMARINES NORTE</div>
+                <div class="rf-sub" style="font-weight:bold;">COLLEGE OF COMPUTING AND MULTIMEDIA STUDIES</div>
+                <div class="rf-sub">Extension Services Office • Daet, Camarines Norte</div>
+              </div>
+              <div class="rf-code-box">
+                <div><strong>CNSC-OP-EXT-01A</strong></div>
+                <div>Rev. 01</div>
+                <div>Effectivity: Oct 2026</div>
+              </div>
+            </div>
+
+            <div class="real-form-title-banner">
+              EXTENSION PROJECT PROPOSAL FORM
+            </div>
+
+            <div class="rf-section-head">I. PROJECT PROFILE</div>
+            <table class="real-form-table">
+              <tr>
+                <th style="width:28%;">1. Project Title</th>
+                <td colspan="3" style="font-weight:bold;font-size:10pt;">${p ? p.title : 'Web Development Training for Daet LGU Employees'}</td>
+              </tr>
+              <tr>
+                <th>2. Project Code</th>
+                <td style="width:25%;"><span style="font-family:monospace;font-weight:bold;">${p ? p.project_id : 'EXT-2026-048'}</span></td>
+                <th style="width:22%;">3. Version No.</th>
+                <td style="width:25%;">v1 (Official Submission)</td>
+              </tr>
+              <tr>
+                <th>4. Implementing Unit</th>
+                <td>College of Computing &amp; Multimedia Studies (CCMS)</td>
+                <th>5. Program / Discipline</th>
+                <td>BS Information Technology / BS Computer Science</td>
+              </tr>
+              <tr>
+                <th>6. Type of Extension Service</th>
+                <td>${p ? p.service_type : 'Skills Enhancement Training'}</td>
+                <th>7. Project Source</th>
+                <td>${p ? p.source_type : 'External Request'}</td>
+              </tr>
+              <tr>
+                <th>8. Project Location / Venue</th>
+                <td>Daet, Camarines Norte</td>
+                <th>9. Proposed Total Budget</th>
+                <td style="font-weight:bold;color:#8B1A1A;">₱ 45,000.00</td>
+              </tr>
+              <tr>
+                <th>10. Target Beneficiaries</th>
+                <td colspan="3">LGU Employees &amp; Community Stakeholders (Est. 40 Participants)</td>
+              </tr>
+              <tr>
+                <th>11. Implementation Period</th>
+                <td colspan="3">${p ? p.start_date : '2026-08-28'} to ${p ? p.end_date : '2026-10-15'}</td>
+              </tr>
+            </table>
+
+            <div class="rf-section-head">II. PROJECT RATIONALE &amp; BACKGROUND</div>
+            <table class="real-form-table">
+              <tr>
+                <td style="text-align:justify;line-height:1.5;">
+                  ${p ? p.description : 'A comprehensive capability building program.'}
+                  <br><br>
+                  In accordance with the University Extension Agenda and Community Development Mandate, the College of Computing and Multimedia Studies undertakes this extension project to empower stakeholders with modern information technology tools and digital workflows.
+                </td>
+              </tr>
+            </table>
+
+            <div class="rf-section-head">III. PROJECT OBJECTIVES</div>
+            <table class="real-form-table">
+              <tr>
+                <td>
+                  <strong>General Objective:</strong><br>
+                  To provide structured IT training and technical capability enhancement for community stakeholders.
+                  <br><br>
+                  <strong>Specific Objectives:</strong>
+                  <ol style="margin:4px 0 0 1.2rem;padding-left:0.5rem;line-height:1.5;">
+                    <li>Deliver hands-on training modules and technical workshops aligned with stakeholder needs.</li>
+                    <li>Equip participants with foundational knowledge and applied skills in modern software.</li>
+                    <li>Achieve a minimum of 90% positive participant satisfaction rating.</li>
+                  </ol>
+                </td>
+              </tr>
+            </table>
+
+            <div class="rf-section-head">IV. LINE-ITEM BUDGET ALLOCATION</div>
+            <table class="real-form-table">
+              <thead><tr><th>Category</th><th>Details</th><th style="text-align:right;">Amount</th></tr></thead>
+              <tbody>
+                <tr><td>Personal Services (PS)</td><td>Facilitator &amp; Technical Support Honoraria</td><td style="text-align:right;">₱ 15,000.00</td></tr>
+                <tr><td>MOOE</td><td>Training kits, materials, consumables, food &amp; venue</td><td style="text-align:right;">₱ 25,000.00</td></tr>
+                <tr><td>Contingency</td><td>Administrative documentation &amp; communication</td><td style="text-align:right;">₱ 5,000.00</td></tr>
+                <tr style="background:#F9FAFB;font-weight:bold;"><td colspan="2" style="text-align:right;">TOTAL:</td><td style="text-align:right;color:#8B1A1A;">₱ 45,000.00</td></tr>
+              </tbody>
+            </table>
+
+            <div class="rf-section-head">V. INSTITUTIONAL SIGNATURES &amp; ENDORSEMENTS</div>
+            <div class="rf-signature-grid">
+              <div>
+                <div style="font-size:8pt;text-transform:uppercase;color:#4B5563;">Prepared &amp; Submitted by:</div>
+                <div class="rf-sig-line">PRINCE JHECK T. JUAN</div>
+                <div style="font-weight:bold;">Project Proponent / Leader</div>
+                <div style="font-size:7.5pt;color:#6B7280;">Date: 2026-08-15</div>
+              </div>
+              <div>
+                <div style="font-size:8pt;text-transform:uppercase;color:#4B5563;">Reviewed &amp; Verified by:</div>
+                <div class="rf-sig-line">DR. MARY GRACE BOLOS</div>
+                <div style="font-weight:bold;">Extension Coordinator</div>
+                <div style="font-size:7.5pt;color:#6B7280;">CCMS Extension Services Office</div>
+              </div>
+              <div>
+                <div style="font-size:8pt;text-transform:uppercase;color:#4B5563;">Recommending Approval / Endorsement:</div>
+                <div class="rf-sig-line">DR. DANIEL MALIGAT</div>
+                <div style="font-weight:bold;">Dean, CCMS</div>
+                <div style="font-size:7.5pt;color:#6B7280;">College of Computing &amp; Multimedia Studies</div>
+              </div>
+            </div>
+          </div>
+        `;
+        document.getElementById('rf-print-area').innerHTML = formHtml;
+        document.getElementById('rf-modal-title').textContent = `Official Form CNSC-OP-EXT-01A — ${p ? p.project_id : pid}`;
+        document.getElementById('modal-real-form').classList.add('open');
+      };
+
+      window.closeRealFormModal = function () {
+        document.getElementById('modal-real-form').classList.remove('open');
+      };
+
+      ['dm-f-project', 'dm-f-stage', 'dm-f-status'].forEach(id => document.getElementById(id).addEventListener('change', render));
+      render();
+    })();
+  </script>
+
+  <!-- In-Portal Document Viewer Modal (No download required) -->
+  <div id="modal-doc-viewer" class="pd-overlay" onclick="if(event.target===this)closeDocModal();">
+    <div class="pd-modal" style="max-width:860px;">
+      <div class="pd-header">
+        <div>
+          <h2 id="doc-viewer-title">Document Preview</h2>
+          <p id="doc-viewer-meta">In-Portal Record</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <button type="button" class="pd-btn" onclick="window.print()" style="background:#fff;color:#8B1A1A;font-weight:700;">
+            <i class="fas fa-print"></i> Print
+          </button>
+          <button class="pd-close" onclick="closeDocModal()">&times;</button>
+        </div>
+      </div>
+      <div id="doc-viewer-content" style="padding:1.5rem;max-height:80vh;overflow-y:auto;background:#F9FAFB;"></div>
+    </div>
+  </div>
+
+  <!-- Official Form CNSC-OP-EXT-01A Modal -->
+  <div id="modal-real-form" class="pd-overlay" onclick="if(event.target===this)closeRealFormModal();">
+    <div class="pd-modal" style="max-width:920px;">
+      <div class="pd-header" style="background:linear-gradient(120deg,#78350F,#B45309,#D97706);">
+        <div>
+          <h2 id="rf-modal-title">Official Form CNSC-OP-EXT-01A</h2>
+          <p>Camarines Norte State College / UCN CCMS Extension Office</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <button type="button" class="pd-btn" onclick="window.print()" style="background:#fff;color:#78350F;font-weight:700;">
+            <i class="fas fa-print"></i> Print / Save as PDF
+          </button>
+          <button class="pd-close" onclick="closeRealFormModal()">&times;</button>
+        </div>
+      </div>
+      <div style="padding:1.5rem;background:#F3F4F6;max-height:80vh;overflow-y:auto;" id="rf-print-area"></div>
+    </div>
+  </div>
 </body>
 </html>

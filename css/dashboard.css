@@ -7,6 +7,8 @@
   display: flex;
   min-height: 100vh;
   background: var(--light-gray);
+  overflow-x: hidden;
+  width: 100%;
 }
 
 /* ---------- Sidebar ---------- */
@@ -250,13 +252,17 @@
 .main-content {
   flex: 1;
   margin-left: 270px;
-  transition: margin-left var(--transition-base);
+  min-width: 0;
+  max-width: calc(100vw - 270px);
+  box-sizing: border-box;
+  transition: margin-left var(--transition-base), max-width var(--transition-base);
   min-height: 100vh;
 }
 
 .sidebar.collapsed ~ .main-content,
 .main-content.expanded {
   margin-left: 72px;
+  max-width: calc(100vw - 72px);
 }
 
 /* ---------- Top Bar ---------- */
